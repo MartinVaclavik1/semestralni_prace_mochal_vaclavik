@@ -6,7 +6,22 @@
         xmlns:local="clr-namespace:semestralni_prace_mochal_vaclavik"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+    <TabControl Name="Okna">
+            <TabItem Header="Kontakty" Name="Kontakty">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="91*"/>
+                        <ColumnDefinition Width="703*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="1" Content="Label" HorizontalAlignment="Left" Margin="58,77,0,0" VerticalAlignment="Top"/>
+                <Button Content="Button" HorizontalAlignment="Left" Margin="43,14,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+            </Grid>
+            </TabItem>
+            <TabItem Header="Evidence přestupků" Name="Prestupky">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+        <TabItem Header="Můj účet">
+            <Grid Background="#FFE5E5E5"/>
+        </TabItem>
+    </TabControl>
 </Window>

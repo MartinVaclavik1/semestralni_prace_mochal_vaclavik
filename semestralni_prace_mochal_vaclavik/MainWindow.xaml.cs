@@ -19,6 +19,19 @@ namespace semestralni_prace_mochal_vaclavik
         public MainWindow()
         {
             InitializeComponent();
+            
+            Prestupky.IsEnabled = false;    //dokud bude uživatel odhlášen, tak některé okna budou disabeled jako toto
+            //TODO přidat popup okno s přihlášením - možnost vytvořit nový účet a pokračovat jako host bez přihlášení
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            //možná budeme využívat vytváření nových oken za běhu
+            var testItem = new TabItem();
+            testItem.Header = "Test nového okna";
+            Okna.Items.Add(testItem);
+
+            Prestupky.Visibility = Visibility.Hidden; //nebo možnost schovávat a zobrazovat okna
         }
     }
 }
