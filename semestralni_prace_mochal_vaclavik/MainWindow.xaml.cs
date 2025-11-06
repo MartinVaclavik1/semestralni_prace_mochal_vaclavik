@@ -21,6 +21,8 @@ namespace semestralni_prace_mochal_vaclavik
             InitializeComponent();
             
             Prestupky.IsEnabled = false;    //dokud bude uživatel odhlášen, tak některé okna budou disabeled jako toto
+            Prestupky.Visibility = Visibility.Hidden;
+            Okna.UseLayoutRounding = true;
             //TODO přidat popup okno s přihlášením - možnost vytvořit nový účet a pokračovat jako host bez přihlášení
         }
 
@@ -32,6 +34,31 @@ namespace semestralni_prace_mochal_vaclavik
             Okna.Items.Add(testItem);
 
             Prestupky.Visibility = Visibility.Hidden; //nebo možnost schovávat a zobrazovat okna
+        }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void Okna_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

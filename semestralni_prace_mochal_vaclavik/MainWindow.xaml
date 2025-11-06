@@ -5,23 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:semestralni_prace_mochal_vaclavik"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <TabControl Name="Okna">
-            <TabItem Header="Kontakty" Name="Kontakty">
-                <Grid Background="#FFE5E5E5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="91*"/>
-                        <ColumnDefinition Width="703*"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="1" Content="Label" HorizontalAlignment="Left" Margin="58,77,0,0" VerticalAlignment="Top"/>
-                <Button Content="Button" HorizontalAlignment="Left" Margin="43,14,0,0" VerticalAlignment="Top" Click="Button_Click"/>
+        Title="Informační systém Policie České Rapubliky" Height="450" Width="800">
+
+    <TabControl Name="Okna" SelectionChanged="Okna_SelectionChanged">
+        <TabItem Header="Kontakty" Name="Kontakty">
+            <Grid Background="#FFE5E5E5">
+                <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="20,52,20,10"/>
+                <Label Content="Kontakty na policisty" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" FontSize="20" FontWeight="Bold"/>
+                
             </Grid>
-            </TabItem>
-            <TabItem Header="Evidence přestupků" Name="Prestupky">
-                <Grid Background="#FFE5E5E5"/>
-            </TabItem>
+        </TabItem>
+        <TabItem Header="Evidence přestupků" Name="Prestupky">
+            <Grid Background="#FFE5E5E5">
+                <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="20,52,20,10"/>
+                <Label Content="Evidence přestupků" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" FontSize="20" FontWeight="Bold"/>
+            </Grid>
+        </TabItem>
         <TabItem Header="Můj účet">
-            <Grid Background="#FFE5E5E5"/>
+            <WindowsFormsHost Margin="34,1,660,305"/>
         </TabItem>
     </TabControl>
 </Window>
