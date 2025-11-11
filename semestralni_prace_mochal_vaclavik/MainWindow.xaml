@@ -7,22 +7,108 @@
         mc:Ignorable="d"
         Title="Informační systém Policie České Rapubliky" Height="450" Width="800">
 
-    <TabControl Name="Okna" SelectionChanged="Okna_SelectionChanged">
-        <TabItem Header="Kontakty" Name="Kontakty">
-            <Grid Background="#FFE5E5E5">
-                <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="20,52,20,10"/>
-                <Label Content="Kontakty na policisty" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" FontSize="20" FontWeight="Bold"/>
-                
+    <TabControl Name="Okna" SelectionChanged="Okna_SelectionChanged" HorizontalAlignment="Left" Width="800">
+        <TabControl.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="White" Offset="0"/>
+                <GradientStop Color="#FF92A1C6" Offset="1"/>
+            </LinearGradientBrush>
+        </TabControl.Background>
+        <TabItem x:Name="Domu" HorizontalAlignment="Center" Height="20" Header="Domu" VerticalAlignment="Center" Width="54" Background="#FF25AACE" BorderBrush="#FF33B4D8">
+            <Grid x:Name="DomuGrid" Background="White" Margin="24
+,0,24,0" Height="366" RenderTransformOrigin="1,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="VítejteTxt" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" Height="300" Width="298"><Run FontWeight="Bold" Text="Vítejte na portálu Policie České Republiky"/><LineBreak/><Run/><LineBreak/><Run Text="jjiafeaogapijpaifjapofjaip"/><LineBreak/><Run Text="faiejapfiafiajfpaikjap"/><LineBreak/><Run Text="ajapifjapifjapiwfjapf"/><LineBreak/><Run Text="afjaoejsasfvadfafjdnadadhbdi"/><LineBreak/><Run Text="afjsiaohuohufaofjhvao"/><LineBreak/><Run/><LineBreak/><Run Text="Info o tom co se tady dá najít"/></TextBlock>
             </Grid>
         </TabItem>
-        <TabItem Header="Evidence přestupků" Name="Prestupky">
-            <Grid Background="#FFE5E5E5">
+        <TabItem Header="Kontakty" x:Name="Kontakty" BorderBrush="#FF39BF2D" HorizontalAlignment="Left" Margin="2,-2,0,0" Width="62">
+            <TabItem.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="White" Offset="1"/>
+                    <GradientStop Color="#FF89D586" Offset="0"/>
+                </LinearGradientBrush>
+            </TabItem.Background>
+            <Grid>
+                <Grid.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF8CC989" Offset="1"/>
+                        <GradientStop Color="White" Offset="0"/>
+                    </LinearGradientBrush>
+                </Grid.Background>
+                <Label x:Name="KontaktyNazev" Content="Kontakty" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" FontSize="20" FontWeight="Bold"/>
+                <DataGrid x:Name="KontaktyGrid" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="20,52,20,10"/>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Evidence přestupků" x:Name="Prestupky" BorderBrush="#FFFF6969" HorizontalAlignment="Right" Margin="0,-2,-2,0" Width="120">
+            <TabItem.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="#FFFF5D5D"/>
+                    <GradientStop Color="#FFE5E5E5" Offset="1"/>
+                </LinearGradientBrush>
+            </TabItem.Background>
+            <Grid>
+                <Grid.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF7C3F3F" Offset="1"/>
+                        <GradientStop Color="White" Offset="0"/>
+                    </LinearGradientBrush>
+                </Grid.Background>
                 <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="20,52,20,10"/>
                 <Label Content="Evidence přestupků" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" FontSize="20" FontWeight="Bold"/>
             </Grid>
         </TabItem>
-        <TabItem Header="Můj účet">
-            <WindowsFormsHost Margin="34,1,660,305"/>
+        <TabItem x:Name="Ucet" Header="Můj účet" Margin="495,-2,-503,0">
+            <Grid x:Name="UcetGrid" Height="386" Margin="10,0,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="5*"/>
+                </Grid.RowDefinitions>
+                <Grid.Background>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="White" Offset="1"/>
+                        <GradientStop Color="White" Offset="0"/>
+                    </LinearGradientBrush>
+                </Grid.Background>
+                <Label x:Name="Nazev" Content="VÁŠ ÚČET" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Padding="10,5,5,5" VerticalContentAlignment="Center"/>
+                <Grid x:Name="GridLeft" Margin="0,0,397,0" Width="350" Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label x:Name="Jmeno" Content="Jmeno" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <Label x:Name="Prijmeni" Content="Prijmeni" Grid.Row="1" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <Label x:Name="Adresa" Content="Adresa" Grid.Row="2" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <Label x:Name="Ulice" Content="Ulice" Grid.Row="3" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <Label x:Name="PSC" Content="PSČ" Grid.Row="4" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <Label x:Name="Země" Content="Země" Grid.Row="5" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </Grid>
+                <Grid Margin="375,0,0,0" Grid.Column="2" Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBox x:Name="JmenoTxt" TextWrapping="Wrap" Text="Jan" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" BorderBrush="White"/>
+                    <TextBox x:Name="PrijmeniTxt" TextWrapping="Wrap" Text="Novák" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" BorderBrush="White"/>
+                    <TextBox x:Name="AdresaTxt" TextWrapping="Wrap" Text="Adresa 1" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" BorderBrush="White"/>
+                    <TextBox x:Name="UliceTxt" TextWrapping="Wrap" Text="Ulice " Width="120" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" BorderBrush="White"/>
+                    <TextBox x:Name="PSCTxt" TextWrapping="Wrap" Text="000 00" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="4" BorderBrush="White"/>
+                    <TextBox x:Name="ZemeTxt" TextWrapping="Wrap" Text="Česká republika" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="5" BorderBrush="White"/>
+                    <Button x:Name="PotvrditBtn" Content="Potvrdit" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center" Width="74" Click="PotvrditBtn_Click"/>
+                </Grid>
+            </Grid>
         </TabItem>
     </TabControl>
 </Window>
