@@ -60,5 +60,15 @@ namespace semestralni_prace_mochal_vaclavik
         {
 
         }
+
+        private void PotvrditBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged_2(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }
