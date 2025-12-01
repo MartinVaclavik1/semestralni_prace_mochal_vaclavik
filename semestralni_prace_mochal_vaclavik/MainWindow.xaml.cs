@@ -17,7 +17,6 @@ namespace semestralni_prace_mochal_vaclavik
     public partial class MainWindow : Window
     {
         // 1. Zde nastavte připojovací řetězec (zkopírujte údaje z přihlašování)
-        // Všimněte si formátu s dvojtečkou pro SID: fei-sql3.upceucebny.cz:1521:BDAS
 
         string connectionString = "User Id=ST72536;Password=||DejTamSvojeHeslo||;Data Source=fei-sql3.upceucebny.cz:1521:BDAS;";
 
@@ -135,6 +134,21 @@ namespace semestralni_prace_mochal_vaclavik
         private void PotvrditBtn_Click(object sender, RoutedEventArgs e)
         {
             // Uložení změn
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

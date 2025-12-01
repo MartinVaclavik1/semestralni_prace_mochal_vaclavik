@@ -14,7 +14,7 @@
                 <GradientStop Color="#FF92A1C6" Offset="1"/>
             </LinearGradientBrush>
         </TabControl.Background>
-        <TabItem x:Name="Domu" HorizontalAlignment="Center" Height="20" Header="Domu" VerticalAlignment="Center" Width="54">
+        <TabItem x:Name="Domu" HorizontalAlignment="Center" Height="21" Header="Domu" VerticalAlignment="Center" Width="54">
             <Grid x:Name="DomuGrid" Background="White" Margin="24
 ,0,24,0" Height="366" RenderTransformOrigin="1,0">
                 <Grid.ColumnDefinitions>
@@ -33,29 +33,42 @@
                 </Grid.RowDefinitions>
                 <Grid.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF8CC989" Offset="1"/>
+                        <GradientStop Color="#FF567A54" Offset="1"/>
                         <GradientStop Color="White" Offset="0"/>
                     </LinearGradientBrush>
                 </Grid.Background>
-                <Label x:Name="KontaktyNazev" Content="Kontakty" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" FontSize="20" FontWeight="Bold"/>
+                <Label x:Name="KontaktyNazev" Content="Kontakty" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="20" FontWeight="Bold"/>
                 <DataGrid x:Name="KontaktyGrid" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,10,10,0" Grid.Row="2"/>
-                <TextBlock HorizontalAlignment="Left" Margin="20,0,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Height="22" Width="48" FontSize="16" FontWeight="Bold"><Run Language="cs-cz" Text="Filtry"/></TextBlock>
-                <TextBox HorizontalAlignment="Left" Margin="79,0,0,0" Grid.Row="1" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Center" Width="120" Height="22" TextChanged="TextBox_TextChanged_2"/>
+                <TextBox x:Name="HledatTxt" HorizontalAlignment="Left" Margin="10,33,0,0" TextWrapping="Wrap" Text="Hledat" VerticalAlignment="Top" Width="212" Height="20" Grid.Row="1"/>
+                <Button x:Name="Zobrazit_btn" Content="Zobrazit" HorizontalAlignment="Left" Margin="227,33,0,0" VerticalAlignment="Top" Width="69" Click="Button_Click" FontFamily="Yu Gothic" Background="#FF0079FF" BorderBrush="#FF004CA0" Foreground="White" Height="20" FontWeight="Bold" Grid.Row="1" FontSize="11"/>
+                <Button x:Name="ZrusFiltry_btn" Content="Zrušit filtry" HorizontalAlignment="Left" Margin="301,33,0,0" VerticalAlignment="Top" Width="85" Click="Button_Click_1" BorderBrush="#FFAA0000" Background="Red" Foreground="White" FontFamily="Yu Gothic" Height="20" Grid.Row="1" FontSize="11"/>
             </Grid>
         </TabItem>
         <TabItem Header="Evidence přestupků" x:Name="Prestupky" HorizontalAlignment="Right" Margin="0,-2,-2,0" Width="120">
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="92*"/>
+                    <ColumnDefinition Width="703*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="75*"/>
+                    <RowDefinition Height="30*"/>
+                    <RowDefinition Height="301*"/>
+                </Grid.RowDefinitions>
                 <Grid.Background>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF7C3F3F" Offset="1"/>
+                        <GradientStop Color="#FF443229" Offset="1"/>
                         <GradientStop Color="White" Offset="0"/>
                     </LinearGradientBrush>
                 </Grid.Background>
-                <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="20,52,20,10"/>
-                <Label Content="Evidence přestupků" HorizontalAlignment="Left" Margin="20,10,0,0" VerticalAlignment="Top" FontSize="20" FontWeight="Bold"/>
+                <Label x:Name="KontaktyNazev1" Content="Evidence Přestupků" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="2" Height="36" Width="194"/>
+                <DataGrid x:Name="KontaktyGrid1" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,10,10,0" Grid.Row="2" Grid.ColumnSpan="2"/>
+                <TextBox x:Name="HledatTxt_Kopírovat" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Grid.Row="1" Grid.ColumnSpan="2"/>
+                <Button x:Name="Zobrazit_btn_Kopírovat" Content="Zobrazit" HorizontalAlignment="Left" Margin="134,0,0,0" VerticalAlignment="Center" Width="69" Click="Button_Click" FontFamily="Yu Gothic" Background="#FF0079FF" BorderBrush="#FF004CA0" Foreground="White" Height="20" FontWeight="Bold" Grid.Row="1" FontSize="11" Grid.Column="1"/>
+                <Button x:Name="ZrusFiltry_btn_Kopírovat" Content="Zrušit filtry" HorizontalAlignment="Left" Margin="208,0,0,0" VerticalAlignment="Center" Width="85" Click="Button_Click_1" BorderBrush="#FFAA0000" Background="Red" Foreground="White" FontFamily="Yu Gothic" Height="20" Grid.Row="1" FontSize="11" Grid.Column="1"/>
             </Grid>
         </TabItem>
-        <TabItem x:Name="Ucet" Header="Můj účet" Margin="495,-2,-503,0">
+        <TabItem x:Name="Ucet" Header="Můj účet" Margin="475,-2,-491,0">
             <Grid x:Name="UcetGrid" Height="380" Margin="10,0,10,0">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -104,11 +117,30 @@
                 </Grid>
             </Grid>
         </TabItem>
-        <TabItem x:Name="Admin" Header="Admin nastavení" Margin="307,-2,-336,0">
+        <TabItem x:Name="Admin" Header="Admin nastavení" Margin="288,-2,-316,0">
             <Grid Background="#FFE5E5E5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25*"/>
+                    <RowDefinition Height="153*"/>
+                    <RowDefinition Height="25*"/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+                <Grid Grid.RowSpan="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="55*"/>
+                        <RowDefinition Height="351*"/>
+                    </Grid.RowDefinitions>
+                    <TextBox x:Name="HledatTxt_Kopírovat1" HorizontalAlignment="Left" Margin="14,0,0,0" TextWrapping="Wrap" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20"/>
+                    <Button x:Name="Zobrazit_btn_Kopírovat1" Content="Zobrazit" HorizontalAlignment="Left" Margin="230,0,0,0" VerticalAlignment="Center" Width="70" Click="Button_Click" FontFamily="Yu Gothic" Background="#FF0079FF" BorderBrush="#FF004CA0" Foreground="White" Height="20" FontWeight="Bold" FontSize="11"/>
+                    <Button x:Name="ZrusFiltry_btn_Kopírovat1" Content="Zrušit filtry" HorizontalAlignment="Left" Margin="304,0,0,0" VerticalAlignment="Center" Width="86" Click="Button_Click_1" BorderBrush="#FFAA0000" Background="Red" Foreground="White" FontFamily="Yu Gothic" Height="20" FontSize="11"/>
+                </Grid>
+                <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="764" Height="300" Grid.Row="1" Margin="15,0,0,0"/>
+                <Label Content="Akce:" HorizontalAlignment="Left" Margin="15,0,0,0" Grid.Row="2" VerticalAlignment="Center" FontWeight="Bold"/>
+                <Button x:Name="btnEmulovat" Content="Emulovat" HorizontalAlignment="Left" Margin="56,0,0,0" Grid.Row="2" VerticalAlignment="Center" Width="100" Click="Button_Click_2" Height="20"/>
+                <Button x:Name="btnUpravit" Content="Upravit" HorizontalAlignment="Left" Margin="161,0,0,0" Grid.Row="2" VerticalAlignment="Center" Width="100" Height="20"/>
+                <Button x:Name="btnPridat" Content="Přidat" HorizontalAlignment="Left" Margin="266,0,0,0" Grid.Row="2" VerticalAlignment="Center" Width="100" Height="20"/>
             </Grid>
         </TabItem>
     </TabControl>

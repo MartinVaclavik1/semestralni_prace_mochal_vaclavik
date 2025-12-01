@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Oracle.ManagedDataAccess" Version="23.26.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.26.0" />
   </ItemGroup>
 
 </Project>
