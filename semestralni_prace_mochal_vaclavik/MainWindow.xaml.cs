@@ -11,7 +11,7 @@ namespace semestralni_prace_mochal_vaclavik
     {
         // 1. Zde nastavte připojovací řetězec (zkopírujte údaje z přihlašování)
         // Všimněte si formátu s dvojtečkou pro SID: fei-sql3.upceucebny.cz:1521:BDAS
-        string connectionString = "User Id=st72536;Password=killer12;" +
+        string connectionString = "User Id=st72536;Password=;" +
                                   "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fei-sql3.upceucebny.cz)(PORT=1521))" +
                                   "(CONNECT_DATA=(SID=BDAS)));";
         public MainWindow()
