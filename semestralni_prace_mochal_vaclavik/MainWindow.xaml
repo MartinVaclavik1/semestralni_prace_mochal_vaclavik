@@ -5,142 +5,238 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:semestralni_prace_mochal_vaclavik"
         mc:Ignorable="d"
-        Title="Informační systém Policie České Rapubliky" Height="450" Width="815">
+        Title="Informační systém Policie České Rapubliky" 
+        Height="450" 
+        Width="815">
 
-    <TabControl Name="Okna" SelectionChanged="Okna_SelectionChanged" HorizontalAlignment="Left" Width="800">
+    <TabControl Name="Okna" 
+                SelectionChanged="Okna_SelectionChanged" 
+                HorizontalAlignment="Stretch" 
+                VerticalAlignment="Stretch">
         <TabControl.Background>
+            <!-- Sjednocený horní gradient pro celou aplikaci -->
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                 <GradientStop Color="White" Offset="0"/>
                 <GradientStop Color="#FF92A1C6" Offset="1"/>
             </LinearGradientBrush>
         </TabControl.Background>
-        <TabItem x:Name="Domu" HorizontalAlignment="Center" Height="21" Header="Domu" VerticalAlignment="Center" Width="54">
-            <Grid x:Name="DomuGrid" Background="White" Margin="24
-,0,24,0" Height="366" RenderTransformOrigin="1,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <TextBlock x:Name="VítejteTxt" HorizontalAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Center" Height="300" Width="298"><Run FontWeight="Bold" Text="Vítejte na portálu Policie České Republiky"/><LineBreak/><Run/><LineBreak/><Run Text="jjiafeaogapijpaifjapofjaip"/><LineBreak/><Run Text="faiejapfiafiajfpaikjap"/><LineBreak/><Run Text="ajapifjapifjapiwfjapf"/><LineBreak/><Run Text="afjaoejsasfvadfafjdnadadhbdi"/><LineBreak/><Run Text="afjsiaohuohufaofjhvao"/><LineBreak/><Run/><LineBreak/><Run Text="Info o tom co se tady dá najít"/></TextBlock>
+
+        <!-- Karta: Domu (VIDITELNÉ VŽDY) -->
+        <TabItem x:Name="Domu" Header="Domu">
+            <Grid x:Name="DomuGrid" Background="White" Margin="20">
+                <TextBlock x:Name="VítejteTxt" HorizontalAlignment="Stretch" VerticalAlignment="Top" TextWrapping="Wrap" Margin="0">
+                    <Run FontWeight="Bold" Text="Vítejte na portálu Policie České Republiky"/>
+                    <LineBreak/>
+                    <Run Text="jjiafeaogapijpaifjapofjaip"/>
+                    <LineBreak/>
+                    <Run Text="faiejapfiafiajfpaikjap"/>
+                    <LineBreak/>
+                    <Run Text="ajapifjapifjapiwfjapf"/>
+                    <LineBreak/>
+                    <Run Text="afjaoejsasfvadfafjdnadadhbdi"/>
+                    <LineBreak/>
+                    <Run Text="afjsiaohuohufaofjhvao"/>
+                    <LineBreak/>
+                    <Run Text="Info o tom co se tady dá najít"/>
+                </TextBlock>
             </Grid>
         </TabItem>
-        <TabItem Header="Kontakty" x:Name="Kontakty" HorizontalAlignment="Left" Margin="2,-2,0,0" Width="62">
-            <Grid>
+
+        <!-- Karta: Kontakty (OPRÁVNĚNÍ: Občan+) -->
+        <TabItem x:Name="Kontakty" Header="Kontakty"
+                 Visibility="{Binding KontaktyVisible}">
+            <Grid Background="White">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="28*"/>
-                    <RowDefinition Height="31*"/>
-                    <RowDefinition Height="144*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF567A54" Offset="1"/>
-                        <GradientStop Color="White" Offset="0"/>
-                    </LinearGradientBrush>
-                </Grid.Background>
-                <Label x:Name="KontaktyNazev" Content="Kontakty" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="20" FontWeight="Bold"/>
-                <DataGrid x:Name="KontaktyGrid" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10" Grid.Row="2"/>
-                <TextBox x:Name="HledatTxt" HorizontalAlignment="Left" Margin="10,33,0,0" TextWrapping="Wrap" Text="Hledat" VerticalAlignment="Top" Width="212" Height="20" Grid.Row="1"/>
-                <Button x:Name="Zobrazit_btn" Content="Zobrazit" HorizontalAlignment="Left" Margin="227,33,0,0" VerticalAlignment="Top" Width="69" Click="Button_Click" FontFamily="Yu Gothic" Background="#FF0079FF" BorderBrush="#FF004CA0" Foreground="White" Height="20" FontWeight="Bold" Grid.Row="1" FontSize="11"/>
-                <Button x:Name="ZrusFiltry_btn" Content="Zrušit filtry" HorizontalAlignment="Left" Margin="301,33,0,0" VerticalAlignment="Top" Width="85" Click="Button_Click_1" BorderBrush="#FFAA0000" Background="Red" Foreground="White" FontFamily="Yu Gothic" Height="20" Grid.Row="1" FontSize="11"/>
+
+                <!-- Nadpis -->
+                <Label x:Name="KontaktyNazev" Content="Kontakty" Margin="10,5,0,5" FontSize="20" FontWeight="Bold"/>
+
+                <!-- Filtry -->
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10">
+                    <TextBox x:Name="HledatTxt_kontakty" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,5,0"/>
+                    <Button x:Name="Zobrazit_btn_kontakty" Content="Zobrazit" Click="Button_Click" Width="69" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,5,0"/>
+                    <Button x:Name="ZrusFiltry_btn_kontakty" Content="Zrušit filtry" Click="Button_Click_1" Width="85" Height="20" Background="Red" Foreground="White" FontSize="11"/>
+                </StackPanel>
+
+                <!-- DataGrid -->
+                <DataGrid x:Name="KontaktyGrid" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10"/>
             </Grid>
         </TabItem>
-        <TabItem Header="Evidence přestupků" x:Name="Prestupky" HorizontalAlignment="Right" Margin="0,-2,-2,0" Width="120">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="92*"/>
-                    <ColumnDefinition Width="703*"/>
-                </Grid.ColumnDefinitions>
+
+        <!-- Karta: Okrsky (OPRÁVNĚNÍ: Policista+) - NOVÁ STRUKTURA S FILTRY A GRIDEM -->
+        <TabItem x:Name="Okrsky" Header="Okrsky"
+                 Visibility="{Binding OkrskyVisible}">
+            <Grid Background="White">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="75*"/>
-                    <RowDefinition Height="30*"/>
-                    <RowDefinition Height="301*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="#FF443229" Offset="1"/>
-                        <GradientStop Color="White" Offset="0"/>
-                    </LinearGradientBrush>
-                </Grid.Background>
-                <Label x:Name="KontaktyNazev1" Content="Evidence Přestupků" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="2" Height="36" Width="194"/>
-                <DataGrid x:Name="KontaktyGrid1" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10" Grid.Row="2" Grid.ColumnSpan="2"/>
-                <TextBox x:Name="HledatTxt_Kopírovat" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Grid.Row="1" Grid.ColumnSpan="2"/>
-                <Button x:Name="Zobrazit_btn_Kopírovat" Content="Zobrazit" HorizontalAlignment="Left" Margin="134,0,0,0" VerticalAlignment="Center" Width="69" Click="Button_Click" FontFamily="Yu Gothic" Background="#FF0079FF" BorderBrush="#FF004CA0" Foreground="White" Height="20" FontWeight="Bold" Grid.Row="1" FontSize="11" Grid.Column="1"/>
-                <Button x:Name="ZrusFiltry_btn_Kopírovat" Content="Zrušit filtry" HorizontalAlignment="Left" Margin="208,0,0,0" VerticalAlignment="Center" Width="85" Click="Button_Click_1" BorderBrush="#FFAA0000" Background="Red" Foreground="White" FontFamily="Yu Gothic" Height="20" Grid.Row="1" FontSize="11" Grid.Column="1"/>
+
+                <!-- Nadpis -->
+                <Label x:Name="OkrskyNazev" Content="Přehled Okrsků" Margin="10,5,0,5" FontSize="20" FontWeight="Bold"/>
+
+                <!-- Filtry -->
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10">
+                    <TextBox x:Name="HledatTxt_okrsky" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,5,0"/>
+                    <Button x:Name="Zobrazit_btn_okrsky" Content="Zobrazit" Click="Button_Click" Width="69" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,5,0"/>
+                    <Button x:Name="ZrusFiltry_btn_okrsky" Content="Zrušit filtry" Click="Button_Click_1" Width="85" Height="20" Background="Red" Foreground="White" FontSize="11"/>
+                </StackPanel>
+
+                <!-- DataGrid -->
+                <DataGrid x:Name="OkrskyGrid" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10"/>
             </Grid>
         </TabItem>
-        <TabItem x:Name="Ucet" Header="Můj účet" Margin="475,-2,-491,0">
-            <Grid x:Name="UcetGrid" Height="380" Margin="10,0,10,0">
+
+        <!-- Karta: Evidence přestupků (OPRÁVNĚNÍ: Policista+) -->
+        <TabItem x:Name="Prestupky" Header="Evidence přestupků"
+                 Visibility="{Binding PrestupkyVisible}">
+            <Grid Background="White">
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="5*"/>
-                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid.Background>
-                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                        <GradientStop Color="White" Offset="1"/>
-                        <GradientStop Color="White" Offset="0"/>
-                    </LinearGradientBrush>
-                </Grid.Background>
-                <Label x:Name="Nazev" Content="VÁŠ ÚČET" FontSize="24" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="Bold" Padding="10,5,5,5" VerticalContentAlignment="Center"/>
-                <Button x:Name="PotvrditBtn" Content="Potvrdit" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Top" Width="71" Click="PotvrditBtn_Click" Margin="0,5,0,0" FontWeight="Bold" Foreground="Black" IsEnabled="False"/>
-                <Grid x:Name="GridLeft" Margin="0,0,397,0" Width="350" Grid.Row="1">
+
+                <!-- Nadpis -->
+                <Label x:Name="KontaktyNazev1" Content="Evidence Přestupků" Margin="20,5,0,5" FontSize="20" FontWeight="Bold"/>
+
+                <!-- Filtry -->
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10">
+                    <TextBox x:Name="HledatTxt_prestupky" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,5,0"/>
+                    <Button x:Name="Zobrazit_btn_prestupky" Content="Zobrazit" Click="Button_Click" Width="69" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,5,0"/>
+                    <Button x:Name="ZrusFiltry_btn_prestupky" Content="Zrušit filtry" Click="Button_Click_1" Width="85" Height="20" Background="Red" Foreground="White" FontSize="11"/>
+                </StackPanel>
+
+                <!-- DataGrid -->
+                <DataGrid x:Name="PrestupkyGrid" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10"/>
+            </Grid>
+        </TabItem>
+
+
+        <!-- Karta: Hlídky a Zásahy (OPRÁVNĚNÍ: Policista+) - PŘIDÁNY FILTRY -->
+        <TabItem x:Name="Hlidky" Header="Hlídky a Zásahy"
+                 Visibility="{Binding HlidkyVisible}">
+            <Grid Background="White">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Nadpis -->
+                <Label Content="Evidence Hlídek a Zásahů" Margin="10,5,0,5" FontSize="20" FontWeight="Bold"/>
+
+                <!-- Filtry -->
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10">
+                    <TextBox x:Name="HledatTxt_hlidky" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,5,0"/>
+                    <Button x:Name="Zobrazit_btn_hlidky" Content="Zobrazit" Click="Button_Click" Width="69" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,5,0"/>
+                    <Button x:Name="ZrusFiltry_btn_hlidky" Content="Zrušit filtry" Click="Button_Click_1" Width="85" Height="20" Background="Red" Foreground="White" FontSize="11"/>
+                </StackPanel>
+
+                <!-- DataGrid -->
+                <DataGrid x:Name="HlidkyGrid" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10"/>
+            </Grid>
+        </TabItem>
+
+        <!-- Karta: Můj účet (OPRÁVNĚNÍ: Všichni přihlášení, Editace pro Policista+) -->
+        <TabItem x:Name="Ucet" Header="Můj účet"
+                 Visibility="{Binding UcetVisible}">
+            <Grid x:Name="UcetGrid" Margin="10" Background="White">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Nadpis -->
+                <Label x:Name="Nazev" Content="VÁŠ ÚČET" FontSize="24" FontWeight="Bold" Margin="0,5,0,10"/>
+
+                <!-- Formulář pro editaci účtu -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Label x:Name="Jmeno" Content="Jmeno" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <Label x:Name="Prijmeni" Content="Prijmeni" Grid.Row="1" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <Label x:Name="Adresa" Content="Adresa" Grid.Row="2" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <Label x:Name="Ulice" Content="Ulice" Grid.Row="3" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <Label x:Name="PSC" Content="PSČ" Grid.Row="4" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                    <Label x:Name="Země" Content="Země" Grid.Row="5" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+
+                    <!-- Popisky a pole -->
+                    <Label Content="Jméno:" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                    <Label Content="Příjmení:" Grid.Row="1" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                    <Label Content="Adresa:" Grid.Row="2" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                    <Label Content="Ulice:" Grid.Row="3" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                    <Label Content="PSČ:" Grid.Row="4" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                    <Label Content="Země:" Grid.Row="5" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+
+                    <TextBox x:Name="JmenoTxt" Text="Jan" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,0,5" Grid.Column="1"/>
+                    <TextBox x:Name="PrijmeniTxt" Text="Novák" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Margin="0,5,0,5"/>
+                    <TextBox x:Name="AdresaTxt" Text="Adresa 1" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Margin="0,5,0,5"/>
+                    <TextBox x:Name="UliceTxt" Text="Ulice" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" Margin="0,5,0,5"/>
+                    <TextBox x:Name="PSCTxt" Text="000 00" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="4" Grid.Column="1" Margin="0,5,0,5"/>
+                    <TextBox x:Name="ZemeTxt" Text="Česká republika" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1" Margin="0,5,0,5"/>
                 </Grid>
-                <Grid Margin="375,0,0,0" Grid.Column="2" Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <TextBox x:Name="JmenoTxt" TextWrapping="Wrap" Text="Jan" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" BorderBrush="White"/>
-                    <TextBox x:Name="PrijmeniTxt" TextWrapping="Wrap" Text="Novák" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" BorderBrush="White"/>
-                    <TextBox x:Name="AdresaTxt" TextWrapping="Wrap" Text="Adresa 1" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" BorderBrush="White"/>
-                    <TextBox x:Name="UliceTxt" TextWrapping="Wrap" Text="Ulice " Width="120" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" BorderBrush="White"/>
-                    <TextBox x:Name="PSCTxt" TextWrapping="Wrap" Text="000 00" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="4" BorderBrush="White"/>
-                    <TextBox x:Name="ZemeTxt" TextWrapping="Wrap" Text="Česká republika" Width="120" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="5" BorderBrush="White"/>
-                </Grid>
+
+                <!-- Tlačítko Potvrdit (OPRÁVNĚNÍ: Policista+) -->
+                <Button x:Name="PotvrditBtn" 
+                        Grid.Row="2" 
+                        Content="Potvrdit" 
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Center" 
+                        Width="100" 
+                        Click="PotvrditBtn_Click" 
+                        FontWeight="Bold" 
+                        IsEnabled="False"
+                        Visibility="{Binding UcetEditVisible}"/>
             </Grid>
         </TabItem>
-        <TabItem x:Name="Admin" Header="Admin nastavení" Margin="288,-2,-316,0">
-            <Grid Background="#FFE5E5E5">
+
+        <!-- Karta: Admin nastavení (OPRÁVNĚNÍ: Admin) -->
+        <TabItem x:Name="Admin" Header="Admin nastavení"
+                 Visibility="{Binding AdminVisible}">
+            <Grid Background="White">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="25*"/>
-                    <RowDefinition Height="153*"/>
-                    <RowDefinition Height="25*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Grid Grid.RowSpan="3">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="55*"/>
-                        <RowDefinition Height="351*"/>
-                    </Grid.RowDefinitions>
-                    <TextBox x:Name="HledatTxt_Kopírovat1" HorizontalAlignment="Left" Margin="14,0,0,0" TextWrapping="Wrap" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20"/>
-                    <Button x:Name="Zobrazit_btn_Kopírovat1" Content="Zobrazit" HorizontalAlignment="Left" Margin="230,0,0,0" VerticalAlignment="Center" Width="70" Click="Button_Click" FontFamily="Yu Gothic" Background="#FF0079FF" BorderBrush="#FF004CA0" Foreground="White" Height="20" FontWeight="Bold" FontSize="11"/>
-                    <Button x:Name="ZrusFiltry_btn_Kopírovat1" Content="Zrušit filtry" HorizontalAlignment="Left" Margin="304,0,0,0" VerticalAlignment="Center" Width="86" Click="Button_Click_1" BorderBrush="#FFAA0000" Background="Red" Foreground="White" FontFamily="Yu Gothic" Height="20" FontSize="11"/>
-                </Grid>
-                <DataGrid x:Name="UzivateleGrid" d:ItemsSource="{d:SampleData ItemCount=5}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="764" Height="285" Grid.Row="1" Margin="15,0,0,0" SelectionChanged="DataGrid_SelectionChanged"/>
-                <Label Content="Akce:" HorizontalAlignment="Left" Margin="15,0,0,0" Grid.Row="2" VerticalAlignment="Center" FontWeight="Bold"/>
-                <Button x:Name="btnEmulovat" Content="Emulovat" HorizontalAlignment="Left" Margin="56,0,0,0" Grid.Row="2" VerticalAlignment="Center" Width="100" Click="Button_Click_2" Height="20"/>
-                <Button x:Name="btnUpravit" Content="Upravit" HorizontalAlignment="Left" Margin="161,0,0,0" Grid.Row="2" VerticalAlignment="Center" Width="100" Height="20"/>
-                <Button x:Name="btnPridat" Content="Přidat" HorizontalAlignment="Left" Margin="266,0,0,0" Grid.Row="2" VerticalAlignment="Center" Width="100" Height="20"/>
+
+                <!-- Řádek 0: Filtry a Zobrazení (OPRÁVNĚNÍ: Admin) -->
+                <StackPanel Orientation="Horizontal" Margin="15,10,15,10"
+                            Visibility="{Binding AdminControlsVisible}">
+                    <TextBox x:Name="HledatTxt_admin" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,6,0"/>
+                    <Button x:Name="Zobrazit_btn_admin" Content="Zobrazit" Click="Button_Click" Width="70" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,4,0"/>
+                    <Button x:Name="ZrusFiltry_btn_admin" Content="Zrušit filtry" Click="Button_Click_1" Width="86" Height="20" Background="Red" Foreground="White" FontSize="11"/>
+                </StackPanel>
+
+                <!-- Řádek 1: DataGrid (OPRÁVNĚNÍ: Admin) -->
+                <DataGrid x:Name="UzivateleGrid" 
+                          Grid.Row="1"
+                          d:ItemsSource="{d:SampleData ItemCount=5}" 
+                          HorizontalAlignment="Stretch" 
+                          VerticalAlignment="Stretch" 
+                          Margin="15,0,15,0" 
+                          SelectionChanged="DataGrid_SelectionChanged"
+                          Visibility="{Binding AdminControlsVisible}"/>
+
+                <!-- Řádek 2: Akce (Emulovat, Upravit, Přidat - OPRÁVNĚNÍ: Admin) -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="15,10,15,10" VerticalAlignment="Center"
+                            Visibility="{Binding AdminControlsVisible}">
+                    <Label Content="Akce:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <Button x:Name="btnEmulovat" Content="Emulovat" Width="100" Click="Button_Click_2" Height="20" Margin="0,0,6,0"/>
+                    <Button x:Name="btnUpravit" Content="Upravit" Width="100" Height="20" Margin="0,0,6,0"/>
+                    <Button x:Name="btnPridat" Content="Přidat" Width="100" Height="20"/>
+                </StackPanel>
             </Grid>
         </TabItem>
     </TabControl>

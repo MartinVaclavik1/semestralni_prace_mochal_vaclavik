@@ -4,23 +4,70 @@ using System.Windows;
 using System.Windows.Controls;
 using Oracle.ManagedDataAccess.Client;
 using MessageBox = System.Windows.MessageBox;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace semestralni_prace_mochal_vaclavik
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         // 1. Zde nastavte připojovací řetězec (zkopírujte údaje z přihlašování)
-        // Všimněte si formátu s dvojtečkou pro SID: fei-sql3.upceucebny.cz:1521:BDAS
-        string connectionString = "User Id=st72536;Password=;" +
-                                  "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fei-sql3.upceucebny.cz)(PORT=1521))" +
-                                  "(CONNECT_DATA=(SID=BDAS)));";
+        string connectionString =   "User Id=st72536;" +
+                                    "Password=;" +
+                                    "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fei-sql3.upceucebny.cz)(PORT=1521))" +
+                                    "(CONNECT_DATA=(SID=BDAS)));";
+
+        private string _userRole = "Admin";
+
         public MainWindow()
         {
             InitializeComponent();
 
-            // Načíst data hned po spuštění (nebo to můžete dát až po kliknutí na záložku)
+            // KLÍČOVÝ KROK: Nastavte DataContext, aby XAML mohl vázat na Visibility vlastnosti
+            this.DataContext = this;
+            //načítají se při kliknutí na záložku
+            /*
             NacistKontakty();
             NacistUzivatele();
+            NacistPrestupky();
+            */
+        }
+
+
+        // Viditelné pro Občana a vyšší
+        public Visibility KontaktyVisible => IsAtLeastRole("Občan") ? Visibility.Visible : Visibility.Collapsed;
+
+        // Viditelné pro Policistu a vyšší
+        public Visibility OkrskyVisible => IsAtLeastRole("Policista") ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility PrestupkyVisible => IsAtLeastRole("Policista") ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility HlidkyVisible => IsAtLeastRole("Policista") ? Visibility.Visible : Visibility.Collapsed;
+
+        // Viditelné pro všechny přihlášené (předpoklad: Občan+)
+        public Visibility UcetVisible => IsAtLeastRole("Občan") ? Visibility.Visible : Visibility.Collapsed;
+
+        // Viditelné POUZE pro Admina
+        public Visibility AdminVisible => IsAtLeastRole("Admin") ? Visibility.Visible : Visibility.Collapsed;
+
+        // Tlačítko Potvrdit na Můj účet (Policista a Admin mohou editovat)
+        public Visibility UcetEditVisible => IsAtLeastRole("Policista") ? Visibility.Visible : Visibility.Collapsed;
+
+        // Celý obsah na kartě Admin (DataGrid, Filtry, Akční tlačítka)
+        public Visibility AdminControlsVisible => IsAtLeastRole("Admin") ? Visibility.Visible : Visibility.Collapsed;
+
+
+        private bool IsAtLeastRole(string requiredRole)
+        {
+            // Kontrola role, pokud by se v budoucnu přidaly další úrovně
+            if (_userRole == "Admin") return true;
+            if (_userRole == "Policista" && (requiredRole == "Policista" || requiredRole == "Občan")) return true;
+            if (_userRole == "Občan" && requiredRole == "Občan") return true;
+            return false;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         // Metoda pro načtení dat do tabulky Kontakty
@@ -35,7 +82,20 @@ namespace semestralni_prace_mochal_vaclavik
 
                     // SQL dotaz - spojíme Policistu s Hodností, aby to hezky vypadalo
                     string sql = @"
-                        SELECT jmeno, prijmeni, idstanice, idhodnosti FROM policiste";
+                        SELECT
+                            p.jmeno AS Jméno,
+                            p.prijmeni AS Příjmení,
+                            h.nazev AS Hodnost,
+                            s.nazev AS Stanice
+                        FROM 
+                            policiste p
+                        INNER JOIN 
+                            hodnosti h ON p.idhodnosti = h.idhodnosti
+                        INNER JOIN 
+                            policejni_stanice s ON p.idstanice = s.idstanice
+                        ORDER BY 
+                            p.prijmeni, h.nazev
+                        ";
 
                     using (OracleCommand cmd = new OracleCommand(sql, conn))
                     {
@@ -56,7 +116,6 @@ namespace semestralni_prace_mochal_vaclavik
         }
 
         // Příklad načtení detailu uživatele (pro záložku Můj účet)
-        // Tuto metodu zavolejte, když budete chtít načíst konkrétního člověka (např. ID 1)
         private void NacistDetailUzivatele(int idUzivatele)
         {
             try
@@ -83,7 +142,6 @@ namespace semestralni_prace_mochal_vaclavik
                                 UliceTxt.Text = reader["ulice"].ToString();
                                 PSCTxt.Text = reader["postovnismerovacicislo"].ToString();
                                 ZemeTxt.Text = reader["zeme"].ToString();
-                                // AdresaTxt asi chcete složit z ulice a čísla, pokud to v DB máte
                             }
                         }
                     }
@@ -104,9 +162,9 @@ namespace semestralni_prace_mochal_vaclavik
                 {
                     conn.Open();
 
-                    // SQL dotaz - Načteme uživatele
+                    // SQL dotaz - Načteme uživatele pro Admin Grid
                     string sql = @"
-                        SELECT * FROM uzivatel";
+                        SELECT * FROM uzivatel"; // Změněno na "uzivatel" pro Admin Grid
 
                     using (OracleCommand cmd = new OracleCommand(sql, conn))
                     {
@@ -122,7 +180,92 @@ namespace semestralni_prace_mochal_vaclavik
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
+                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
+            }
+        }
+
+        private void NacistPrestupky()
+        {
+            try
+            {
+                // Vytvoření připojení
+                using (OracleConnection conn = new OracleConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // SQL dotaz - Načteme přestupky pro Přestupky Grid
+                    string sql = @"
+                        SELECT * FROM prestupky_obcanu";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        // Použijeme DataAdapter pro naplnění tabulky
+                        OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+
+                        // Napojení dat do vašeho DataGridu v XAML
+                        PrestupkyGrid.ItemsSource = dt.DefaultView;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání přestupků: " + ex.Message);
+            }
+        }
+        private void NacistHlidky()
+        {
+            try
+            {
+                using (OracleConnection conn = new OracleConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // SQL dotaz - Načtení hlídek (příklad)
+                    string sql = @"
+                SELECT * FROM hlidky";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+                        // Vazba na nový DataGrid
+                        HlidkyGrid.ItemsSource = dt.DefaultView;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání hlídek: " + ex.Message);
+            }
+        }
+        private void NacistOkrsky()
+        {
+            try
+            {
+                using (OracleConnection conn = new OracleConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // SQL dotaz - Načtení okrsků
+                    string sql = @"
+                SELECT * FROM okrsky";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+                        // Vazba na nový DataGrid
+                        OkrskyGrid.ItemsSource = dt.DefaultView;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání okrsků: " + ex.Message);
             }
         }
 
@@ -137,41 +280,33 @@ namespace semestralni_prace_mochal_vaclavik
                 }
                 else if (Ucet.IsSelected)
                 {
-                    // Tady byste normálně předal ID přihlášeného uživatele
-                    // Pro test dáme natvrdo ID 1, pokud v DB existuje
                     NacistDetailUzivatele(1);
+                }
+                else if (Admin.IsSelected)
+                {
+                    NacistUzivatele();
+                }
+                else if (Prestupky.IsSelected)
+                {
+                    NacistPrestupky();
+                }
+                else if (Hlidky.IsSelected)
+                {
+                    NacistHlidky();
+                }
+                else if (Okrsky.IsSelected)
+                {
+                    NacistOkrsky();
                 }
             }
         }
 
-        private void TextBox_TextChanged_2(object sender, TextChangedEventArgs e)
-        {
-            // Zde bude filtrování kontaktů
-        }
-
-        private void PotvrditBtn_Click(object sender, RoutedEventArgs e)
-        {
-            // Uložení změn
-        }
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
+        // Metody na tlačítka
+        private void TextBox_TextChanged_2(object sender, TextChangedEventArgs e) { /* Zde bude filtrování kontaktů */ }
+        private void PotvrditBtn_Click(object sender, RoutedEventArgs e) { /* Uložení změn */ }
+        private void Button_Click_1(object sender, RoutedEventArgs e) { }
+        private void Button_Click(object sender, RoutedEventArgs e) { }
+        private void Button_Click_2(object sender, RoutedEventArgs e) { }
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
     }
 }
