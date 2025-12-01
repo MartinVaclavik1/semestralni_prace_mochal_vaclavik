@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:semestralni_prace_mochal_vaclavik"
         mc:Ignorable="d"
-        Title="Informační systém Policie České Rapubliky" Height="450" Width="800">
+        Title="Informační systém Policie České Rapubliky" Height="450" Width="815">
 
     <TabControl Name="Okna" SelectionChanged="Okna_SelectionChanged" HorizontalAlignment="Left" Width="800">
         <TabControl.Background>
@@ -38,7 +38,7 @@
                     </LinearGradientBrush>
                 </Grid.Background>
                 <Label x:Name="KontaktyNazev" Content="Kontakty" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="20" FontWeight="Bold"/>
-                <DataGrid x:Name="KontaktyGrid" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,10,10,0" Grid.Row="2"/>
+                <DataGrid x:Name="KontaktyGrid" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10" Grid.Row="2"/>
                 <TextBox x:Name="HledatTxt" HorizontalAlignment="Left" Margin="10,33,0,0" TextWrapping="Wrap" Text="Hledat" VerticalAlignment="Top" Width="212" Height="20" Grid.Row="1"/>
                 <Button x:Name="Zobrazit_btn" Content="Zobrazit" HorizontalAlignment="Left" Margin="227,33,0,0" VerticalAlignment="Top" Width="69" Click="Button_Click" FontFamily="Yu Gothic" Background="#FF0079FF" BorderBrush="#FF004CA0" Foreground="White" Height="20" FontWeight="Bold" Grid.Row="1" FontSize="11"/>
                 <Button x:Name="ZrusFiltry_btn" Content="Zrušit filtry" HorizontalAlignment="Left" Margin="301,33,0,0" VerticalAlignment="Top" Width="85" Click="Button_Click_1" BorderBrush="#FFAA0000" Background="Red" Foreground="White" FontFamily="Yu Gothic" Height="20" Grid.Row="1" FontSize="11"/>
@@ -62,7 +62,7 @@
                     </LinearGradientBrush>
                 </Grid.Background>
                 <Label x:Name="KontaktyNazev1" Content="Evidence Přestupků" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="2" Height="36" Width="194"/>
-                <DataGrid x:Name="KontaktyGrid1" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,10,10,0" Grid.Row="2" Grid.ColumnSpan="2"/>
+                <DataGrid x:Name="KontaktyGrid1" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10" Grid.Row="2" Grid.ColumnSpan="2"/>
                 <TextBox x:Name="HledatTxt_Kopírovat" HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Grid.Row="1" Grid.ColumnSpan="2"/>
                 <Button x:Name="Zobrazit_btn_Kopírovat" Content="Zobrazit" HorizontalAlignment="Left" Margin="134,0,0,0" VerticalAlignment="Center" Width="69" Click="Button_Click" FontFamily="Yu Gothic" Background="#FF0079FF" BorderBrush="#FF004CA0" Foreground="White" Height="20" FontWeight="Bold" Grid.Row="1" FontSize="11" Grid.Column="1"/>
                 <Button x:Name="ZrusFiltry_btn_Kopírovat" Content="Zrušit filtry" HorizontalAlignment="Left" Margin="208,0,0,0" VerticalAlignment="Center" Width="85" Click="Button_Click_1" BorderBrush="#FFAA0000" Background="Red" Foreground="White" FontFamily="Yu Gothic" Height="20" Grid.Row="1" FontSize="11" Grid.Column="1"/>
@@ -136,7 +136,7 @@
                     <Button x:Name="Zobrazit_btn_Kopírovat1" Content="Zobrazit" HorizontalAlignment="Left" Margin="230,0,0,0" VerticalAlignment="Center" Width="70" Click="Button_Click" FontFamily="Yu Gothic" Background="#FF0079FF" BorderBrush="#FF004CA0" Foreground="White" Height="20" FontWeight="Bold" FontSize="11"/>
                     <Button x:Name="ZrusFiltry_btn_Kopírovat1" Content="Zrušit filtry" HorizontalAlignment="Left" Margin="304,0,0,0" VerticalAlignment="Center" Width="86" Click="Button_Click_1" BorderBrush="#FFAA0000" Background="Red" Foreground="White" FontFamily="Yu Gothic" Height="20" FontSize="11"/>
                 </Grid>
-                <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="764" Height="300" Grid.Row="1" Margin="15,0,0,0"/>
+                <DataGrid x:Name="UzivateleGrid" d:ItemsSource="{d:SampleData ItemCount=5}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="764" Height="285" Grid.Row="1" Margin="15,0,0,0" SelectionChanged="DataGrid_SelectionChanged"/>
                 <Label Content="Akce:" HorizontalAlignment="Left" Margin="15,0,0,0" Grid.Row="2" VerticalAlignment="Center" FontWeight="Bold"/>
                 <Button x:Name="btnEmulovat" Content="Emulovat" HorizontalAlignment="Left" Margin="56,0,0,0" Grid.Row="2" VerticalAlignment="Center" Width="100" Click="Button_Click_2" Height="20"/>
                 <Button x:Name="btnUpravit" Content="Upravit" HorizontalAlignment="Left" Margin="161,0,0,0" Grid.Row="2" VerticalAlignment="Center" Width="100" Height="20"/>

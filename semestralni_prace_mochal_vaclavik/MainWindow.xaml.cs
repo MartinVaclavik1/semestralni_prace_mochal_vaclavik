@@ -1,31 +1,26 @@
 ﻿using System;
-using System.Text;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Oracle.ManagedDataAccess.Client; // Důležité: Přidat toto using
+using Oracle.ManagedDataAccess.Client;
+using MessageBox = System.Windows.MessageBox;
 
 namespace semestralni_prace_mochal_vaclavik
 {
     public partial class MainWindow : Window
     {
         // 1. Zde nastavte připojovací řetězec (zkopírujte údaje z přihlašování)
-
-        string connectionString = "User Id=ST72536;Password=||DejTamSvojeHeslo||;Data Source=fei-sql3.upceucebny.cz:1521:BDAS;";
-
+        // Všimněte si formátu s dvojtečkou pro SID: fei-sql3.upceucebny.cz:1521:BDAS
+        string connectionString = "User Id=st72536;Password=killer12;" +
+                                  "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fei-sql3.upceucebny.cz)(PORT=1521))" +
+                                  "(CONNECT_DATA=(SID=BDAS)));";
         public MainWindow()
         {
             InitializeComponent();
 
             // Načíst data hned po spuštění (nebo to můžete dát až po kliknutí na záložku)
-            //NacistKontakty();
+            NacistKontakty();
+            NacistUzivatele();
         }
 
         // Metoda pro načtení dat do tabulky Kontakty
@@ -34,22 +29,15 @@ namespace semestralni_prace_mochal_vaclavik
             try
             {
                 // Vytvoření připojení
-                using (OracleConnection pripojeni = new OracleConnection(connectionString))
+                using (OracleConnection conn = new OracleConnection(connectionString))
                 {
-                    pripojeni.Open();
+                    conn.Open();
 
                     // SQL dotaz - spojíme Policistu s Hodností, aby to hezky vypadalo
                     string sql = @"
-                        SELECT 
-                            p.jmeno, 
-                            p.prijmeni, 
-                            h.nazev AS hodnost, 
-                            s.nazev AS stanice 
-                        FROM policista p
-                        JOIN hodnost h ON p.hodnost_idhodnosti = h.idhodnosti
-                        JOIN policejni_stanice s ON p.policejni_stanice_idstanice = s.idstanice";
+                        SELECT jmeno, prijmeni, idstanice, idhodnosti FROM policiste";
 
-                    using (OracleCommand cmd = new OracleCommand(sql, pripojeni))
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
                     {
                         // Použijeme DataAdapter pro naplnění tabulky
                         OracleDataAdapter adapter = new OracleDataAdapter(cmd);
@@ -63,7 +51,7 @@ namespace semestralni_prace_mochal_vaclavik
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
+                MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
             }
         }
 
@@ -73,16 +61,15 @@ namespace semestralni_prace_mochal_vaclavik
         {
             try
             {
-                using (OracleConnection pripojeni = new OracleConnection(connectionString))
+                using (OracleConnection conn = new OracleConnection(connectionString))
                 {
-                    pripojeni.Open();
+                    conn.Open();
 
-                    // Příklad dotazu pro občana
                     string sql = "SELECT jmeno, prijmeni, ulice, postovnismerovacicislo, obec, zeme " +
-                                 "FROM obcan o JOIN adresa a ON o.adresa_idadresy = a.idadresy " +
-                                 "WHERE o.uzivatel_iduzivatele = :id";
+                                 "FROM obcane o JOIN adresy a ON o.idadresy = a.idadresy " +
+                                 "WHERE o.iduzivatele = :id";
 
-                    using (OracleCommand cmd = new OracleCommand(sql, pripojeni))
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
                     {
                         cmd.Parameters.Add(new OracleParameter("id", idUzivatele));
 
@@ -104,7 +91,38 @@ namespace semestralni_prace_mochal_vaclavik
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show("Chyba detailu: " + ex.Message);
+                MessageBox.Show("Chyba detailu: " + ex.Message);
+            }
+        }
+
+        private void NacistUzivatele()
+        {
+            try
+            {
+                // Vytvoření připojení
+                using (OracleConnection conn = new OracleConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // SQL dotaz - Načteme uživatele
+                    string sql = @"
+                        SELECT * FROM uzivatel";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        // Použijeme DataAdapter pro naplnění tabulky
+                        OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+
+                        // Napojení dat do vašeho DataGridu v XAML
+                        UzivateleGrid.ItemsSource = dt.DefaultView;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
             }
         }
 
@@ -136,17 +154,22 @@ namespace semestralni_prace_mochal_vaclavik
             // Uložení změn
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
 
         }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }
