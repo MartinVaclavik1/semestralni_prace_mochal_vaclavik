@@ -36,22 +36,16 @@ namespace semestralni_prace_mochal_vaclavik
 
         // Viditelné pro Občana a vyšší
         public Visibility KontaktyVisible => IsAtLeastRole("Občan") ? Visibility.Visible : Visibility.Collapsed;
-
-        // Viditelné pro Policistu a vyšší
+        // Viditelné pro všechny přihlášené (předpoklad: Občan+)
+        public Visibility UcetVisible => IsAtLeastRole("Občan") ? Visibility.Visible : Visibility.Collapsed;
+        // Tlačítko Potvrdit na Můj účet (Policista a Admin mohou editovat)
+        public Visibility UcetEditVisible => IsAtLeastRole("Policista") ? Visibility.Visible : Visibility.Collapsed;
         public Visibility OkrskyVisible => IsAtLeastRole("Policista") ? Visibility.Visible : Visibility.Collapsed;
         public Visibility PrestupkyVisible => IsAtLeastRole("Policista") ? Visibility.Visible : Visibility.Collapsed;
         public Visibility HlidkyVisible => IsAtLeastRole("Policista") ? Visibility.Visible : Visibility.Collapsed;
 
-        // Viditelné pro všechny přihlášené (předpoklad: Občan+)
-        public Visibility UcetVisible => IsAtLeastRole("Občan") ? Visibility.Visible : Visibility.Collapsed;
-
-        // Viditelné POUZE pro Admina
-        public Visibility AdminVisible => IsAtLeastRole("Admin") ? Visibility.Visible : Visibility.Collapsed;
-
-        // Tlačítko Potvrdit na Můj účet (Policista a Admin mohou editovat)
-        public Visibility UcetEditVisible => IsAtLeastRole("Policista") ? Visibility.Visible : Visibility.Collapsed;
-
         // Celý obsah na kartě Admin (DataGrid, Filtry, Akční tlačítka)
+        public Visibility AdminVisible => IsAtLeastRole("Admin") ? Visibility.Visible : Visibility.Collapsed;
         public Visibility AdminControlsVisible => IsAtLeastRole("Admin") ? Visibility.Visible : Visibility.Collapsed;
 
 
@@ -308,5 +302,10 @@ namespace semestralni_prace_mochal_vaclavik
         private void Button_Click(object sender, RoutedEventArgs e) { }
         private void Button_Click_2(object sender, RoutedEventArgs e) { }
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
+
+        private void HledatTxt_kontakty_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }

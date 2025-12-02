@@ -24,7 +24,7 @@
         <!-- Karta: Domu (VIDITELNÉ VŽDY) -->
         <TabItem x:Name="Domu" Header="Domu">
             <Grid x:Name="DomuGrid" Background="White" Margin="20">
-                <TextBlock x:Name="VítejteTxt" HorizontalAlignment="Stretch" VerticalAlignment="Top" TextWrapping="Wrap" Margin="0">
+                <TextBlock x:Name="VítejteTxt" VerticalAlignment="Top" TextWrapping="Wrap">
                     <Run FontWeight="Bold" Text="Vítejte na portálu Policie České Republiky"/>
                     <LineBreak/>
                     <Run Text="jjiafeaogapijpaifjapofjaip"/>
@@ -37,7 +37,8 @@
                     <LineBreak/>
                     <Run Text="afjsiaohuohufaofjhvao"/>
                     <LineBreak/>
-                    <Run Text="Info o tom co se tady dá najít"/>
+                    <LineBreak></LineBreak>
+                    <Run FontWeight="" Text="Info o tom co se tady dá najít"/>
                 </TextBlock>
             </Grid>
         </TabItem>
@@ -57,7 +58,7 @@
 
                 <!-- Filtry -->
                 <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10">
-                    <TextBox x:Name="HledatTxt_kontakty" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,5,0"/>
+                    <TextBox x:Name="HledatTxt_kontakty" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,5,0" TextChanged="HledatTxt_kontakty_TextChanged"/>
                     <Button x:Name="Zobrazit_btn_kontakty" Content="Zobrazit" Click="Button_Click" Width="69" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,5,0"/>
                     <Button x:Name="ZrusFiltry_btn_kontakty" Content="Zrušit filtry" Click="Button_Click_1" Width="85" Height="20" Background="Red" Foreground="White" FontSize="11"/>
                 </StackPanel>
@@ -149,15 +150,15 @@
             <Grid x:Name="UcetGrid" Margin="10" Background="White">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto" MinHeight="41.157"/>
                 </Grid.RowDefinitions>
 
                 <!-- Nadpis -->
                 <Label x:Name="Nazev" Content="VÁŠ ÚČET" FontSize="24" FontWeight="Bold" Margin="0,5,0,10"/>
 
                 <!-- Formulář pro editaci účtu -->
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="1" Margin="0,0,0,24" Grid.RowSpan="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
@@ -197,7 +198,7 @@
                         Click="PotvrditBtn_Click" 
                         FontWeight="Bold" 
                         IsEnabled="False"
-                        Visibility="{Binding UcetEditVisible}"/>
+                        Visibility="{Binding UcetEditVisible}" Height="20"/>
             </Grid>
         </TabItem>
 
