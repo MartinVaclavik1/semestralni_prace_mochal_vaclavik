@@ -38,7 +38,7 @@
                     <Run Text="afjsiaohuohufaofjhvao"/>
                     <LineBreak/>
                     <LineBreak></LineBreak>
-                    <Run FontWeight="" Text="Info o tom co se tady dá najít"/>
+                    <Run FontWeight="Bold" Text="Info o tom co se tady dá najít"/>
                 </TextBlock>
             </Grid>
         </TabItem>
