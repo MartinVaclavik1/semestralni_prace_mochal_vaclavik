@@ -12,15 +12,17 @@ namespace semestralni_prace_mochal_vaclavik
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         // 1. Zde nastavte připojovací řetězec (zkopírujte údaje z přihlašování)
-        string connectionString =   "User Id=st72536;" +
+        string connectionString =   "User Id=st72588;" +
                                     "Password=;" +
                                     "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fei-sql3.upceucebny.cz)(PORT=1521))" +
                                     "(CONNECT_DATA=(SID=BDAS)));";
 
         private string _userRole = "Admin";
+        private int idPrihlasenehoUzivatele = 0;
 
         public MainWindow()
         {
+            MainWindowViewController controller = new MainWindowViewController();
             InitializeComponent();
 
             // KLÍČOVÝ KROK: Nastavte DataContext, aby XAML mohl vázat na Visibility vlastnosti
@@ -158,7 +160,7 @@ namespace semestralni_prace_mochal_vaclavik
 
                     // SQL dotaz - Načteme uživatele pro Admin Grid
                     string sql = @"
-                        SELECT * FROM uzivatel"; // Změněno na "uzivatel" pro Admin Grid
+                        SELECT * FROM uzivatele"; // Změněno na "uzivatel" pro Admin Grid
 
                     using (OracleCommand cmd = new OracleCommand(sql, conn))
                     {
@@ -300,7 +302,7 @@ namespace semestralni_prace_mochal_vaclavik
         private void PotvrditBtn_Click(object sender, RoutedEventArgs e) { /* Uložení změn */ }
         private void Button_Click_1(object sender, RoutedEventArgs e) { }
         private void Button_Click(object sender, RoutedEventArgs e) { }
-        private void Button_Click_2(object sender, RoutedEventArgs e) { }
+        //private void Button_Click_2(object sender, RoutedEventArgs e) { }
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) { }
 
         private void HledatTxt_kontakty_TextChanged(object sender, TextChangedEventArgs e)

@@ -47,6 +47,11 @@
         <TabItem x:Name="Kontakty" Header="Kontakty"
                  Visibility="{Binding KontaktyVisible}">
             <Grid Background="White">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="16*"/>
+                    <ColumnDefinition Width="11*"/>
+                    <ColumnDefinition Width="782*"/>
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -54,17 +59,17 @@
                 </Grid.RowDefinitions>
 
                 <!-- Nadpis -->
-                <Label x:Name="KontaktyNazev" Content="Kontakty" Margin="10,5,0,5" FontSize="20" FontWeight="Bold"/>
+                <Label x:Name="KontaktyNazev" Content="Kontakty" Margin="10,5,0,5" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="3"/>
 
                 <!-- Filtry -->
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10">
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10" Grid.ColumnSpan="3">
                     <TextBox x:Name="HledatTxt_kontakty" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,5,0" TextChanged="HledatTxt_kontakty_TextChanged"/>
                     <Button x:Name="Zobrazit_btn_kontakty" Content="Zobrazit" Click="Button_Click" Width="69" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,5,0"/>
                     <Button x:Name="ZrusFiltry_btn_kontakty" Content="Zrušit filtry" Click="Button_Click_1" Width="85" Height="20" Background="Red" Foreground="White" FontSize="11"/>
                 </StackPanel>
 
                 <!-- DataGrid -->
-                <DataGrid x:Name="KontaktyGrid" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10"/>
+                <DataGrid x:Name="KontaktyGrid" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10" Grid.ColumnSpan="3"/>
             </Grid>
         </TabItem>
 
@@ -206,6 +211,11 @@
         <TabItem x:Name="Admin" Header="Admin nastavení"
                  Visibility="{Binding AdminVisible}">
             <Grid Background="White">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="555*"/>
+                    <ColumnDefinition Width="13*"/>
+                    <ColumnDefinition Width="241*"/>
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -214,7 +224,7 @@
 
                 <!-- Řádek 0: Filtry a Zobrazení (OPRÁVNĚNÍ: Admin) -->
                 <StackPanel Orientation="Horizontal" Margin="15,10,15,10"
-                            Visibility="{Binding AdminControlsVisible}">
+                            Visibility="{Binding AdminControlsVisible}" Grid.ColumnSpan="3">
                     <TextBox x:Name="HledatTxt_admin" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,6,0"/>
                     <Button x:Name="Zobrazit_btn_admin" Content="Zobrazit" Click="Button_Click" Width="70" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,4,0"/>
                     <Button x:Name="ZrusFiltry_btn_admin" Content="Zrušit filtry" Click="Button_Click_1" Width="86" Height="20" Background="Red" Foreground="White" FontSize="11"/>
@@ -224,20 +234,33 @@
                 <DataGrid x:Name="UzivateleGrid" 
                           Grid.Row="1"
                           d:ItemsSource="{d:SampleData ItemCount=5}" 
-                          HorizontalAlignment="Stretch" 
-                          VerticalAlignment="Stretch" 
                           Margin="15,0,15,0" 
                           SelectionChanged="DataGrid_SelectionChanged"
-                          Visibility="{Binding AdminControlsVisible}"/>
+                          Visibility="{Binding AdminControlsVisible}" Grid.ColumnSpan="3"/>
 
                 <!-- Řádek 2: Akce (Emulovat, Upravit, Přidat - OPRÁVNĚNÍ: Admin) -->
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="15,10,15,10" VerticalAlignment="Center"
-                            Visibility="{Binding AdminControlsVisible}">
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="15,0,15,0" VerticalAlignment="Center"
+                            Visibility="{Binding AdminControlsVisible}" Grid.ColumnSpan="3">
                     <Label Content="Akce:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                    <Button x:Name="btnEmulovat" Content="Emulovat" Width="100" Click="Button_Click_2" Height="20" Margin="0,0,6,0"/>
+                    <Button x:Name="btnEmulovat" Content="Emulovat" Click="{Binding Emulovat}" Width="100" Height="20" Margin="0,0,6,0"/>
                     <Button x:Name="btnUpravit" Content="Upravit" Width="100" Height="20" Margin="0,0,6,0"/>
                     <Button x:Name="btnPridat" Content="Přidat" Width="100" Height="20"/>
                 </StackPanel>
+            </Grid>
+        </TabItem>
+        <TabItem x:Name="Prihlaseni" Header="Přihlášení">
+            <Grid Background="White">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="555*"/>
+                    <ColumnDefinition Width="13*"/>
+                    <ColumnDefinition Width="241*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
             </Grid>
         </TabItem>
     </TabControl>
