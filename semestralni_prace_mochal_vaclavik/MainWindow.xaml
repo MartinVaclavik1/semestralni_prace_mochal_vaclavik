@@ -15,9 +15,13 @@
     </Window.Resources>
 
     <TabControl Name="Okna" 
-                SelectionChanged="Okna_SelectionChanged" 
                 HorizontalAlignment="Stretch" 
                 VerticalAlignment="Stretch">
+        <i:Interaction.Triggers>
+            <i:EventTrigger EventName="SelectionChanged">
+                <i:InvokeCommandAction Command="{Binding ZmenaOknaCommand}"/>
+            </i:EventTrigger>
+        </i:Interaction.Triggers>
         <TabControl.Background>
             <!-- Sjednocený horní gradient pro celou aplikaci -->
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -25,7 +29,7 @@
                 <GradientStop Color="#FF92A1C6" Offset="1"/>
             </LinearGradientBrush>
         </TabControl.Background>
-
+        
         <!-- Karta: Domu (VIDITELNÉ VŽDY) -->
         <TabItem x:Name="Domu" Header="Domu">
             <Grid x:Name="DomuGrid" Background="White" Margin="20">
@@ -51,11 +55,6 @@
         <!-- Karta: Kontakty (OPRÁVNĚNÍ: Občan+) -->
         <TabItem x:Name="Kontakty" Header="Kontakty"
                  Visibility="{Binding KontaktyVisible}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="Selected">
-                    <i:InvokeCommandAction Command="{Binding NacistKontakty}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
             <Grid Background="White">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="16*"/>
