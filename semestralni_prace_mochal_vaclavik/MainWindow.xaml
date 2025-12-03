@@ -4,10 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:semestralni_prace_mochal_vaclavik"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="Informační systém Policie České Rapubliky" 
         Height="450" 
         Width="815">
+
+    <Window.Resources>
+        <local:TupleConverter x:Key="TupleConverter"/>
+    </Window.Resources>
 
     <TabControl Name="Okna" 
                 SelectionChanged="Okna_SelectionChanged" 
@@ -46,11 +51,18 @@
         <!-- Karta: Kontakty (OPRÁVNĚNÍ: Občan+) -->
         <TabItem x:Name="Kontakty" Header="Kontakty"
                  Visibility="{Binding KontaktyVisible}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Selected">
+                    <i:InvokeCommandAction Command="{Binding NacistKontakty}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
             <Grid Background="White">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="16*"/>
                     <ColumnDefinition Width="11*"/>
-                    <ColumnDefinition Width="782*"/>
+                    <ColumnDefinition Width="438*"/>
+                    <ColumnDefinition Width="85*"/>
+                    <ColumnDefinition Width="259*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -59,17 +71,17 @@
                 </Grid.RowDefinitions>
 
                 <!-- Nadpis -->
-                <Label x:Name="KontaktyNazev" Content="Kontakty" Margin="10,5,0,5" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="3"/>
+                <Label x:Name="KontaktyNazev" Content="Kontakty" Margin="10,5,0,5" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="5"/>
 
                 <!-- Filtry -->
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10" Grid.ColumnSpan="3">
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10" Grid.ColumnSpan="5">
                     <TextBox x:Name="HledatTxt_kontakty" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,5,0" TextChanged="HledatTxt_kontakty_TextChanged"/>
                     <Button x:Name="Zobrazit_btn_kontakty" Content="Zobrazit" Click="Button_Click" Width="69" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,5,0"/>
                     <Button x:Name="ZrusFiltry_btn_kontakty" Content="Zrušit filtry" Click="Button_Click_1" Width="85" Height="20" Background="Red" Foreground="White" FontSize="11"/>
                 </StackPanel>
 
                 <!-- DataGrid -->
-                <DataGrid x:Name="KontaktyGrid" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10" Grid.ColumnSpan="3"/>
+                <DataGrid x:Name="KontaktyGrid" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10" Grid.ColumnSpan="5"/>
             </Grid>
         </TabItem>
 
@@ -242,26 +254,46 @@
                 <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="15,0,15,0" VerticalAlignment="Center"
                             Visibility="{Binding AdminControlsVisible}" Grid.ColumnSpan="3">
                     <Label Content="Akce:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                    <Button x:Name="btnEmulovat" Content="Emulovat" Click="{Binding Emulovat}" Width="100" Height="20" Margin="0,0,6,0"/>
+                    <Button x:Name="btnEmulovat" Content="Emulovat" Command="{Binding EmulovatCommand}" Width="100" Height="20" Margin="0,0,6,0"/>
                     <Button x:Name="btnUpravit" Content="Upravit" Width="100" Height="20" Margin="0,0,6,0"/>
                     <Button x:Name="btnPridat" Content="Přidat" Width="100" Height="20"/>
                 </StackPanel>
             </Grid>
         </TabItem>
         <TabItem x:Name="Prihlaseni" Header="Přihlášení">
-            <Grid Background="White">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="555*"/>
-                    <ColumnDefinition Width="13*"/>
-                    <ColumnDefinition Width="241*"/>
-                </Grid.ColumnDefinitions>
+            <Grid Margin="20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Přihlašovací jméno:" VerticalAlignment="Center" Margin="0,0,10,10" Grid.Row="0" Grid.Column="0"/>
+
+                <TextBox x:Name="UsernameTextBox" Width="200" Margin="0,0,0,10" Grid.Row="0" Grid.Column="1"/>
+
+                <TextBlock Text="Heslo:" VerticalAlignment="Center" Margin="0,0,10,10" Grid.Row="1" Grid.Column="0"/>
+
+                <!--TODO předělat pak na passwordBox -->
+                <TextBox x:Name="PasswordBox" Width="200"  Margin="0,0,0,10" Grid.Row="1" Grid.Column="1"/>
+
+                <Button Content="Odeslat" Command="{Binding PrihlasCommand}" Width="100" HorizontalAlignment="Center" Margin="0,10,0,0" Grid.Row="2" Grid.ColumnSpan="2">
+                    <Button.CommandParameter>
+                        <MultiBinding Converter="{StaticResource TupleConverter}">
+                            <Binding ElementName="UsernameTextBox" Path="Text"/>
+                            <Binding ElementName="PasswordBox" Path="Text"/>
+                        </MultiBinding>
+                    </Button.CommandParameter>
+                </Button>
 
             </Grid>
         </TabItem>
     </TabControl>
+
 </Window>

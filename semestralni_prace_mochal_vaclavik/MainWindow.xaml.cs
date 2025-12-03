@@ -1,11 +1,14 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.Input;
+using Oracle.ManagedDataAccess.Client;
+using semestralni_prace_mochal_vaclavik.ViewModels;
+using System;
+using System.ComponentModel;
 using System.Data;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using Oracle.ManagedDataAccess.Client;
+using System.Windows.Threading;
 using MessageBox = System.Windows.MessageBox;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace semestralni_prace_mochal_vaclavik
 {
@@ -22,17 +25,9 @@ namespace semestralni_prace_mochal_vaclavik
 
         public MainWindow()
         {
-            MainWindowViewController controller = new MainWindowViewController();
+            
             InitializeComponent();
-
-            // KLÍČOVÝ KROK: Nastavte DataContext, aby XAML mohl vázat na Visibility vlastnosti
-            this.DataContext = this;
-            //načítají se při kliknutí na záložku
-            /*
-            NacistKontakty();
-            NacistUzivatele();
-            NacistPrestupky();
-            */
+            DataContext = new MainViewModel(this, Dispatcher);
         }
 
 
