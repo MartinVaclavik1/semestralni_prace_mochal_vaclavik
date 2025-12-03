@@ -19,12 +19,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                                     "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fei-sql3.upceucebny.cz)(PORT=1521))" +
                                     "(CONNECT_DATA=(SID=BDAS)));";
         private MainWindow window {  get; set; }
-        private Dispatcher _dispatcher { get; }
         [ObservableProperty]
         public DataView kontaktyItemsSource;
-        public MainViewModel(MainWindow window, Dispatcher dispatcher) { 
+        public MainViewModel(MainWindow window) { 
             this.window = window;
-            _dispatcher = dispatcher;
         }
 
         [RelayCommand]
@@ -109,9 +107,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         adapter.Fill(dt);
 
                         
-                        _dispatcher.Invoke(() => { 
-                            window.KontaktyGrid.ItemsSource = dt.DefaultView; 
-                        });
+                        
+                        window.KontaktyGrid.ItemsSource = dt.DefaultView; 
+                        
                         
                     }
                 }

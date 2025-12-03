@@ -21,7 +21,7 @@ namespace semestralni_prace_mochal_vaclavik
         {
             
             InitializeComponent();
-            DataContext = new MainViewModel(this, Dispatcher);
+            DataContext = new MainViewModel(this);
         }
 
 
