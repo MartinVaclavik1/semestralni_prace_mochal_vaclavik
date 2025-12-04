@@ -1,17 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Oracle.ManagedDataAccess.Client;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using System.Windows.Threading;
 using MessageBox = System.Windows.MessageBox;
 
 namespace semestralni_prace_mochal_vaclavik.ViewModels
@@ -23,27 +14,31 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                                     "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fei-sql3.upceucebny.cz)(PORT=1521))" +
                                     "(CONNECT_DATA=(SID=BDAS)));";
         private MainWindow Window { get; set; }
-        private Dispatcher WindowDispatcher { get; set; }
 
         [ObservableProperty]
         public DataView kontaktyItemsSource;
 
         private string Opravneni { get; set; }
         private int IdUzivatele { get; set; }
-        public MainViewModel(MainWindow window, Dispatcher dispatcher)
+        public MainViewModel(MainWindow window)
         {
             this.Window = window;
-            this.WindowDispatcher = dispatcher;
+            //Opravneni = "administrator";
             nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
         }
 
+        /// <summary>
+        /// otevře nové okno kde se nebude nic commitovat do db - půjde jen zobrazovat data
+        /// </summary>
         [RelayCommand]
         public async void Emulovat()
         {
-            MessageBox.Show("Test");
+            var emulace = new MainWindow();
+            /*((MainViewModel)emulace.DataContext).IdUzivatele =*/
+            emulace.Show();
         }
 
-        [RelayCommand(CanExecute = nameof(ZkontrolovatHeslo))]
+        [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniPrihlaseni))]
         private void Prihlas((string PrihlasovaciJmeno, string Heslo) udaje)
         {
             //TODO po přihlášení nastavit viditelné TabItemy
@@ -95,7 +90,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         }
 
 
-        public bool ZkontrolovatHeslo()
+        public bool ZkontrolovatVyplneniPrihlaseni()
         {
             return Window.UsernameTextBox.Text != string.Empty && Window.PasswordBox.Text != string.Empty;
         }
@@ -252,7 +247,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                     // SQL dotaz - Načteme uživatele pro Admin Grid
                     string sql = @"
-                        SELECT * FROM uzivatele"; // Změněno na "uzivatel" pro Admin Grid
+                        SELECT u.prihlasovacijmeno, o.nazevopravneni FROM uzivatele u
+                        left join opravneni o using(idopravneni)"; // Změněno na "uzivatel" pro Admin Grid
 
                     using (OracleCommand cmd = new OracleCommand(sql, conn))
                     {
