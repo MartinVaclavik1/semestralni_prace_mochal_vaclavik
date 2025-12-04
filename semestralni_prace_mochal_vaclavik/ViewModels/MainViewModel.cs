@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -33,7 +34,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             this.Window = window;
             this.WindowDispatcher = dispatcher;
-            nastavOknaPodleOpravneni();
+            nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
         }
 
         [RelayCommand]
@@ -64,19 +65,23 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     using (OracleCommand cmd = new OracleCommand(sql, conn))
                     {
                         cmd.Parameters.Add(new OracleParameter("prihlJmeno", udaje.PrihlasovaciJmeno));
-                        cmd.Parameters.Add(new OracleParameter("heslo", udaje.Heslo));
+                        cmd.Parameters.Add(new OracleParameter("heslo", udaje.Heslo.ToString()));
 
                         using (OracleDataReader reader = cmd.ExecuteReader())
                         {
                             if (reader.Read())
                             {
+
                                 // Naplnění vašich TextBoxů z XAML
                                 IdUzivatele = int.Parse(reader["id"].ToString());
                                 Opravneni = reader["opravneni"].ToString();
-                                if(IdUzivatele == 0)
-                                {
-                                    MessageBox.Show("Špatné přihlašovací údaje");
-                                }
+                                Window.Okna.SelectedIndex = 0;
+                                MessageBox.Show("Uživatel přihlášen");
+
+                            }
+                            else
+                            {
+                                MessageBox.Show("Špatné přihlašovací údaje");
                             }
                         }
                     }
@@ -86,14 +91,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
             }
-            MessageBox.Show($"{IdUzivatele} , {Opravneni}");
             nastavOknaPodleOpravneni();
         }
 
 
         public bool ZkontrolovatHeslo()
         {
-            return true;
+            return Window.UsernameTextBox.Text != string.Empty && Window.PasswordBox.Text != string.Empty;
         }
 
         private void nastavOknaPodleOpravneni()
@@ -112,7 +116,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             Window.Admin.Visibility = IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
             //public Visibility AdminControlsVisible => IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
 
-            Window.Prihlaseni.Visibility = !IsAtLeastRole("Obcan") ? Visibility.Visible : Visibility.Collapsed;
+            Window.Prihlaseni.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed: Visibility.Visible;
 
         }
         private bool IsAtLeastRole(string requiredRole)

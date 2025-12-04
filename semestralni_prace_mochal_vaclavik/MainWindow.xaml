@@ -282,7 +282,7 @@
                 <!--TODO předělat pak na passwordBox -->
                 <TextBox x:Name="PasswordBox" Width="200"  Margin="0,0,0,10" Grid.Row="1" Grid.Column="1"/>
 
-                <Button Content="Odeslat" Command="{Binding PrihlasCommand}" Width="100" HorizontalAlignment="Center" Margin="0,10,0,0" Grid.Row="2" Grid.ColumnSpan="2">
+                <Button Content="Přihlásit" Command="{Binding PrihlasCommand}" Width="100" HorizontalAlignment="Center" Margin="0,10,0,0" Grid.Row="2" Grid.ColumnSpan="2">
                     <Button.CommandParameter>
                         <MultiBinding Converter="{StaticResource TupleConverter}">
                             <Binding ElementName="UsernameTextBox" Path="Text"/>
