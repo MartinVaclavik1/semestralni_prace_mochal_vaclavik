@@ -7,8 +7,11 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Threading;
+using MessageBox = System.Windows.MessageBox;
 
 namespace semestralni_prace_mochal_vaclavik.ViewModels
 {
@@ -18,11 +21,19 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                                     "Password=;" +
                                     "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fei-sql3.upceucebny.cz)(PORT=1521))" +
                                     "(CONNECT_DATA=(SID=BDAS)));";
-        private MainWindow window {  get; set; }
+        private MainWindow Window { get; set; }
+        private Dispatcher WindowDispatcher { get; set; }
+
         [ObservableProperty]
         public DataView kontaktyItemsSource;
-        public MainViewModel(MainWindow window) { 
-            this.window = window;
+
+        private string Opravneni { get; set; }
+        private int IdUzivatele { get; set; }
+        public MainViewModel(MainWindow window, Dispatcher dispatcher)
+        {
+            this.Window = window;
+            this.WindowDispatcher = dispatcher;
+            nastavOknaPodleOpravneni();
         }
 
         [RelayCommand]
@@ -31,43 +42,112 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             MessageBox.Show("Test");
         }
 
-        [RelayCommand(CanExecute =nameof(ZkontrolovatHeslo))]
+        [RelayCommand(CanExecute = nameof(ZkontrolovatHeslo))]
         private void Prihlas((string PrihlasovaciJmeno, string Heslo) udaje)
         {
-            
-            MessageBox.Show($"{udaje.PrihlasovaciJmeno} , {udaje.Heslo}");
+            //TODO po přihlášení nastavit viditelné TabItemy
+            //udělat funkci v databázi která vrátí uživatele?
+            try
+            {
+                // Vytvoření připojení
+                using (OracleConnection conn = new OracleConnection(connectionString))
+                {
+                    conn.Open();
+
+                    // SQL dotaz - Načteme uživatele pro Admin Grid
+                    string sql = @"
+                        select u.iduzivatele id , o.nazevopravneni opravneni from uzivatele u
+                        left join opravneni o using(idopravneni)
+                        where LOWER(u.prihlasovacijmeno) = LOWER(:prihlJmeno) 
+                        and u.heslo = :heslo"; // jméno není case sensitive. Heslo je
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        cmd.Parameters.Add(new OracleParameter("prihlJmeno", udaje.PrihlasovaciJmeno));
+                        cmd.Parameters.Add(new OracleParameter("heslo", udaje.Heslo));
+
+                        using (OracleDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                // Naplnění vašich TextBoxů z XAML
+                                IdUzivatele = int.Parse(reader["id"].ToString());
+                                Opravneni = reader["opravneni"].ToString();
+                                if(IdUzivatele == 0)
+                                {
+                                    MessageBox.Show("Špatné přihlašovací údaje");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
+            }
+            MessageBox.Show($"{IdUzivatele} , {Opravneni}");
+            nastavOknaPodleOpravneni();
         }
 
-        
+
         public bool ZkontrolovatHeslo()
         {
             return true;
         }
 
+        private void nastavOknaPodleOpravneni()
+        {
+
+            Window.Kontakty.Visibility = IsAtLeastRole("obcan") ? Visibility.Visible : Visibility.Collapsed;
+            Window.Ucet.Visibility = IsAtLeastRole("obcan") ? Visibility.Visible : Visibility.Collapsed;
+            //// Tlačítko Potvrdit na Můj účet (Policista a Admin mohou editovat)
+            //public Visibility UcetEditVisible => IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
+
+            Window.Okrsky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
+            Window.Prestupky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
+            Window.Hlidky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
+
+            //// Celý obsah na kartě Admin (DataGrid, Filtry, Akční tlačítka)
+            Window.Admin.Visibility = IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
+            //public Visibility AdminControlsVisible => IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
+
+            Window.Prihlaseni.Visibility = !IsAtLeastRole("Obcan") ? Visibility.Visible : Visibility.Collapsed;
+
+        }
+        private bool IsAtLeastRole(string requiredRole)
+        {
+            // Kontrola role, pokud by se v budoucnu přidaly další úrovně
+            if (Opravneni == "administrator") return true;
+            if (Opravneni == "policista" && (requiredRole == "policista" || requiredRole == "obcan")) return true;
+            if (Opravneni == "obcan" && requiredRole == "obcan") return true;
+            return false;
+        }
+
         [RelayCommand]
         private void ZmenaOkna()
         {
-            if (window.Kontakty.IsSelected)
+            if (Window.Kontakty.IsSelected)
             {
                 NacistKontakty();
             }
-            else if (window.Ucet.IsSelected)
+            else if (Window.Ucet.IsSelected)
             {
-                NacistDetailUzivatele(1);
+                NacistDetailUzivatele(IdUzivatele);
             }
-            else if (window.Admin.IsSelected)
+            else if (Window.Admin.IsSelected)
             {
                 NacistUzivatele();
             }
-            else if (window.Prestupky.IsSelected)
+            else if (Window.Prestupky.IsSelected)
             {
                 NacistPrestupky();
             }
-            else if (window.Hlidky.IsSelected)
+            else if (Window.Hlidky.IsSelected)
             {
                 NacistHlidky();
             }
-            else if (window.Okrsky.IsSelected)
+            else if (Window.Okrsky.IsSelected)
             {
                 NacistOkrsky();
             }
@@ -106,11 +186,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         DataTable dt = new DataTable();
                         adapter.Fill(dt);
 
-                        
-                        
-                        window.KontaktyGrid.ItemsSource = dt.DefaultView; 
-                        
-                        
+
+
+                        Window.KontaktyGrid.ItemsSource = dt.DefaultView;
+
+
                     }
                 }
             }
@@ -141,11 +221,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                             if (reader.Read())
                             {
                                 // Naplnění vašich TextBoxů z XAML
-                                window.JmenoTxt.Text = reader["jmeno"].ToString();
-                                window.PrijmeniTxt.Text = reader["prijmeni"].ToString();
-                                window.UliceTxt.Text = reader["ulice"].ToString();
-                                window.PSCTxt.Text = reader["postovnismerovacicislo"].ToString();
-                                window.ZemeTxt.Text = reader["zeme"].ToString();
+                                Window.JmenoTxt.Text = reader["jmeno"].ToString();
+                                Window.PrijmeniTxt.Text = reader["prijmeni"].ToString();
+                                Window.UliceTxt.Text = reader["ulice"].ToString();
+                                Window.PSCTxt.Text = reader["postovnismerovacicislo"].ToString();
+                                Window.ZemeTxt.Text = reader["zeme"].ToString();
                             }
                         }
                     }
@@ -178,7 +258,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         adapter.Fill(dt);
 
                         // Napojení dat do vašeho DataGridu v XAML
-                        window.UzivateleGrid.ItemsSource = dt.DefaultView;
+                        Window.UzivateleGrid.ItemsSource = dt.DefaultView;
                     }
                 }
             }
@@ -209,7 +289,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         adapter.Fill(dt);
 
                         // Napojení dat do vašeho DataGridu v XAML
-                        window.PrestupkyGrid.ItemsSource = dt.DefaultView;
+                        Window.PrestupkyGrid.ItemsSource = dt.DefaultView;
                     }
                 }
             }
@@ -236,7 +316,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         DataTable dt = new DataTable();
                         adapter.Fill(dt);
                         // Vazba na nový DataGrid
-                        window.HlidkyGrid.ItemsSource = dt.DefaultView;
+                        Window.HlidkyGrid.ItemsSource = dt.DefaultView;
                     }
                 }
             }
@@ -263,7 +343,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         DataTable dt = new DataTable();
                         adapter.Fill(dt);
                         // Vazba na nový DataGrid
-                        window.OkrskyGrid.ItemsSource = dt.DefaultView;
+                        Window.OkrskyGrid.ItemsSource = dt.DefaultView;
                     }
                 }
             }
