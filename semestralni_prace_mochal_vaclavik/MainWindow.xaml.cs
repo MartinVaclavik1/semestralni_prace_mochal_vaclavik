@@ -57,5 +57,10 @@ namespace semestralni_prace_mochal_vaclavik
         {
 
         }
+
+        private void KontaktyGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

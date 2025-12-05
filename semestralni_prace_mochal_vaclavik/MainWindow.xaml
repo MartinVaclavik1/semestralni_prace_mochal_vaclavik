@@ -29,26 +29,11 @@
                 <GradientStop Color="#FF92A1C6" Offset="1"/>
             </LinearGradientBrush>
         </TabControl.Background>
-        
+
         <!-- Karta: Domu (VIDITELNÉ VŽDY) -->
         <TabItem x:Name="Domu" Header="Domu">
             <Grid x:Name="DomuGrid" Background="White" Margin="20">
-                <TextBlock x:Name="VítejteTxt" VerticalAlignment="Top" TextWrapping="Wrap">
-                    <Run FontWeight="Bold" Text="Vítejte na portálu Policie České Republiky"/>
-                    <LineBreak/>
-                    <Run Text="jjiafeaogapijpaifjapofjaip"/>
-                    <LineBreak/>
-                    <Run Text="faiejapfiafiajfpaikjap"/>
-                    <LineBreak/>
-                    <Run Text="ajapifjapifjapiwfjapf"/>
-                    <LineBreak/>
-                    <Run Text="afjaoejsasfvadfafjdnadadhbdi"/>
-                    <LineBreak/>
-                    <Run Text="afjsiaohuohufaofjhvao"/>
-                    <LineBreak/>
-                    <LineBreak></LineBreak>
-                    <Run FontWeight="Bold" Text="Info o tom co se tady dá najít"/>
-                </TextBlock>
+                <TextBlock x:Name="VítejteTxt" VerticalAlignment="Top" TextWrapping="Wrap" Height="358"><Run Text="Vítejte na informačním portálu Policie České Republiky"/><LineBreak/><Run/><LineBreak/><Run Text="Tento systém slouží k efektivní správě, monitoringu a koordinaci všech klíčových policejních operací a záznamů. Poskytuje rychlý a bezpečný přístup k relevantním informacím potřebným pro výkon služby."/><LineBreak/><Run/><LineBreak/><Run Text="Základní Funkce a Přehled:"/><LineBreak/><Run/><LineBreak/><Run Text="Kontakty: Rychlý přehled aktivních policistů, jejich hodností a aktuálního umístění na služebních stanicích."/><LineBreak/><Run/><LineBreak/><Run Text="Evidence Přestupků: Detailní záznamy o spáchaných přestupcích s možností vyhledávání a klasifikace."/><LineBreak/><Run/><LineBreak/><Run Text="Okrsky a Hlídky: Správa a přehled přidělených okrsků a monitorování aktivních hlídek v terénu."/><LineBreak/><Run/><LineBreak/><Run Text="Vozový Park: Kompletní evidence vozidel, techniky a jejich přidělení k operačním stanicím."/><LineBreak/><Run/><LineBreak/><Run Text="Můj Účet: Přihlášeným uživatelům je k dispozici sekce pro správu osobních údajů."/><LineBreak/><Run/><LineBreak/><Run Text="Důležité Upozornění:"/><LineBreak/><Run/><LineBreak/><Run Text="Tento portál pracuje s citlivými a osobními údaji. Přístup k datům podléhá přísným bezpečnostním standardům a je omezen pouze na autorizované pracovníky Policie ČR. Pro plný přístup se prosím přihlaste."/></TextBlock>
             </Grid>
         </TabItem>
 
@@ -80,7 +65,7 @@
                 </StackPanel>
 
                 <!-- DataGrid -->
-                <DataGrid x:Name="KontaktyGrid" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10" Grid.ColumnSpan="5"/>
+                <DataGrid x:Name="KontaktyGrid" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10" Grid.ColumnSpan="5" SelectionMode="Single" IsManipulationEnabled="False"/>
             </Grid>
         </TabItem>
 
@@ -267,8 +252,8 @@
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="5*"/>
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Text="Přihlašovací jméno:" VerticalAlignment="Center" Margin="0,0,10,10" Grid.Row="0" Grid.Column="0"/>

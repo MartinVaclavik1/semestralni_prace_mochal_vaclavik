@@ -9,10 +9,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        private readonly string connectionString = "User Id=st72588;" +
-                                    "Password=;" +
+        private readonly string connectionString = "User Id=st72536;" +
+                                    "Password=killer12;" +
                                     "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fei-sql3.upceucebny.cz)(PORT=1521))" +
                                     "(CONNECT_DATA=(SID=BDAS)));";
+        private OracleConnection conn;
         private MainWindow Window { get; set; }
 
         [ObservableProperty]
@@ -23,8 +24,19 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public MainViewModel(MainWindow window)
         {
             this.Window = window;
-            //Opravneni = "administrator";
+            Opravneni = "administrator";
+
+            try
+            {
+                conn = new OracleConnection(connectionString);
+                conn.Open();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
             nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
+
         }
 
         /// <summary>
@@ -46,38 +58,35 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             try
             {
                 // Vytvoření připojení
-                using (OracleConnection conn = new OracleConnection(connectionString))
-                {
-                    conn.Open();
 
-                    // SQL dotaz - Načteme uživatele pro Admin Grid
-                    string sql = @"
+
+                // SQL dotaz - Načteme uživatele pro Admin Grid
+                string sql = @"
                         select u.iduzivatele id , o.nazevopravneni opravneni from uzivatele u
                         left join opravneni o using(idopravneni)
                         where LOWER(u.prihlasovacijmeno) = LOWER(:prihlJmeno) 
                         and u.heslo = :heslo"; // jméno není case sensitive. Heslo je
 
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    cmd.Parameters.Add(new OracleParameter("prihlJmeno", udaje.PrihlasovaciJmeno));
+                    cmd.Parameters.Add(new OracleParameter("heslo", udaje.Heslo.ToString()));
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
                     {
-                        cmd.Parameters.Add(new OracleParameter("prihlJmeno", udaje.PrihlasovaciJmeno));
-                        cmd.Parameters.Add(new OracleParameter("heslo", udaje.Heslo.ToString()));
-
-                        using (OracleDataReader reader = cmd.ExecuteReader())
+                        if (reader.Read())
                         {
-                            if (reader.Read())
-                            {
 
-                                // Naplnění vašich TextBoxů z XAML
-                                IdUzivatele = int.Parse(reader["id"].ToString());
-                                Opravneni = reader["opravneni"].ToString();
-                                Window.Okna.SelectedIndex = 0;
-                                MessageBox.Show("Uživatel přihlášen");
+                            // Naplnění vašich TextBoxů z XAML
+                            IdUzivatele = int.Parse(reader["id"].ToString());
+                            Opravneni = reader["opravneni"].ToString();
+                            Window.Okna.SelectedIndex = 0;
+                            MessageBox.Show("Uživatel přihlášen");
 
-                            }
-                            else
-                            {
-                                MessageBox.Show("Špatné přihlašovací údaje");
-                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Špatné přihlašovací údaje");
                         }
                     }
                 }
@@ -97,7 +106,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
         private void nastavOknaPodleOpravneni()
         {
-
             Window.Kontakty.Visibility = IsAtLeastRole("obcan") ? Visibility.Visible : Visibility.Collapsed;
             Window.Ucet.Visibility = IsAtLeastRole("obcan") ? Visibility.Visible : Visibility.Collapsed;
             //// Tlačítko Potvrdit na Můj účet (Policista a Admin mohou editovat)
@@ -111,7 +119,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             Window.Admin.Visibility = IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
             //public Visibility AdminControlsVisible => IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
 
-            Window.Prihlaseni.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed: Visibility.Visible;
+            Window.Prihlaseni.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
 
         }
         private bool IsAtLeastRole(string requiredRole)
@@ -156,13 +164,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                // Vytvoření připojení
-                using (OracleConnection conn = new OracleConnection(connectionString))
-                {
-                    conn.Open();
-
-                    // SQL dotaz - spojíme Policistu s Hodností, aby to hezky vypadalo
-                    string sql = @"
+                // SQL dotaz - spojíme Policistu s Hodností, aby to hezky vypadalo
+                string sql = @"
                         SELECT
                             p.jmeno AS Jméno,
                             p.prijmeni AS Příjmení,
@@ -178,19 +181,18 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                             p.prijmeni, h.nazev
                         ";
 
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
-                    {
-                        // Použijeme DataAdapter pro naplnění tabulky
-                        OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                        DataTable dt = new DataTable();
-                        adapter.Fill(dt);
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    // Použijeme DataAdapter pro naplnění tabulky
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
 
 
 
-                        Window.KontaktyGrid.ItemsSource = dt.DefaultView;
+                    Window.KontaktyGrid.ItemsSource = dt.DefaultView;
 
 
-                    }
                 }
             }
             catch (Exception ex)
@@ -203,29 +205,25 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                using (OracleConnection conn = new OracleConnection(connectionString))
+
+                string sql = "SELECT jmeno, prijmeni, ulice, postovnismerovacicislo, obec, zeme " +
+                             "FROM obcane o JOIN adresy a ON o.idadresy = a.idadresy " +
+                             "WHERE o.iduzivatele = :id";
+
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
-                    conn.Open();
+                    cmd.Parameters.Add(new OracleParameter("id", idUzivatele));
 
-                    string sql = "SELECT jmeno, prijmeni, ulice, postovnismerovacicislo, obec, zeme " +
-                                 "FROM obcane o JOIN adresy a ON o.idadresy = a.idadresy " +
-                                 "WHERE o.iduzivatele = :id";
-
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    using (OracleDataReader reader = cmd.ExecuteReader())
                     {
-                        cmd.Parameters.Add(new OracleParameter("id", idUzivatele));
-
-                        using (OracleDataReader reader = cmd.ExecuteReader())
+                        if (reader.Read())
                         {
-                            if (reader.Read())
-                            {
-                                // Naplnění vašich TextBoxů z XAML
-                                Window.JmenoTxt.Text = reader["jmeno"].ToString();
-                                Window.PrijmeniTxt.Text = reader["prijmeni"].ToString();
-                                Window.UliceTxt.Text = reader["ulice"].ToString();
-                                Window.PSCTxt.Text = reader["postovnismerovacicislo"].ToString();
-                                Window.ZemeTxt.Text = reader["zeme"].ToString();
-                            }
+                            // Naplnění vašich TextBoxů z XAML
+                            Window.JmenoTxt.Text = reader["jmeno"].ToString();
+                            Window.PrijmeniTxt.Text = reader["prijmeni"].ToString();
+                            Window.UliceTxt.Text = reader["ulice"].ToString();
+                            Window.PSCTxt.Text = reader["postovnismerovacicislo"].ToString();
+                            Window.ZemeTxt.Text = reader["zeme"].ToString();
                         }
                     }
                 }
@@ -240,26 +238,20 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                // Vytvoření připojení
-                using (OracleConnection conn = new OracleConnection(connectionString))
-                {
-                    conn.Open();
-
-                    // SQL dotaz - Načteme uživatele pro Admin Grid
-                    string sql = @"
+                // SQL dotaz - Načteme uživatele pro Admin Grid
+                string sql = @"
                         SELECT u.prihlasovacijmeno, o.nazevopravneni FROM uzivatele u
                         left join opravneni o using(idopravneni)"; // Změněno na "uzivatel" pro Admin Grid
 
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
-                    {
-                        // Použijeme DataAdapter pro naplnění tabulky
-                        OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                        DataTable dt = new DataTable();
-                        adapter.Fill(dt);
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    // Použijeme DataAdapter pro naplnění tabulky
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
 
-                        // Napojení dat do vašeho DataGridu v XAML
-                        Window.UzivateleGrid.ItemsSource = dt.DefaultView;
-                    }
+                    // Napojení dat do vašeho DataGridu v XAML
+                    Window.UzivateleGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -272,25 +264,20 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                // Vytvoření připojení
-                using (OracleConnection conn = new OracleConnection(connectionString))
-                {
-                    conn.Open();
 
-                    // SQL dotaz - Načteme přestupky pro Přestupky Grid
-                    string sql = @"
+                // SQL dotaz - Načteme přestupky pro Přestupky Grid
+                string sql = @"
                         SELECT * FROM prestupky_obcanu";
 
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
-                    {
-                        // Použijeme DataAdapter pro naplnění tabulky
-                        OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                        DataTable dt = new DataTable();
-                        adapter.Fill(dt);
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    // Použijeme DataAdapter pro naplnění tabulky
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
 
-                        // Napojení dat do vašeho DataGridu v XAML
-                        Window.PrestupkyGrid.ItemsSource = dt.DefaultView;
-                    }
+                    // Napojení dat do vašeho DataGridu v XAML
+                    Window.PrestupkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -302,22 +289,18 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                using (OracleConnection conn = new OracleConnection(connectionString))
-                {
-                    conn.Open();
 
-                    // SQL dotaz - Načtení hlídek (příklad)
-                    string sql = @"
+                // SQL dotaz - Načtení hlídek (příklad)
+                string sql = @"
                 SELECT * FROM hlidky";
 
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
-                    {
-                        OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                        DataTable dt = new DataTable();
-                        adapter.Fill(dt);
-                        // Vazba na nový DataGrid
-                        Window.HlidkyGrid.ItemsSource = dt.DefaultView;
-                    }
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    // Vazba na nový DataGrid
+                    Window.HlidkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -329,22 +312,18 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                using (OracleConnection conn = new OracleConnection(connectionString))
-                {
-                    conn.Open();
 
-                    // SQL dotaz - Načtení okrsků
-                    string sql = @"
+                // SQL dotaz - Načtení okrsků
+                string sql = @"
                 SELECT * FROM okrsky";
 
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
-                    {
-                        OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                        DataTable dt = new DataTable();
-                        adapter.Fill(dt);
-                        // Vazba na nový DataGrid
-                        Window.OkrskyGrid.ItemsSource = dt.DefaultView;
-                    }
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    // Vazba na nový DataGrid
+                    Window.OkrskyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
