@@ -123,6 +123,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
             Window.Okrsky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
             Window.Prestupky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
+            Window.MojePrestupky.Visibility = Opravneni == "obcan" ? Visibility.Visible : Visibility.Collapsed;
+
             Window.Hlidky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
 
             //// Celý obsah na kartě Admin (DataGrid, Filtry, Akční tlačítka)
