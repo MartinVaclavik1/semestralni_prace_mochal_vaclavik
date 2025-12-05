@@ -24,8 +24,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public MainViewModel(MainWindow window)
         {
             this.Window = window;
-            Opravneni = "administrator";
-
+            Opravneni = "obcan";
+            IdUzivatele = 80;
             try
             {
                 conn = new OracleConnection(connectionString);
@@ -162,6 +162,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 NacistPrestupky();
             }
+            else if (Window.MojePrestupky.IsSelected)
+            {
+                NacistMojePrestupky();
+            }
             else if (Window.Hlidky.IsSelected)
             {
                 NacistHlidky();
@@ -290,6 +294,33 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                     // Napojení dat do vašeho DataGridu v XAML
                     Window.PrestupkyGrid.ItemsSource = dt.DefaultView;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání přestupků: " + ex.Message);
+            }
+        }
+
+        private void NacistMojePrestupky()
+        {
+            throw new NotImplementedException();
+            try
+            {
+                string sql = @"
+                        SELECT * FROM prestupky_obcanu
+                        where idobcana = :id";
+
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    // Použijeme DataAdapter pro naplnění tabulky
+                    cmd.Parameters.Add(new OracleParameter("id", IdUzivatele));
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    // Napojení dat do vašeho DataGridu v XAML
+                    //Window.PrestupkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
