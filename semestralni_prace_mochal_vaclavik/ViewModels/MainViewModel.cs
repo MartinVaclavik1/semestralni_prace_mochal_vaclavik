@@ -53,7 +53,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniPrihlaseni))]
         private void Prihlas((string PrihlasovaciJmeno, string Heslo) udaje)
         {
-            //TODO po přihlášení nastavit viditelné TabItemy
             //udělat funkci v databázi která vrátí uživatele?
             try
             {
@@ -76,13 +75,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     {
                         if (reader.Read())
                         {
-
-                            // Naplnění vašich TextBoxů z XAML
                             IdUzivatele = int.Parse(reader["id"].ToString());
                             Opravneni = reader["opravneni"].ToString();
                             Window.Okna.SelectedIndex = 0;
-                            MessageBox.Show("Uživatel přihlášen");
+                            Window.UsernameTextBox.Clear();
+                            Window.PasswordBox.Clear();
 
+                            Task.Run(() => { MessageBox.Show("Uživatel přihlášen"); });
+                            
+                            
                         }
                         else
                         {
@@ -95,6 +96,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
             }
+            nastavOknaPodleOpravneni();
+        }
+
+        [RelayCommand]
+        private void Odhlas()
+        {
+            IdUzivatele = 0;
+            Opravneni = string.Empty;
+            Window.Okna.SelectedIndex = 0;
             nastavOknaPodleOpravneni();
         }
 

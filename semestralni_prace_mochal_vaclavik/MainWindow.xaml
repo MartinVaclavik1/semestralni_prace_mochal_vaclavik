@@ -199,6 +199,17 @@
                         Click="PotvrditBtn_Click" 
                         FontWeight="Bold" 
                         IsEnabled="False" Height="20"/>
+                
+                <Button x:Name="OdhlasitBtn" 
+                    Grid.Row="2" 
+                    Content="Odhlásit se" 
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Center" 
+                    Width="100" 
+                    Command="{Binding OdhlasCommand}"
+                    FontWeight="Bold" 
+                    Height="20"/>
+
             </Grid>
         </TabItem>
 
