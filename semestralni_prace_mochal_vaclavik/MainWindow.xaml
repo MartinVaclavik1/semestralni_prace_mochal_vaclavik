@@ -33,7 +33,12 @@
         <!-- Karta: Domu (VIDITELNÉ VŽDY) -->
         <TabItem x:Name="Domu" Header="Domu">
             <Grid x:Name="DomuGrid" Background="White" Margin="20">
-                <TextBlock x:Name="VítejteTxt" VerticalAlignment="Top" TextWrapping="Wrap" Height="358"><Run Text="Vítejte na informačním portálu Policie České Republiky"/><LineBreak/><Run/><LineBreak/><Run Text="Tento systém slouží k efektivní správě, monitoringu a koordinaci všech klíčových policejních operací a záznamů. Poskytuje rychlý a bezpečný přístup k relevantním informacím potřebným pro výkon služby."/><LineBreak/><Run/><LineBreak/><Run Text="Základní Funkce a Přehled:"/><LineBreak/><Run/><LineBreak/><Run Text="Kontakty: Rychlý přehled aktivních policistů, jejich hodností a aktuálního umístění na služebních stanicích."/><LineBreak/><Run/><LineBreak/><Run Text="Evidence Přestupků: Detailní záznamy o spáchaných přestupcích s možností vyhledávání a klasifikace."/><LineBreak/><Run/><LineBreak/><Run Text="Okrsky a Hlídky: Správa a přehled přidělených okrsků a monitorování aktivních hlídek v terénu."/><LineBreak/><Run/><LineBreak/><Run Text="Vozový Park: Kompletní evidence vozidel, techniky a jejich přidělení k operačním stanicím."/><LineBreak/><Run/><LineBreak/><Run Text="Můj Účet: Přihlášeným uživatelům je k dispozici sekce pro správu osobních údajů."/><LineBreak/><Run/><LineBreak/><Run Text="Důležité Upozornění:"/><LineBreak/><Run/><LineBreak/><Run Text="Tento portál pracuje s citlivými a osobními údaji. Přístup k datům podléhá přísným bezpečnostním standardům a je omezen pouze na autorizované pracovníky Policie ČR. Pro plný přístup se prosím přihlaste."/></TextBlock>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="20*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="VítejteTxt" VerticalAlignment="Center" TextWrapping="Wrap" Height="346" Grid.Column="1"><Run FontWeight="Bold" Text="Vítejte na informačním portálu Policie České Republiky"/><LineBreak/><Run FontStyle="Italic" Text="Tento systém slouží k efektivní správě, monitoringu a koordinaci všech klíčových policejních operací a záznamů. Poskytuje rychlý a bezpečný přístup k relevantním informacím potřebným pro výkon služby."/><LineBreak/><Run/><LineBreak/><Run FontWeight="Bold" Text="Základní Funkce a Přehled:"/><LineBreak/><Run Language="cs-cz" Text=" - "/><Run Text="Kontakty: Rychlý přehled aktivních policistů, jejich hodností a aktuálního umístění na služebních stanicích."/><LineBreak/><Run Language="cs-cz" Text=" - "/><Run Text="Evidence Přestupků: Detailní záznamy o spáchaných přestupcích s možností vyhledávání a klasifikace."/><LineBreak/><Run Language="cs-cz" Text=" - "/><Run Text="Okrsky a Hlídky: Správa a přehled přidělených okrsků a monitorování aktivních hlídek v terénu."/><LineBreak/><Run/><LineBreak/><Run FontWeight="Bold" Text="Můj Účet:"/><LineBreak/><Run Language="cs-cz" Text=" - "/><Run Text="Přihlášeným uživatelům je k dispozici sekce pro správu osobních údajů."/><LineBreak/><Run/><LineBreak/><Run FontWeight="Bold" Text="Důležité Upozornění:"/><LineBreak/><Run FontStyle="Italic" Text="Tento portál pracuje s citlivými a osobními údaji. Přístup k datům podléhá přísným bezpečnostním standardům a je omezen pouze na autorizované pracovníky Policie ČR. Pro plný přístup se prosím přihlaste."/></TextBlock>
             </Grid>
         </TabItem>
 
@@ -121,12 +126,12 @@
                 <!-- DataGrid -->
                 <DataGrid x:Name="PrestupkyGrid" Grid.Row="2" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,0,10,10" Grid.ColumnSpan="2"/>
             </Grid>
-            
+
         </TabItem>
 
         <TabItem x:Name="MojePrestupky" Header="Moje Přestupky">
-            
-            
+
+
         </TabItem>
 
         <!-- Karta: Hlídky a Zásahy (OPRÁVNĚNÍ: Policista+) - PŘIDÁNY FILTRY -->
@@ -185,17 +190,17 @@
                     <!-- Popisky a pole -->
                     <Label Content="Jméno:" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
                     <Label Content="Příjmení:" Grid.Row="1" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
-                    <Label Content="Adresa:" Grid.Row="2" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
-                    <Label Content="Ulice:" Grid.Row="3" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
-                    <Label Content="PSČ:" Grid.Row="4" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
-                    <Label Content="Země:" Grid.Row="5" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                    <Label Content="Přihlašovací Jméno:" Grid.Row="2" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                    <Label Content="Heslo:" Grid.Row="3" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                    <!--<Label Content="PSČ:" Grid.Row="4" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+                    <Label Content="Země:" Grid.Row="5" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>-->
 
-                    <TextBox x:Name="JmenoTxt" Text="Jan" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,0,5" Grid.Column="1"/>
-                    <TextBox x:Name="PrijmeniTxt" Text="Novák" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Margin="0,5,0,5"/>
-                    <TextBox x:Name="AdresaTxt" Text="Adresa 1" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Margin="0,5,0,5"/>
-                    <TextBox x:Name="UliceTxt" Text="Ulice" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" Margin="0,5,0,5"/>
-                    <TextBox x:Name="PSCTxt" Text="000 00" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="4" Grid.Column="1" Margin="0,5,0,5"/>
-                    <TextBox x:Name="ZemeTxt" Text="Česká republika" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1" Margin="0,5,0,5"/>
+                    <TextBox x:Name="JmenoTxt" Text="{Binding Uzivatel.Jmeno, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,0,5" Grid.Column="1"/>
+                    <TextBox x:Name="PrijmeniTxt" Text="{Binding Uzivatel.Prijemni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Margin="0,5,0,5"/>
+                    <TextBox x:Name="UsernameTxt" Text="{Binding Uzivatel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Margin="0,5,0,5"/>
+                    <TextBox x:Name="HesloTxt" Text="{Binding Uzivatel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" Margin="0,5,0,5"/>
+                    <!--<TextBox x:Name="PSCTxt" Text="000 00" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="4" Grid.Column="1" Margin="0,5,0,5"/>
+                    <TextBox x:Name="ZemeTxt" Text="Česká republika" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1" Margin="0,5,0,5"/>-->
                 </Grid>
 
                 <!-- Tlačítko Potvrdit (OPRÁVNĚNÍ: Policista+) -->
@@ -212,12 +217,12 @@
                 <Button x:Name="OdhlasitBtn" 
                     Grid.Row="2" 
                     Content="Odhlásit se" 
-                    HorizontalAlignment="Right" 
+                    HorizontalAlignment="Left" 
                     VerticalAlignment="Center" 
                     Width="100" 
                     Command="{Binding OdhlasCommand}"
                     FontWeight="Bold" 
-                    Height="20"/>
+                    Height="20" Margin="658,0,0,0"/>
 
             </Grid>
         </TabItem>

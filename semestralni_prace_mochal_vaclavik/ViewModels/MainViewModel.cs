@@ -4,6 +4,7 @@ using Oracle.ManagedDataAccess.Client;
 using System.Data;
 using System.Windows;
 using MessageBox = System.Windows.MessageBox;
+using semestralni_prace_mochal_vaclavik.Tridy;
 
 namespace semestralni_prace_mochal_vaclavik.ViewModels
 {
@@ -18,14 +19,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
         [ObservableProperty]
         public DataView kontaktyItemsSource;
-
-        private string Opravneni { get; set; }
-        private int IdUzivatele { get; set; }
+        [ObservableProperty]
+        private Uzivatel uzivatel = new Uzivatel();
         public MainViewModel(MainWindow window)
         {
             this.Window = window;
-            Opravneni = "obcan";
-            IdUzivatele = 80;
+            //user.Id = 80;
+            //user.Opravneni = "obcan";
             try
             {
                 conn = new OracleConnection(connectionString);
@@ -56,12 +56,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             //udělat funkci v databázi která vrátí uživatele?
             try
             {
-                // Vytvoření připojení
-
-
                 // SQL dotaz - Načteme uživatele pro Admin Grid
                 string sql = @"
-                        select u.iduzivatele id , o.nazevopravneni opravneni from uzivatele u
+                        select u.iduzivatele id, u.prihlasovacijmeno, u.heslo , o.nazevopravneni opravneni from uzivatele u
                         left join opravneni o using(idopravneni)
                         where LOWER(u.prihlasovacijmeno) = LOWER(:prihlJmeno) 
                         and u.heslo = :heslo"; // jméno není case sensitive. Heslo je
@@ -75,8 +72,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     {
                         if (reader.Read())
                         {
-                            IdUzivatele = int.Parse(reader["id"].ToString());
-                            Opravneni = reader["opravneni"].ToString();
+                            uzivatel.Id = int.Parse(reader["id"].ToString());
+                            uzivatel.Username = reader["prihlasovacijmeno"].ToString();
+                            uzivatel.Password = reader["heslo"].ToString();
+                            uzivatel.Opravneni = reader["opravneni"].ToString();
                             Window.Okna.SelectedIndex = 0;
                             Window.UsernameTextBox.Clear();
                             Window.PasswordBox.Clear();
@@ -102,8 +101,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         private void Odhlas()
         {
-            IdUzivatele = 0;
-            Opravneni = string.Empty;
+            uzivatel.Id = 0;
+            uzivatel.Opravneni = string.Empty;
             Window.Okna.SelectedIndex = 0;
             nastavOknaPodleOpravneni();
         }
@@ -123,7 +122,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
             Window.Okrsky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
             Window.Prestupky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
-            Window.MojePrestupky.Visibility = Opravneni == "obcan" ? Visibility.Visible : Visibility.Collapsed;
+            Window.MojePrestupky.Visibility = uzivatel.Opravneni == "obcan" ? Visibility.Visible : Visibility.Collapsed;
 
             Window.Hlidky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
 
@@ -137,9 +136,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         private bool IsAtLeastRole(string requiredRole)
         {
             // Kontrola role, pokud by se v budoucnu přidaly další úrovně
-            if (Opravneni == "administrator") return true;
-            if (Opravneni == "policista" && (requiredRole == "policista" || requiredRole == "obcan")) return true;
-            if (Opravneni == "obcan" && requiredRole == "obcan") return true;
+            if (uzivatel.Opravneni == "administrator") return true;
+            if (uzivatel.Opravneni == "policista" && (requiredRole == "policista" || requiredRole == "obcan")) return true;
+            if (uzivatel.Opravneni == "obcan" && requiredRole == "obcan") return true;
             return false;
         }
 
@@ -152,7 +151,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
             else if (Window.Ucet.IsSelected)
             {
-                NacistDetailUzivatele(IdUzivatele);
+                NacistDetailUzivatele(uzivatel.Id);
             }
             else if (Window.Admin.IsSelected)
             {
@@ -221,7 +220,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-
                 string sql = "SELECT jmeno, prijmeni, ulice, postovnismerovacicislo, obec, zeme " +
                              "FROM obcane o JOIN adresy a ON o.idadresy = a.idadresy " +
                              "WHERE o.iduzivatele = :id";
@@ -234,12 +232,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     {
                         if (reader.Read())
                         {
-                            // Naplnění vašich TextBoxů z XAML
-                            Window.JmenoTxt.Text = reader["jmeno"].ToString();
-                            Window.PrijmeniTxt.Text = reader["prijmeni"].ToString();
-                            Window.UliceTxt.Text = reader["ulice"].ToString();
-                            Window.PSCTxt.Text = reader["postovnismerovacicislo"].ToString();
-                            Window.ZemeTxt.Text = reader["zeme"].ToString();
+                            Window.JmenoTxt.Clear();
+                            Window.PrijmeniTxt.Clear();
+                            Window.UsernameTxt.Clear();
+                            Window.HesloTxt.Clear();
+                            Window.JmenoTxt.Text = "Dodělat";
+                            Window.PrijmeniTxt.Text = "Dodělat";
+                            Window.UsernameTxt.Text = uzivatel.Username;
+                            Window.HesloTxt.Text = uzivatel.Password;
+                            //Window.ZemeTxt.Text = reader["zeme"].ToString();
                         }
                     }
                 }
@@ -304,7 +305,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
         private void NacistMojePrestupky()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
             try
             {
                 string sql = @"
@@ -314,7 +315,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
                     // Použijeme DataAdapter pro naplnění tabulky
-                    cmd.Parameters.Add(new OracleParameter("id", IdUzivatele));
+                    cmd.Parameters.Add(new OracleParameter("id", uzivatel.Id));
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
