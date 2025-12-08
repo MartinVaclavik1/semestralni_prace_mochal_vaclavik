@@ -196,7 +196,7 @@
                     <Label Content="Země:" Grid.Row="5" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>-->
 
                     <TextBox x:Name="JmenoTxt" Text="{Binding Uzivatel.Jmeno, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,5,0,5" Grid.Column="1"/>
-                    <TextBox x:Name="PrijmeniTxt" Text="{Binding Uzivatel.Prijemni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Margin="0,5,0,5"/>
+                    <TextBox x:Name="PrijmeniTxt" Text="{Binding Uzivatel.Prijmeni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Margin="0,5,0,5"/>
                     <TextBox x:Name="UsernameTxt" Text="{Binding Uzivatel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Margin="0,5,0,5"/>
                     <TextBox x:Name="HesloTxt" Text="{Binding Uzivatel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" Margin="0,5,0,5"/>
                     <!--<TextBox x:Name="PSCTxt" Text="000 00" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="4" Grid.Column="1" Margin="0,5,0,5"/>

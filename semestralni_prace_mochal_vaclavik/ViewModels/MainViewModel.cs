@@ -24,6 +24,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public MainViewModel(MainWindow window)
         {
             this.Window = window;
+            //wallis45548 - policista
+            //martin25922 - obcan => hesla jsou stejné číslo
             //user.Id = 80;
             //user.Opravneni = "obcan";
             try
@@ -57,11 +59,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             try
             {
                 // SQL dotaz - Načteme uživatele pro Admin Grid
+                //id ,prihlasovacijmeno, nazevopravneni, o_jmeno, o_prijmeni, p_jmeno, p_prijmeni
                 string sql = @"
-                        select u.iduzivatele id, u.prihlasovacijmeno, u.heslo , o.nazevopravneni opravneni from uzivatele u
-                        left join opravneni o using(idopravneni)
-                        where LOWER(u.prihlasovacijmeno) = LOWER(:prihlJmeno) 
-                        and u.heslo = :heslo"; // jméno není case sensitive. Heslo je
+                        select * from datauctuview where id = 
+                        (select prihlaseni(:prihlJmeni,:heslo) from Dual)";
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
@@ -74,9 +75,21 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         {
                             uzivatel.Id = int.Parse(reader["id"].ToString());
                             uzivatel.Username = reader["prihlasovacijmeno"].ToString();
-                            uzivatel.Password = reader["heslo"].ToString();
-                            uzivatel.Opravneni = reader["opravneni"].ToString();
-                            Window.Okna.SelectedIndex = 0;
+                            //uzivatel.Password = reader["heslo"].ToString();
+                            uzivatel.Opravneni = reader["nazevopravneni"].ToString();
+                            
+                            if(uzivatel.Opravneni == "obcan")
+                            {
+                                uzivatel.Jmeno = reader["o_jmeno"].ToString();
+                                uzivatel.Prijmeni = reader["o_prijmeni"].ToString();
+
+                            }
+                            else
+                            {
+                                uzivatel.Jmeno = reader["p_jmeno"].ToString();
+                                uzivatel.Prijmeni = reader["p_prijmeni"].ToString();
+                            }
+                                Window.Okna.SelectedIndex = 0;
                             Window.UsernameTextBox.Clear();
                             Window.PasswordBox.Clear();
 

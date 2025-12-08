@@ -36,7 +36,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             set
             {
                 prijmeni = value;
-                this.OnPropertyChanged("Prijemni");
+                this.OnPropertyChanged("Prijmeni");
             }
         }
         private string username { get; set; }
