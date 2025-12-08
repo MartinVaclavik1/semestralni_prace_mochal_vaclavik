@@ -206,7 +206,35 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 NacistOkrsky();
             }
+            else if (Window.LogovaciTabulka.IsSelected)
+            {
+                NacistLogovaciTabulku();
+            }
         }
+
+        private void NacistLogovaciTabulku()
+        {
+            try
+            {
+                // SQL dotaz - spojíme Policistu s Hodností, aby to hezky vypadalo
+                string sql = @"
+                        SELECT * FROM logovaci_tabulka
+                        ";
+
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    // Použijeme DataAdapter pro naplnění tabulky
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    Window.logovaciTabulkaGrid.ItemsSource = dt.DefaultView;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
+            }
+            }
 
         private void NacistKontakty()
         {

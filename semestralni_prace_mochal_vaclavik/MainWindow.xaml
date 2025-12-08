@@ -287,6 +287,12 @@
                 </StackPanel>
             </Grid>
         </TabItem>
+        <TabItem x:Name="LogovaciTabulka" Header="Logovací tabulka">
+            <Grid Margin="20">
+                <DataGrid x:Name="logovaciTabulkaGrid" d:ItemsSource="{d:SampleData ItemCount=5}" AutoGenerateColumns="True"/>
+                
+            </Grid>
+        </TabItem>
         <TabItem x:Name="Prihlaseni" Header="Přihlášení">
             <Grid Margin="20">
                 <Grid.RowDefinitions>
