@@ -26,7 +26,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             set
             {
                 jmeno = value;
-                this.OnPropertyChanged("Jmeno");
+                this.OnPropertyChanged(nameof(Jmeno));
             }
         }
         private string prijmeni { get; set; }
