@@ -60,7 +60,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- Nadpis -->
-                <Label x:Name="KontaktyNazev" Content="Kontakty" Margin="10,5,0,5" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="5"/>
+                <Label x:Name="KontaktyNazev" Content="Policisté" Margin="10,5,0,5" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="5"/>
 
                 <!-- Filtry -->
                 <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10" Grid.ColumnSpan="5">
@@ -250,19 +250,39 @@
                     <Button x:Name="ZrusFiltry_btn_admin" Content="Zrušit filtry" Click="Button_Click_1" Width="86" Height="20" Background="Red" Foreground="White" FontSize="11"/>
                 </StackPanel>
 
-                <!-- Řádek 1: DataGrid (OPRÁVNĚNÍ: Admin) -->
-                <DataGrid x:Name="UzivateleGrid" 
-                          Grid.Row="1"
-                          d:ItemsSource="{d:SampleData ItemCount=5}" 
-                          Margin="15,0,15,0" 
-                          SelectionChanged="DataGrid_SelectionChanged" Grid.ColumnSpan="3" SelectionMode="Single" ScrollViewer.CanContentScroll="True"/>
+                <DataGrid x:Name="UzivateleGrid"
+          Grid.Row="1"
+          d:ItemsSource="{d:SampleData ItemCount=5}"
+          Margin="15,0,15,0"
+          SelectionChanged="DataGrid_SelectionChanged"
+          Grid.ColumnSpan="5"
+          SelectionMode="Single"
+          ScrollViewer.CanContentScroll="True"
+          AutoGenerateColumns="True">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Emulovat"
+                                            Command="{Binding DataContext.EmulovatCommand, 
+                                                              RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                            CommandParameter="{Binding}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
 
-                <!-- Řádek 2: Akce (Emulovat, Upravit, Přidat - OPRÁVNĚNÍ: Admin) -->
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Upravit" Command="{Binding UpravitCommand}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
                 <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="15,0,15,0" VerticalAlignment="Center"
                             Grid.ColumnSpan="3">
                     <Label Content="Akce:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                    <Button x:Name="btnEmulovat" Content="Emulovat" Command="{Binding EmulovatCommand}" Width="100" Height="20" Margin="0,0,6,0"/>
-                    <Button x:Name="btnUpravit" Content="Upravit" Width="100" Height="20" Margin="0,0,6,0"/>
                     <Button x:Name="btnPridat" Content="Přidat" Width="100" Height="20"/>
                 </StackPanel>
             </Grid>

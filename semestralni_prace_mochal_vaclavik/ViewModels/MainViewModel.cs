@@ -1,10 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Oracle.ManagedDataAccess.Client;
+using semestralni_prace_mochal_vaclavik.Tridy;
 using System.Data;
+using System.Reflection.Metadata;
 using System.Windows;
 using MessageBox = System.Windows.MessageBox;
-using semestralni_prace_mochal_vaclavik.Tridy;
 
 namespace semestralni_prace_mochal_vaclavik.ViewModels
 {
@@ -26,8 +27,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             this.Window = window;
             //wallis45548 - policista
             //martin25922 - obcan => hesla jsou stejné číslo
-            //user.Id = 80;
-            //user.Opravneni = "obcan";
+            uzivatel.Id = 80;
+            uzivatel.Opravneni = "administrator";
             try
             {
                 conn = new OracleConnection(connectionString);
@@ -45,11 +46,31 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// otevře nové okno kde se nebude nic commitovat do db - půjde jen zobrazovat data
         /// </summary>
         [RelayCommand]
-        public async void Emulovat()
+        public async void Emulovat(object radek)
         {
-            var emulace = new MainWindow();
-            /*((MainViewModel)emulace.DataContext).IdUzivatele =*/
-            emulace.Show();
+            // převod na DataRowView
+            var uzivatelRow = radek as DataRowView;
+
+            if (uzivatelRow != null)
+            {
+                try
+                {
+                    // Získání ID: Použijte přesný název sloupce z databáze (zde předpokládáme IDUZIVATELE)
+                    string jmeno = uzivatelRow["PrihlasovaciJmeno"].ToString();
+                    string heslo = uzivatelRow["Heslo"].ToString();
+
+                    MessageBox.Show($"Emulace uživatele: {jmeno}");
+
+                    var emulace = new MainWindow();
+                    ((MainViewModel)emulace.DataContext).Prihlas((jmeno,heslo));
+                    emulace.Show();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Chyba při získávání dat řádku: " + ex.Message);
+                }
+            }
+            
         }
 
         [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniPrihlaseni))]
@@ -75,7 +96,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         {
                             uzivatel.Id = int.Parse(reader["id"].ToString());
                             uzivatel.Username = reader["prihlasovacijmeno"].ToString();
-                            //uzivatel.Password = reader["heslo"].ToString();
                             uzivatel.Opravneni = reader["nazevopravneni"].ToString();
                             
                             if(uzivatel.Opravneni == "obcan")
@@ -268,10 +288,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                // SQL dotaz - Načteme uživatele pro Admin Grid
+                // SQL dotaz - Přidáno 'u.heslo'
                 string sql = @"
-                        SELECT u.prihlasovacijmeno, o.nazevopravneni FROM uzivatele u
-                        left join opravneni o using(idopravneni)"; // Změněno na "uzivatel" pro Admin Grid
+                    SELECT u.iduzivatele, u.prihlasovacijmeno, u.heslo, o.nazevopravneni 
+                    FROM uzivatele u
+                    LEFT JOIN opravneni o USING(idopravneni)";
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
@@ -281,6 +302,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     adapter.Fill(dt);
 
                     // Napojení dat do vašeho DataGridu v XAML
+                    // Předpokládám, že 'Window' je statická reference na okno, kde se DataGrid nachází
                     Window.UzivateleGrid.ItemsSource = dt.DefaultView;
                 }
             }
