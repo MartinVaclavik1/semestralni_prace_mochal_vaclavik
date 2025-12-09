@@ -62,5 +62,15 @@ namespace semestralni_prace_mochal_vaclavik
         {
 
         }
+
+        private void HlidkyGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

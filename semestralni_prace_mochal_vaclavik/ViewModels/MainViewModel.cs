@@ -5,6 +5,7 @@ using semestralni_prace_mochal_vaclavik.Tridy;
 using System.Data;
 using System.Reflection.Metadata;
 using System.Windows;
+using System.Windows.Controls;
 using MessageBox = System.Windows.MessageBox;
 
 namespace semestralni_prace_mochal_vaclavik.ViewModels
@@ -27,8 +28,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             this.Window = window;
             //wallis45548 - policista
             //martin25922 - obcan => hesla jsou stejné číslo
-            uzivatel.Id = 80;
-            uzivatel.Opravneni = "administrator";
+            //uzivatel.Id = 80;
+            //uzivatel.Opravneni = "administrator";
             try
             {
                 conn = new OracleConnection(connectionString);
@@ -41,6 +42,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
 
         }
+        public Visibility PolicistaControlsVisible => IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility AdminControlsVisible => IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility UcetEditVisible => IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
 
         /// <summary>
         /// otevře nové okno kde se nebude nic commitovat do db - půjde jen zobrazovat data
@@ -129,6 +133,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
             }
             nastavOknaPodleOpravneni();
+            OnPropertyChanged(nameof(PolicistaControlsVisible));
+            OnPropertyChanged(nameof(AdminControlsVisible));
+            OnPropertyChanged(nameof(UcetEditVisible));
+        }
+
+        [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniRegistrace))]
+        private void Registrovat()
+        {
+            MessageBox.Show("Baller");
         }
 
         [RelayCommand]
@@ -138,12 +151,27 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             uzivatel.Opravneni = string.Empty;
             Window.Okna.SelectedIndex = 0;
             nastavOknaPodleOpravneni();
+            OnPropertyChanged(nameof(PolicistaControlsVisible));
+            OnPropertyChanged(nameof(AdminControlsVisible));
+            OnPropertyChanged(nameof(UcetEditVisible));
         }
 
 
         public bool ZkontrolovatVyplneniPrihlaseni()
         {
             return Window.UsernameTextBox.Text != string.Empty && Window.PasswordBox.Text != string.Empty;
+        }
+
+        private bool ZkontrolovatVyplneniRegistrace()
+        {
+            return Window.jmenoTxt.Text != string.Empty
+                && Window.prijmeniTxt.Text != string.Empty
+                && Window.opTxt.Text != string.Empty
+                && Window.pscTxt.Text != string.Empty
+                && Window.uliceTxt.Text != string.Empty
+                && Window.cpTxt.Text != string.Empty
+                && Window.obecTxt.Text != string.Empty
+                && Window.zemeTxt.Text != string.Empty;
         }
 
         private void nastavOknaPodleOpravneni()
@@ -161,9 +189,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
             //// Celý obsah na kartě Admin (DataGrid, Filtry, Akční tlačítka)
             Window.Admin.Visibility = IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
+            Window.LogovaciTabulka.Visibility = IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
             //public Visibility AdminControlsVisible => IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
 
             Window.Prihlaseni.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
+            Window.Registrace.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
 
         }
         private bool IsAtLeastRole(string requiredRole)
@@ -218,7 +248,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 // SQL dotaz - spojíme Policistu s Hodností, aby to hezky vypadalo
                 string sql = @"
-                        SELECT * FROM logovaci_tabulka
+                        SELECT * FROM logovaci_tabulkaview
                         ";
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
@@ -243,8 +273,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 // SQL dotaz - spojíme Policistu s Hodností, aby to hezky vypadalo
                 string sql = @"
                         SELECT
-                            p.jmeno AS Jméno,
-                            p.prijmeni AS Příjmení,
+                            p.jmeno AS Jmeno,
+                            p.prijmeni AS Prijmeni,
                             h.nazev AS Hodnost,
                             s.nazev AS Stanice
                         FROM 
@@ -267,7 +297,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
 
                     Window.KontaktyGrid.ItemsSource = dt.DefaultView;
-
 
                 }
             }
@@ -297,8 +326,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                             Window.PrijmeniTxt.Clear();
                             Window.UsernameTxt.Clear();
                             Window.HesloTxt.Clear();
-                            Window.JmenoTxt.Text = "Dodělat";
-                            Window.PrijmeniTxt.Text = "Dodělat";
+                            Window.JmenoTxt.Text = uzivatel.Jmeno;
+                            Window.PrijmeniTxt.Text = uzivatel.Prijmeni;
                             Window.UsernameTxt.Text = uzivatel.Username;
                             Window.HesloTxt.Text = uzivatel.Password;
                             //Window.ZemeTxt.Text = reader["zeme"].ToString();
@@ -347,7 +376,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                 // SQL dotaz - Načteme přestupky pro Přestupky Grid
                 string sql = @"
-                        SELECT * FROM prestupky_obcanu";
+                        SELECT * FROM prestupkyview";
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
@@ -368,11 +397,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
         private void NacistMojePrestupky()
         {
-            //throw new NotImplementedException();
             try
             {
                 string sql = @"
-                        SELECT * FROM prestupky_obcanu
+                        SELECT * FROM prestupkyview
                         where idobcana = :id";
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
@@ -398,8 +426,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
 
                 // SQL dotaz - Načtení hlídek (příklad)
-                string sql = @"
-                SELECT * FROM hlidky";
+                string sql = @"select h.nazevhlidky, t.nazev from hlidky h
+                               join typy_hlidky t using(idtypu)";
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
@@ -437,6 +465,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show("Chyba při načítání okrsků: " + ex.Message);
             }
+        }
+        private void Hledat()
+        {
+            MessageBox.Show("Hledání");
         }
     }
 }
