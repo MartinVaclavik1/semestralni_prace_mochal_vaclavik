@@ -23,6 +23,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public DataView kontaktyItemsSource;
         [ObservableProperty]
         private Uzivatel uzivatel = new Uzivatel();
+        [ObservableProperty]
+        private Registrace novaRegistrace = new Registrace();
         public MainViewModel(MainWindow window)
         {
             this.Window = window;
@@ -66,7 +68,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     MessageBox.Show($"Emulace uživatele: {jmeno}");
 
                     var emulace = new MainWindow();
-                    ((MainViewModel)emulace.DataContext).Prihlas((jmeno,heslo));
+                    ((MainViewModel)emulace.DataContext).Prihlas((jmeno, heslo));
                     emulace.Show();
                 }
                 catch (Exception ex)
@@ -74,7 +76,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     MessageBox.Show("Chyba při získávání dat řádku: " + ex.Message);
                 }
             }
-            
+
         }
 
         [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniPrihlaseni))]
@@ -101,8 +103,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                             uzivatel.Id = int.Parse(reader["id"].ToString());
                             uzivatel.Username = reader["prihlasovacijmeno"].ToString();
                             uzivatel.Opravneni = reader["nazevopravneni"].ToString();
-                            
-                            if(uzivatel.Opravneni == "obcan")
+
+                            if (uzivatel.Opravneni == "obcan")
                             {
                                 uzivatel.Jmeno = reader["o_jmeno"].ToString();
                                 uzivatel.Prijmeni = reader["o_prijmeni"].ToString();
@@ -113,13 +115,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                                 uzivatel.Jmeno = reader["p_jmeno"].ToString();
                                 uzivatel.Prijmeni = reader["p_prijmeni"].ToString();
                             }
-                                Window.Okna.SelectedIndex = 0;
+                            Window.Okna.SelectedIndex = 0;
                             Window.UsernameTextBox.Clear();
                             Window.PasswordBox.Clear();
 
                             Task.Run(() => { MessageBox.Show("Uživatel přihlášen"); });
-                            
-                            
+
+
                         }
                         else
                         {
@@ -136,12 +138,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             OnPropertyChanged(nameof(PolicistaControlsVisible));
             OnPropertyChanged(nameof(AdminControlsVisible));
             OnPropertyChanged(nameof(UcetEditVisible));
-        }
-
-        [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniRegistrace))]
-        private void Registrovat()
-        {
-            MessageBox.Show("Baller");
         }
 
         [RelayCommand]
@@ -164,6 +160,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
         private bool ZkontrolovatVyplneniRegistrace()
         {
+            return true;
             return Window.jmenoTxt.Text != string.Empty
                 && Window.prijmeniTxt.Text != string.Empty
                 && Window.opTxt.Text != string.Empty
@@ -205,6 +202,79 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             return false;
         }
 
+        [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniRegistrace))]
+        private void Registrovat()
+        {
+            int newIdUzivatele = 0;
+
+            try
+            {
+                string sqlAdresa = @"
+                    INSERT INTO ADRESY (ULICE, CISLOPOPISNE, POSTOVNISMEROVACICISLO, OBEC, ZEME) 
+                    VALUES (:ulice, :cp, :psc, :obec, :zeme)
+                    RETURNING IDADRESY INTO :newIdAdresy";
+
+                int newIdAdresy = 0;
+
+                using (OracleCommand cmdAdresa = new OracleCommand(sqlAdresa, conn))
+                {
+                    cmdAdresa.Parameters.Add("ulice", novaRegistrace.Ulice);
+                    cmdAdresa.Parameters.Add("cp", novaRegistrace.CisloPopisne.HasValue ? (object)novaRegistrace.CisloPopisne.Value : DBNull.Value);
+                    cmdAdresa.Parameters.Add("psc", novaRegistrace.PSC);
+                    cmdAdresa.Parameters.Add("obec", novaRegistrace.Obec);
+                    cmdAdresa.Parameters.Add("zeme", novaRegistrace.Zeme);
+
+                    OracleParameter idParam = new OracleParameter("newIdAdresy", OracleDbType.Decimal, ParameterDirection.ReturnValue);
+                    cmdAdresa.Parameters.Add(idParam);
+
+                    cmdAdresa.ExecuteNonQuery();
+                    newIdAdresy = Convert.ToInt32(idParam.Value.ToString());
+                }
+
+                string sqlUzivatel = @"
+                    INSERT INTO UZIVATELE (PRIHLASOVACIJMENO, HESLO, IDOPRAVNENI)
+                    VALUES (:username, :heslo, 2)
+                    RETURNING IDUZIVATELE INTO :newIdUzivatele";
+
+                using (OracleCommand cmdUzivatel = new OracleCommand(sqlUzivatel, conn))
+                {
+                    cmdUzivatel.Parameters.Add("username", novaRegistrace.Username);
+                    cmdUzivatel.Parameters.Add("heslo", novaRegistrace.Heslo);
+
+                    // Parametr pro získání generovaného ID
+                    OracleParameter idUzivatelParam = new OracleParameter("newIdUzivatele", OracleDbType.Decimal, ParameterDirection.ReturnValue);
+                    cmdUzivatel.Parameters.Add(idUzivatelParam);
+
+                    cmdUzivatel.ExecuteNonQuery();
+                    newIdUzivatele = Convert.ToInt32(idUzivatelParam.Value.ToString());
+                }
+
+                string sqlObcan = @"
+                    INSERT INTO OBCANE (JMENO, PRIJMENI, CISLOOP, IDADRESY, IDUZIVATELE)
+                    VALUES (:jmeno, :prijmeni, :cisloOP, :idAdresy, :idUzivatele)";
+
+                using (OracleCommand cmdObcan = new OracleCommand(sqlObcan, conn))
+                {
+                    cmdObcan.Parameters.Add("jmeno", novaRegistrace.Jmeno);
+                    cmdObcan.Parameters.Add("prijmeni", novaRegistrace.Prijmeni);
+                    cmdObcan.Parameters.Add("cisloOP", novaRegistrace.CisloOP.HasValue ? (object)novaRegistrace.CisloOP.Value : DBNull.Value);
+
+                    cmdObcan.Parameters.Add("idAdresy", newIdAdresy);
+                    cmdObcan.Parameters.Add("idUzivatele", newIdUzivatele);
+
+                    cmdObcan.ExecuteNonQuery();
+                }
+
+                MessageBox.Show($"Uživatel {novaRegistrace.Username} Heslo {novaRegistrace.Heslo}.", "Registrace", MessageBoxButton.OK, MessageBoxImage.Information);
+                Prihlas((novaRegistrace.Username, novaRegistrace.Heslo));
+                novaRegistrace.Clear();
+                
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Chyba při registraci: {ex.Message}", "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         [RelayCommand]
         private void ZmenaOkna()
         {
@@ -246,7 +316,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                // SQL dotaz - spojíme Policistu s Hodností, aby to hezky vypadalo
                 string sql = @"
                         SELECT * FROM logovaci_tabulkaview
                         ";
@@ -264,13 +333,12 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
             }
-            }
+        }
 
         private void NacistKontakty()
         {
             try
             {
-                // SQL dotaz - spojíme Policistu s Hodností, aby to hezky vypadalo
                 string sql = @"
                         SELECT
                             p.jmeno AS Jmeno,
@@ -289,7 +357,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
-                    // Použijeme DataAdapter pro naplnění tabulky
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
@@ -305,7 +372,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
             }
         }
-        // Příklad načtení detailu uživatele (pro záložku Můj účet)
         private void NacistDetailUzivatele(int idUzivatele)
         {
             try
@@ -345,7 +411,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                // SQL dotaz - Přidáno 'u.heslo'
                 string sql = @"
                     SELECT u.iduzivatele, u.prihlasovacijmeno, u.heslo, o.nazevopravneni 
                     FROM uzivatele u
@@ -353,13 +418,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
-                    // Použijeme DataAdapter pro naplnění tabulky
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
 
-                    // Napojení dat do vašeho DataGridu v XAML
-                    // Předpokládám, že 'Window' je statická reference na okno, kde se DataGrid nachází
                     Window.UzivateleGrid.ItemsSource = dt.DefaultView;
                 }
             }
@@ -374,18 +436,16 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             try
             {
 
-                // SQL dotaz - Načteme přestupky pro Přestupky Grid
+
                 string sql = @"
                         SELECT * FROM prestupkyview";
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
-                    // Použijeme DataAdapter pro naplnění tabulky
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
 
-                    // Napojení dat do vašeho DataGridu v XAML
                     Window.PrestupkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
@@ -405,14 +465,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
-                    // Použijeme DataAdapter pro naplnění tabulky
+
                     cmd.Parameters.Add(new OracleParameter("id", uzivatel.Id));
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
-
-                    // Napojení dat do vašeho DataGridu v XAML
-                    //Window.PrestupkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -425,7 +482,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             try
             {
 
-                // SQL dotaz - Načtení hlídek (příklad)
                 string sql = @"select h.nazevhlidky, t.nazev from hlidky h
                                join typy_hlidky t using(idtypu)";
 
@@ -434,7 +490,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
-                    // Vazba na nový DataGrid
                     Window.HlidkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
@@ -447,8 +502,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-
-                // SQL dotaz - Načtení okrsků
                 string sql = @"
                 SELECT * FROM okrsky";
 
@@ -466,9 +519,34 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show("Chyba při načítání okrsků: " + ex.Message);
             }
         }
-        private void Hledat()
+        [RelayCommand]
+        public void UpravitKontakty(object radek)
         {
-            MessageBox.Show("Hledání");
+            // Převod na DataRowView, protože DataGrid je vázán na DataView
+            var policistaRow = radek as DataRowView;
+
+            if (policistaRow != null)
+            {
+                try
+                {
+                    int idPolicisty = Convert.ToInt32(policistaRow["IDPOLICISTY"]);
+
+                    string jmeno = policistaRow["JMENO"].ToString();
+                    string prijmeni = policistaRow["PRIJMENI"].ToString();
+
+                    MessageBox.Show($"Otevírám úpravu pro policistu: {jmeno} {prijmeni} (ID: {idPolicisty})");
+
+
+                }
+                catch (KeyNotFoundException)
+                {
+                    MessageBox.Show("Chyba: Sloupec s ID policisty nebyl nalezen v datovém zdroji. Ujistěte se, že SQL dotaz vrací ID!", "Chyba datového klíče");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Chyba při zpracování úpravy kontaktu: " + ex.Message);
+                }
+            }
         }
     }
 }

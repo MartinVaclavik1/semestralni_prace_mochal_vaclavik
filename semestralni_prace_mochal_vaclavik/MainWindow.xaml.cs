@@ -46,31 +46,33 @@ namespace semestralni_prace_mochal_vaclavik
 
 
         // Metody na tlačítka
-        private void TextBox_TextChanged_2(object sender, TextChangedEventArgs e) { /* Zde bude filtrování kontaktů */ }
-        private void PotvrditBtn_Click(object sender, RoutedEventArgs e) { /* Uložení změn */ }
-        private void Button_Click_1(object sender, RoutedEventArgs e) { }
-        private void Button_Click(object sender, RoutedEventArgs e) { }
-        //private void Button_Click_2(object sender, RoutedEventArgs e) { }
-        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e){ }
+        //private void TextBox_TextChanged_2(object sender, TextChangedEventArgs e) { /* Zde bude filtrování kontaktů */ }
+        //private void PotvrditBtn_Click(object sender, RoutedEventArgs e) { /* Uložení změn */ }
+        //private void Button_Click_1(object sender, RoutedEventArgs e) { }
+        //private void Button_Click(object sender, RoutedEventArgs e) { }
+        ////private void Button_Click_2(object sender, RoutedEventArgs e) { }
+        //private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e){ }
 
-        private void HledatTxt_kontakty_TextChanged(object sender, TextChangedEventArgs e)
-        {
+        //private void HledatTxt_kontakty_TextChanged(object sender, TextChangedEventArgs e)
+        //{
 
-        }
+        //}
 
-        private void KontaktyGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+        //private void KontaktyGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
 
-        }
+        //}
 
-        private void HlidkyGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+        //private void HlidkyGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
 
-        }
+        //}
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
+        //private void Button_Click_2(object sender, RoutedEventArgs e)
+        //{
+        //}
+        
+        
 
-        }
     }
 }

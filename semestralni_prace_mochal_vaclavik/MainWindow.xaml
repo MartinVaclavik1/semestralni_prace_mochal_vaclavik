@@ -54,29 +54,24 @@
                     <ColumnDefinition Width="259*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="7*"/>
                 </Grid.RowDefinitions>
 
                 <!-- Nadpis -->
-                <Label x:Name="KontaktyNazev" Content="Policisté" Margin="10,5,0,5" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="5"/>
+                <Label x:Name="KontaktyNazev" Content="Policisté" Margin="10,5,0,15" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="5"/>
 
                 <!-- Filtry -->
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10" Grid.ColumnSpan="5">
-                    <TextBox x:Name="Hledat" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,5,0" TextChanged="HledatTxt_kontakty_TextChanged"/>
-                    <Button x:Name="Zobrazit_btn_kontakty" Content="Zobrazit" Click="Button_Click" Width="69" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,5,0"/>
-                    <Button x:Name="ZrusFiltry_btn_kontakty" Content="Zrušit filtry" Click="Button_Click_1" Width="85" Height="20" Background="Red" Foreground="White" FontSize="11"/>
-                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,47,10,10" Grid.ColumnSpan="5"/>
 
                 <!-- DataGrid -->
-                <DataGrid x:Name="KontaktyGrid" Grid.Row="2" 
+                <DataGrid x:Name="KontaktyGrid" Grid.Row="1" 
           d:ItemsSource="{d:SampleData ItemCount=5}" 
           Margin="10,0,10,10" 
           Grid.ColumnSpan="5" 
           SelectionMode="Single" 
           IsManipulationEnabled="False"
-          AutoGenerateColumns="False">
+          AutoGenerateColumns="False" SelectionChanged="KontaktyGrid_SelectionChanged">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Jméno" Binding="{Binding JMENO}" Width="*"/>
                         <DataGridTextColumn Header="Příjmení" Binding="{Binding PRIJMENI}" Width="*"/>
@@ -86,7 +81,7 @@
                         <DataGridTemplateColumn Header="" Width="SizeToCells">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Upravit" Command="{Binding UpravitCommand}" Margin="5,0" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
+                                    <Button Content="Upravit" Command="{Binding UpravitKontaktyCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -100,23 +95,17 @@
                  Visibility="{Binding OkrskyVisible}">
             <Grid Background="White">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="7*"/>
                 </Grid.RowDefinitions>
 
                 <!-- Nadpis -->
                 <Label x:Name="OkrskyNazev" Content="Přehled Okrsků" Margin="10,5,0,5" FontSize="20" FontWeight="Bold"/>
 
                 <!-- Filtry -->
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10">
-                    <TextBox x:Name="HledatTxt_okrsky" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,5,0"/>
-                    <Button x:Name="Zobrazit_btn_okrsky" Content="Zobrazit" Click="Button_Click" Width="69" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,5,0" Command="{Binding HledatCommand}"/>
-                    <Button x:Name="ZrusFiltry_btn_okrsky" Content="Zrušit filtry" Click="Button_Click_1" Width="85" Height="20" Background="Red" Foreground="White" FontSize="11"/>
-                </StackPanel>
 
                 <!-- DataGrid -->
-                <DataGrid x:Name="OkrskyGrid" Grid.Row="2" 
+                <DataGrid x:Name="OkrskyGrid" Grid.Row="1" 
                   d:ItemsSource="{d:SampleData ItemCount=5}" 
                   Margin="10,0,10,10"
                   AutoGenerateColumns="False">
@@ -142,30 +131,24 @@
                  Visibility="{Binding PrestupkyVisible}">
             <Grid Background="White">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="214*"/>
-                    <ColumnDefinition Width="595*"/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="7*"/>
                 </Grid.RowDefinitions>
 
                 <!-- Nadpis -->
-                <Label x:Name="KontaktyNazev1" Content="Evidence Přestupků" Margin="20,5,0,5" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="2"/>
+                <Label x:Name="KontaktyNazev1" Content="Evidence Přestupků" Margin="20,5,0,5" FontSize="20" FontWeight="Bold"/>
 
                 <!-- Filtry -->
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10" Grid.ColumnSpan="2">
-                    <TextBox x:Name="HledatTxt_prestupky" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,5,0"/>
-                    <Button x:Name="Zobrazit_btn_prestupky" Content="Zobrazit" Click="Button_Click" Width="69" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,5,0"/>
-                    <Button x:Name="ZrusFiltry_btn_prestupky" Content="Zrušit filtry" Click="Button_Click_1" Width="85" Height="20" Background="Red" Foreground="White" FontSize="11"/>
-                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10"/>
 
                 <!-- DataGrid -->
                 <DataGrid x:Name="PrestupkyGrid" Grid.Row="2" 
                   d:ItemsSource="{d:SampleData ItemCount=5}" 
-                  Margin="10,0,10,10" 
-                  Grid.ColumnSpan="2"
+                  Margin="10,0,10,10"
                   AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Typ přestupku" Binding="{Binding PRESTUPEK}" Width="*"/>
@@ -173,8 +156,7 @@
                         <DataGridTextColumn Header="Jméno Občana" Binding="{Binding JMENOOBCANA}" Width="*"/>
                         <DataGridTextColumn Header="Poznámka" Binding="{Binding POZNAMKA}" Width="*"/>
 
-                        <DataGridTemplateColumn Header="" Width="SizeToCells"
-                    >
+                        <DataGridTemplateColumn Header="" Width="SizeToCells">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="Upravit" Command="{Binding UpravitCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
@@ -197,23 +179,18 @@
                  Visibility="{Binding HlidkyVisible}">
             <Grid Background="White">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="7*"/>
                 </Grid.RowDefinitions>
 
                 <!-- Nadpis -->
-                <Label Content="Evidence Hlídek" Margin="10,5,0,5" FontSize="20" FontWeight="Bold"/>
+                <Label Content="Evidence Hlídek" Margin="10,5,0,15" FontSize="20" FontWeight="Bold"/>
 
                 <!-- Filtry -->
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10">
-                    <TextBox x:Name="HledatTxt_hlidky" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,5,0"/>
-                    <Button x:Name="Zobrazit_btn_hlidky" Content="Zobrazit" Click="Button_Click" Width="69" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,5,0"/>
-                    <Button x:Name="ZrusFiltry_btn_hlidky" Content="Zrušit filtry" Click="Button_Click_1" Width="85" Height="20" Background="Red" Foreground="White" FontSize="11"/>
-                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10,47,10,10"/>
 
                 <!-- DataGrid -->
-                <DataGrid x:Name="HlidkyGrid" Grid.Row="2" 
+                <DataGrid x:Name="HlidkyGrid" Grid.Row="1" 
                   d:ItemsSource="{d:SampleData ItemCount=5}" 
                   Margin="10,0,10,10" 
                   AutoGenerateColumns="False">
@@ -283,7 +260,6 @@
                         HorizontalAlignment="Center" 
                         VerticalAlignment="Center" 
                         Width="100" 
-                        Click="PotvrditBtn_Click" 
                         FontWeight="Bold" 
                         IsEnabled="False" Height="20"/>
 
@@ -305,30 +281,18 @@
                  Visibility="{Binding AdminVisible}">
             <Grid Background="White">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="555*"/>
-                    <ColumnDefinition Width="13*"/>
-                    <ColumnDefinition Width="241*"/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- Řádek 0: Filtry a Zobrazení (OPRÁVNĚNÍ: Admin) -->
-                <StackPanel Orientation="Horizontal" Margin="15,10,15,10"
-                           Grid.ColumnSpan="3">
-                    <TextBox x:Name="HledatTxt_admin" Text="Hledat" VerticalAlignment="Center" Width="212" Height="20" Margin="0,0,6,0"/>
-                    <Button x:Name="Zobrazit_btn_admin" Content="Zobrazit" Click="Button_Click" Width="70" Height="20" Background="#FF0079FF" Foreground="White" FontWeight="Bold" FontSize="11" Margin="0,0,4,0"/>
-                    <Button x:Name="ZrusFiltry_btn_admin" Content="Zrušit filtry" Click="Button_Click_1" Width="86" Height="20" Background="Red" Foreground="White" FontSize="11"/>
-                </StackPanel>
 
                 <DataGrid x:Name="UzivateleGrid"
-                  Grid.Row="1"
                   d:ItemsSource="{d:SampleData ItemCount=5}"
-                  Margin="15,0,15,0"
-                  SelectionChanged="DataGrid_SelectionChanged"
-                  Grid.ColumnSpan="5"
+                  Margin="10,10,25,10"
                   SelectionMode="Single"
                   ScrollViewer.CanContentScroll="True"
                   AutoGenerateColumns="True">
@@ -353,8 +317,7 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="15,0,15,0" VerticalAlignment="Center"
-                            Grid.ColumnSpan="3">
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,0" VerticalAlignment="Center">
                     <Label Content="Akce:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
                     <Button x:Name="btnPridat" Content="Přidat" Width="100" Height="20"/>
                 </StackPanel>
@@ -367,29 +330,30 @@
             </Grid>
         </TabItem>
         <TabItem x:Name="Prihlaseni" Header="Přihlášení">
-            <Grid Margin="20">
+            <Grid Margin="10,0,0,0" HorizontalAlignment="Left" Width="779">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="29.96"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="130"/>
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="5*"/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Přihlašovací jméno:" VerticalAlignment="Center" Margin="0,0,10,10" Grid.Row="0" Grid.Column="0"/>
+                <TextBlock Text="Přihlašovací jméno:" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="278,0,0,0" Height="16" Width="101"/>
 
-                <TextBox x:Name="UsernameTextBox" Width="200" Margin="0,0,0,10" Grid.Row="0" Grid.Column="1"/>
+                <TextBox x:Name="UsernameTextBox" Margin="12,5,177,5" Grid.Row="0" Grid.Column="1"/>
 
-                <TextBlock Text="Heslo:" VerticalAlignment="Center" Margin="0,0,10,10" Grid.Row="1" Grid.Column="0"/>
+                <TextBlock Text="Heslo:" VerticalAlignment="Center" Margin="347,0,0,0" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" Height="16" Width="32"/>
 
                 <!--TODO předělat pak na passwordBox -->
-                <TextBox x:Name="PasswordBox" Width="200"  Margin="0,0,0,10" Grid.Row="1" Grid.Column="1"/>
+                <TextBox x:Name="PasswordBox"  Margin="12,5,177,5" Grid.Row="1" Grid.Column="1"/>
 
-                <Button Content="Přihlásit" Command="{Binding PrihlasCommand}" Width="100" HorizontalAlignment="Center" Margin="0,10,0,0" Grid.Row="2" Grid.ColumnSpan="2">
+                <Button Content="Přihlásit" Command="{Binding PrihlasCommand}" Width="100" HorizontalAlignment="Left" Margin="12,5,0,5" Grid.Row="2" Grid.Column="1">
                     <Button.CommandParameter>
                         <MultiBinding Converter="{StaticResource TupleConverter}">
                             <Binding ElementName="UsernameTextBox" Path="Text"/>
@@ -403,61 +367,67 @@
         <TabItem x:Name="Registrace" Header="Registrace">
             <Grid Margin="19,20,21,20" Background="White">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" MinHeight="40"/>
-                    <RowDefinition Height="Auto" MinHeight="261"/>
                     <RowDefinition/>
+                    <RowDefinition Height="10*"/>
                 </Grid.RowDefinitions>
 
-                <Label Content="Registrace Občana" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
+                <Label Content="Registrace" FontSize="16" FontWeight="Bold" Margin="338,2,337,331" Grid.RowSpan="2"/>
 
-                <StackPanel Width="483" HorizontalAlignment="Center" Margin="0,43,0,20" Grid.RowSpan="3">
+                <StackPanel Width="483" HorizontalAlignment="Center" Margin="0,2,0,12" Grid.Row="1">
 
-                    <StackPanel Orientation="Horizontal" Margin="0,2">
+                    <StackPanel Orientation="Horizontal" Margin="1,1">
                         <Label Content="Jméno:" Width="120"/>
-                        <TextBox x:Name="jmenoTxt" Text="{Binding NovyObcanJmeno, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
+                        <TextBox x:Name="jmenoTxt" Text="{Binding NovaRegistrace.Jmeno, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,2">
+                    <StackPanel Orientation="Horizontal" Margin="1,1">
                         <Label Content="Příjmení:" Width="120"/>
-                        <TextBox x:Name="prijmeniTxt" Text="{Binding NovyObcanPrijmeni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
+                        <TextBox x:Name="prijmeniTxt" Text="{Binding NovaRegistrace.Prijmeni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,2">
+                    <StackPanel Orientation="Horizontal" Margin="1,1">
                         <Label Content="Číslo OP:" Width="120"/>
-                        <TextBox x:Name="opTxt" Text="{Binding NovyObcanCisloOP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
+                        <TextBox x:Name="opTxt" Text="{Binding NovaRegistrace.CisloOP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,2">
+                    <StackPanel Orientation="Horizontal" Margin="1,1">
                         <Label Content="PSČ:" Width="120"/>
-                        <TextBox x:Name="pscTxt" Text="{Binding NovaAdresaUlice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
+                        <TextBox x:Name="pscTxt" Text="{Binding NovaRegistrace.PSC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,2">
+                    <StackPanel Orientation="Horizontal" Margin="1,1">
                         <Label Content="Ulice:" Width="120"/>
-                        <TextBox x:Name="uliceTxt" Text="{Binding NovaAdresaUlice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20" />
+                        <TextBox x:Name="uliceTxt" Text="{Binding NovaRegistrace.Ulice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20" />
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,2">
+                    <StackPanel Orientation="Horizontal" Margin="1,1">
                         <Label Content="Číslo popsiné:" Width="120"/>
-                        <TextBox x:Name="cpTxt" Text="{Binding NovaAdresaUlice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
+                        <TextBox x:Name="cpTxt" Text="{Binding NovaRegistrace.CisloPopisne, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,2">
-                        <Label Content="Obec:" Width="120"/>
-                        <TextBox x:Name="obecTxt" Text="{Binding NovaAdresaUlice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <Label Content="Země:" Width="120"/>
-                        <TextBox x:Name="zemeTxt" Text="{Binding NovaAdresaUlice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
-                    </StackPanel>
-                    <Button Content="Registrovat" 
-                    Command="{Binding RegistrovatCommand}"
-                    Width="150" 
-                    Height="30"/>
-                </StackPanel>
 
+                    <StackPanel Orientation="Horizontal" Margin="1,1">
+                        <Label Content="Obec:" Width="120"/>
+                        <TextBox x:Name="obecTxt" Text="{Binding NovaRegistrace.Obec, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="1,1">
+                        <Label Content="Země:" Width="120"/>
+                        <TextBox x:Name="zemeTxt" Text="{Binding NovaRegistrace.Zeme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="1,1">
+                        <Label Content="Uživatleské jméno:" Width="120"/>
+                        <TextBox x:Name="usernameTxt" Text="{Binding NovaRegistrace.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="1,1">
+                        <Label Content="Heslo:" Width="120"/>
+                        <TextBox x:Name="heslotxt" Text="{Binding NovaRegistrace.Heslo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
+                    </StackPanel>
+
+                    <Button Content="Registrovat" Command="{Binding RegistrovatCommand}" Width="150" Height="24"/>
+                </StackPanel>
             </Grid>
         </TabItem>
-
     </TabControl>
-
 </Window>
