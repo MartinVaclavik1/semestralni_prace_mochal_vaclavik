@@ -205,7 +205,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniRegistrace))]
         private void Registrovat()
         {
-            int newIdUzivatele = 0;
 
             try
             {
@@ -229,7 +228,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                     cmdAdresa.ExecuteNonQuery();
                 }
-
+                conn.Commit();
 
                 MessageBox.Show($"Uživatel {novaRegistrace.Username} Heslo {novaRegistrace.Heslo}.", "Registrace", MessageBoxButton.OK, MessageBoxImage.Information);
                 Prihlas((novaRegistrace.Username, novaRegistrace.Heslo));
@@ -247,10 +246,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             if (Window.Kontakty.IsSelected)
             {
                 NacistKontakty();
-            }
-            else if (Window.Ucet.IsSelected)
-            {
-                NacistDetailUzivatele(uzivatel.Id);
             }
             else if (Window.Admin.IsSelected)
             {
@@ -336,40 +331,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
-            }
-        }
-        private void NacistDetailUzivatele(int idUzivatele)
-        {
-            try
-            {
-                string sql = "SELECT jmeno, prijmeni, ulice, postovnismerovacicislo, obec, zeme " +
-                             "FROM obcane o JOIN adresy a ON o.idadresy = a.idadresy " +
-                             "WHERE o.iduzivatele = :id";
-
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    cmd.Parameters.Add(new OracleParameter("id", idUzivatele));
-
-                    using (OracleDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            Window.JmenoTxt.Clear();
-                            Window.PrijmeniTxt.Clear();
-                            Window.UsernameTxt.Clear();
-                            Window.HesloTxt.Clear();
-                            Window.JmenoTxt.Text = uzivatel.Jmeno;
-                            Window.PrijmeniTxt.Text = uzivatel.Prijmeni;
-                            Window.UsernameTxt.Text = uzivatel.Username;
-                            Window.HesloTxt.Text = uzivatel.Password;
-                            //Window.ZemeTxt.Text = reader["zeme"].ToString();
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba detailu: " + ex.Message);
             }
         }
 
