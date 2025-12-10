@@ -68,6 +68,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     MessageBox.Show($"Emulace uživatele: {jmeno}");
 
                     var emulace = new MainWindow();
+                    emulace.Title = emulace.Title + " - EMULACE";
                     ((MainViewModel)emulace.DataContext).Prihlas((jmeno, heslo));
                     emulace.Show();
                 }
