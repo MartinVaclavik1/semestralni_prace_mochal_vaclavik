@@ -209,61 +209,27 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
             try
             {
-                string sqlAdresa = @"
-                    INSERT INTO ADRESY (ULICE, CISLOPOPISNE, POSTOVNISMEROVACICISLO, OBEC, ZEME) 
-                    VALUES (:ulice, :cp, :psc, :obec, :zeme)
-                    RETURNING IDADRESY INTO :newIdAdresy";
-
-                int newIdAdresy = 0;
-
-                using (OracleCommand cmdAdresa = new OracleCommand(sqlAdresa, conn))
+                using (OracleCommand cmdAdresa = new OracleCommand("vytvor_uzivatele_obcana", conn))
                 {
-                    cmdAdresa.Parameters.Add("ulice", novaRegistrace.Ulice);
-                    cmdAdresa.Parameters.Add("cp", novaRegistrace.CisloPopisne.HasValue ? (object)novaRegistrace.CisloPopisne.Value : DBNull.Value);
-                    cmdAdresa.Parameters.Add("psc", novaRegistrace.PSC);
-                    cmdAdresa.Parameters.Add("obec", novaRegistrace.Obec);
-                    cmdAdresa.Parameters.Add("zeme", novaRegistrace.Zeme);
+                    cmdAdresa.CommandType = CommandType.StoredProcedure;
+                    cmdAdresa.BindByName = true;
 
-                    OracleParameter idParam = new OracleParameter("newIdAdresy", OracleDbType.Decimal, ParameterDirection.ReturnValue);
-                    cmdAdresa.Parameters.Add(idParam);
+                    cmdAdresa.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = novaRegistrace.Username;
+                    cmdAdresa.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = novaRegistrace.Heslo;
+                    cmdAdresa.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = novaRegistrace.Jmeno;
+                    cmdAdresa.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = novaRegistrace.Prijmeni;
+
+                    cmdAdresa.Parameters.Add("p_cisloop", OracleDbType.Decimal).Value = Convert.ToInt32(novaRegistrace.CisloOP);
+                    cmdAdresa.Parameters.Add("p_psc", OracleDbType.Char, 5).Value = novaRegistrace.PSC;
+                    cmdAdresa.Parameters.Add("p_ulice", OracleDbType.Varchar2).Value = novaRegistrace.Ulice;
+                    cmdAdresa.Parameters.Add("p_cislopopisne", OracleDbType.Decimal).Value = Convert.ToInt32(novaRegistrace.CisloPopisne);
+
+                    cmdAdresa.Parameters.Add("p_obec", OracleDbType.Varchar2).Value = novaRegistrace.Obec;
+                    cmdAdresa.Parameters.Add("p_zeme", OracleDbType.Varchar2).Value = novaRegistrace.Zeme;
 
                     cmdAdresa.ExecuteNonQuery();
-                    newIdAdresy = Convert.ToInt32(idParam.Value.ToString());
                 }
 
-                string sqlUzivatel = @"
-                    INSERT INTO UZIVATELE (PRIHLASOVACIJMENO, HESLO, IDOPRAVNENI)
-                    VALUES (:username, :heslo, 2)
-                    RETURNING IDUZIVATELE INTO :newIdUzivatele";
-
-                using (OracleCommand cmdUzivatel = new OracleCommand(sqlUzivatel, conn))
-                {
-                    cmdUzivatel.Parameters.Add("username", novaRegistrace.Username);
-                    cmdUzivatel.Parameters.Add("heslo", novaRegistrace.Heslo);
-
-                    // Parametr pro získání generovaného ID
-                    OracleParameter idUzivatelParam = new OracleParameter("newIdUzivatele", OracleDbType.Decimal, ParameterDirection.ReturnValue);
-                    cmdUzivatel.Parameters.Add(idUzivatelParam);
-
-                    cmdUzivatel.ExecuteNonQuery();
-                    newIdUzivatele = Convert.ToInt32(idUzivatelParam.Value.ToString());
-                }
-
-                string sqlObcan = @"
-                    INSERT INTO OBCANE (JMENO, PRIJMENI, CISLOOP, IDADRESY, IDUZIVATELE)
-                    VALUES (:jmeno, :prijmeni, :cisloOP, :idAdresy, :idUzivatele)";
-
-                using (OracleCommand cmdObcan = new OracleCommand(sqlObcan, conn))
-                {
-                    cmdObcan.Parameters.Add("jmeno", novaRegistrace.Jmeno);
-                    cmdObcan.Parameters.Add("prijmeni", novaRegistrace.Prijmeni);
-                    cmdObcan.Parameters.Add("cisloOP", novaRegistrace.CisloOP.HasValue ? (object)novaRegistrace.CisloOP.Value : DBNull.Value);
-
-                    cmdObcan.Parameters.Add("idAdresy", newIdAdresy);
-                    cmdObcan.Parameters.Add("idUzivatele", newIdUzivatele);
-
-                    cmdObcan.ExecuteNonQuery();
-                }
 
                 MessageBox.Show($"Uživatel {novaRegistrace.Username} Heslo {novaRegistrace.Heslo}.", "Registrace", MessageBoxButton.OK, MessageBoxImage.Information);
                 Prihlas((novaRegistrace.Username, novaRegistrace.Heslo));

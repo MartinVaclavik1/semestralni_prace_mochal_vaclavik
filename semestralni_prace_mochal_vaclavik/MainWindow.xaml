@@ -71,7 +71,7 @@
           Grid.ColumnSpan="5" 
           SelectionMode="Single" 
           IsManipulationEnabled="False"
-          AutoGenerateColumns="False" SelectionChanged="KontaktyGrid_SelectionChanged">
+          AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Jméno" Binding="{Binding JMENO}" Width="*"/>
                         <DataGridTextColumn Header="Příjmení" Binding="{Binding PRIJMENI}" Width="*"/>
