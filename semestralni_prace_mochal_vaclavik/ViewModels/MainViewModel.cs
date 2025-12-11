@@ -107,11 +107,14 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         {
                             uzivatel.Id = int.Parse(reader["id"].ToString());
                             uzivatel.Username = reader["prihlasovacijmeno"].ToString();
-                            uzivatel.ObrazekBytes = nactiByteZBLOB(reader.GetOracleBlob(2));    //2 = pozice blob z view (začíná 0)
-                            if (uzivatel.ObrazekBytes != null) 
-                            { 
+                            var blob = reader.GetOracleBlob(2); //2 = pozice blob z view (začíná 0)
+                            if (!blob.IsNull)
+                            {
+                                uzivatel.ObrazekBytes = nactiByteZBLOB(blob);
                                 uzivatel.Obrazek = vytvorObrazek(uzivatel.ObrazekBytes);
-                            }   
+                            }
+                            
+                              
                             uzivatel.Opravneni = reader["nazevopravneni"].ToString();
 
                             if (uzivatel.Opravneni == "obcan")
