@@ -200,18 +200,18 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             Window.Kontakty.Visibility = IsAtLeastRole("obcan") ? Visibility.Visible : Visibility.Collapsed;
             Window.Ucet.Visibility = IsAtLeastRole("obcan") ? Visibility.Visible : Visibility.Collapsed;
+            Window.MojePrestupky.Visibility = uzivatel.Opravneni == "obcan" ? Visibility.Visible : Visibility.Collapsed;
             //// Tlačítko Potvrdit na Můj účet (Policista a Admin mohou editovat)
             //public Visibility UcetEditVisible => IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
 
             Window.Okrsky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
             Window.Prestupky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
-            Window.MojePrestupky.Visibility = uzivatel.Opravneni == "obcan" ? Visibility.Visible : Visibility.Collapsed;
-
             Window.Hlidky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
 
             //// Celý obsah na kartě Admin (DataGrid, Filtry, Akční tlačítka)
             Window.Admin.Visibility = IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
             Window.LogovaciTabulka.Visibility = IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
+            Window.SystemovyKatalog.Visibility = IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
             //public Visibility AdminControlsVisible => IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
 
             Window.Prihlaseni.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
@@ -295,6 +295,33 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show($"Chyba při registraci: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            //try
+            //{
+            //    using (OracleCommand cmdAdresa = new OracleCommand("aktualizuj_ucet", conn))
+            //    {
+
+
+            //        cmdAdresa.CommandType = CommandType.StoredProcedure;
+            //        cmdAdresa.BindByName = true;
+
+            //        cmdAdresa.Parameters.Add("p_id", OracleDbType.Int32).Value = uzivatel.Id;
+            //        cmdAdresa.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatel.Username;
+            //        cmdAdresa.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatel.Password;
+            //        cmdAdresa.Parameters.Add("p_obrazek", OracleDbType.Blob).Value = uzivatel.ObrazekBytes;
+
+
+            //        cmdAdresa.ExecuteNonQuery();
+            //    }
+            //    conn.Commit();
+
+            //    MessageBox.Show($"Uživatel {Uzivatel.Username} Heslo {Uzivatel.Password}.", "Aktualizace", MessageBoxButton.OK, MessageBoxImage.Information);
+            //    novaRegistrace.Clear();
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show($"Chyba při registraci: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
         }
         [RelayCommand]
         private void ZmenaOkna()
@@ -326,6 +353,32 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             else if (Window.LogovaciTabulka.IsSelected)
             {
                 NacistLogovaciTabulku();
+            }
+            else if (Window.SystemovyKatalog.IsSelected)
+            {
+                NacistSystemovyKatalog();
+            }
+        }
+
+        private void NacistSystemovyKatalog()
+        {
+            try
+            {
+                string sql = @"
+                        SELECT * FROM systemovy_katalogview
+                        ";
+
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    Window.systemovyKatalogGrid.ItemsSource = dt.DefaultView;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
             }
         }
 
@@ -510,12 +563,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 try
                 {
-                    int idPolicisty = Convert.ToInt32(policistaRow["IDPOLICISTY"]);
-
-                    string jmeno = policistaRow["JMENO"].ToString();
-                    string prijmeni = policistaRow["PRIJMENI"].ToString();
-
-                    MessageBox.Show($"Otevírám úpravu pro policistu: {jmeno} {prijmeni} (ID: {idPolicisty})");
+                   
 
 
                 }

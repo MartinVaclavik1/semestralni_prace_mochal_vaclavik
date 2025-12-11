@@ -7,8 +7,8 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="Informační systém Policie České Rapubliky" 
-        Height="450" 
-        Width="815">
+        Height="460" 
+        Width="800">
 
     <Window.Resources>
         <local:TupleConverter x:Key="TupleConverter"/>
@@ -59,7 +59,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- Nadpis -->
-                <Label x:Name="KontaktyNazev" Content="Policisté" Margin="10,5,0,15" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="5"/>
+                <Label x:Name="KontaktyNazev" Content="Policisté" Margin="10,10,0,0" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="5"/>
 
                 <!-- Filtry -->
                 <StackPanel Orientation="Horizontal" Margin="10,47,10,10" Grid.ColumnSpan="5"/>
@@ -67,7 +67,7 @@
                 <!-- DataGrid -->
                 <DataGrid x:Name="KontaktyGrid" Grid.Row="1" 
           d:ItemsSource="{d:SampleData ItemCount=5}" 
-          Margin="10,0,10,10" 
+          Margin="10,14,10,14" 
           Grid.ColumnSpan="5" 
           SelectionMode="Single" 
           IsManipulationEnabled="False"
@@ -140,7 +140,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- Nadpis -->
-                <Label x:Name="KontaktyNazev1" Content="Evidence Přestupků" Margin="20,5,0,5" FontSize="20" FontWeight="Bold"/>
+                <Label x:Name="KontaktyNazev1" Content="Evidence Přestupků" Margin="20,0,0,5" FontSize="20" FontWeight="Bold"/>
 
                 <!-- Filtry -->
                 <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,10,10"/>
@@ -334,6 +334,12 @@
         <TabItem x:Name="LogovaciTabulka" Header="Logovací tabulka">
             <Grid Margin="20">
                 <DataGrid x:Name="logovaciTabulkaGrid" d:ItemsSource="{d:SampleData ItemCount=5}" AutoGenerateColumns="True"/>
+
+            </Grid>
+        </TabItem>
+        <TabItem x:Name="SystemovyKatalog" Header="Systémový katalog">
+            <Grid Margin="20">
+                <DataGrid x:Name="systemovyKatalogGrid" d:ItemsSource="{d:SampleData ItemCount=5}" AutoGenerateColumns="True"/>
 
             </Grid>
         </TabItem>
