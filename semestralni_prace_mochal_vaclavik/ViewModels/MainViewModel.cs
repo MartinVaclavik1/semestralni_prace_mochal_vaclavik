@@ -119,7 +119,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                             if (uzivatel.Opravneni == "obcan")
                             {
-                                uzivatel.Jmeno = reader["o_jmeno"].ToString();
+                                Uzivatel.Jmeno = reader["o_jmeno"].ToString();
                                 uzivatel.Prijmeni = reader["o_prijmeni"].ToString();
 
                             }
@@ -168,13 +168,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         private void Odhlas()
         {
-            uzivatel.Id = 0;
-            uzivatel.Opravneni = string.Empty;
+            Uzivatel.Resetuj();
             Window.Okna.SelectedIndex = 0;
             nastavOknaPodleOpravneni();
             OnPropertyChanged(nameof(PolicistaControlsVisible));
             OnPropertyChanged(nameof(AdminControlsVisible));
             OnPropertyChanged(nameof(UcetEditVisible));
+
         }
 
 
@@ -581,16 +581,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     MessageBox.Show($"Chyba při odstraňování obrázku: {ex.Message}", "Chyba");
                 }
             }
-        }
-
-        private void OdebratObrazekZDB()
-        {
-            
-        }
-
-        private void UlozitObrazekDoDB(byte[] imageBytes)
-        {
-           
         }
     }
 }

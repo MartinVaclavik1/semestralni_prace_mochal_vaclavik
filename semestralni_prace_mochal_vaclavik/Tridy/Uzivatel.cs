@@ -70,8 +70,8 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 this.OnPropertyChanged("Opravneni");
             }
         }
-        private BitmapImage obrazek { get; set; }
-        public  BitmapImage Obrazek
+        private BitmapImage? obrazek { get; set; }
+        public  BitmapImage? Obrazek
         {
             get { return obrazek; }
             set
@@ -80,9 +80,23 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 this.OnPropertyChanged("Obrazek");
             }
         }
-        public byte[] ObrazekBytes { get; set; }
+        public byte[]? ObrazekBytes { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void Resetuj()
+        {
+            Id= 0;
+            Jmeno = String.Empty;
+            Prijmeni = String.Empty;
+            Username = String.Empty;
+            Password = String.Empty;
+            Opravneni = String.Empty;
+            Obrazek = null;
+            ObrazekBytes = null;
+        }
+
+        
 
         private void OnPropertyChanged(string propertyName)
         {
