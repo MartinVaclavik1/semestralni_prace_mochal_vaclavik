@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
 using semestralni_prace_mochal_vaclavik.Tridy;
 using System.Data;
 using System.IO;
@@ -106,10 +107,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         {
                             uzivatel.Id = int.Parse(reader["id"].ToString());
                             uzivatel.Username = reader["prihlasovacijmeno"].ToString();
-                            //uzivatel.ObrazekBytes = reader.GetOracleBlob(["obrazek"]);
+                            uzivatel.ObrazekBytes = nactiByteZBLOB(reader.GetOracleBlob(2));    //2 = pozice blob z view (začíná 0)
                             if (uzivatel.ObrazekBytes != null) 
                             { 
-                            //uzivatel.Obrazek = vytvorObrazek(uzivatel.ObrazekBytes);
+                                uzivatel.Obrazek = vytvorObrazek(uzivatel.ObrazekBytes);
                             }   
                             uzivatel.Opravneni = reader["nazevopravneni"].ToString();
 
@@ -147,6 +148,18 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             OnPropertyChanged(nameof(PolicistaControlsVisible));
             OnPropertyChanged(nameof(AdminControlsVisible));
             OnPropertyChanged(nameof(UcetEditVisible));
+        }
+
+        private byte[] nactiByteZBLOB(OracleBlob imgBlob)
+        {
+            if (imgBlob == null)
+                return null;
+            // Create byte array to read the blob into
+            byte[] imgBytes = new byte[imgBlob.Length];
+            // Read the blob into the byte array
+            imgBlob.Read(imgBytes, 0, (int)imgBlob.Length);
+
+            return imgBytes;
         }
 
         [RelayCommand]
