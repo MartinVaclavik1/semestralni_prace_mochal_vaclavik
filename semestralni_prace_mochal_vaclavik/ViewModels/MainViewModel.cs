@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.VisualBasic;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 using semestralni_prace_mochal_vaclavik.Tridy;
@@ -250,12 +251,12 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                     cmdAdresa.Parameters.Add("p_obec", OracleDbType.Varchar2).Value = novaRegistrace.Obec;
                     cmdAdresa.Parameters.Add("p_zeme", OracleDbType.Varchar2).Value = novaRegistrace.Zeme;
-
+                    
                     cmdAdresa.ExecuteNonQuery();
                 }
                 conn.Commit();
 
-                MessageBox.Show($"Uživatel {novaRegistrace.Username} Heslo {novaRegistrace.Heslo}.", "Registrace", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Uživatel {NovaRegistrace.Username} Heslo {novaRegistrace.Heslo}.", "Registrace", MessageBoxButton.OK, MessageBoxImage.Information);
                 Prihlas((novaRegistrace.Username, novaRegistrace.Heslo));
                 novaRegistrace.Clear();
                 
@@ -410,18 +411,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 string sql = @"
                         SELECT
-                            p.jmeno AS Jmeno,
-                            p.prijmeni AS Prijmeni,
-                            h.nazev AS Hodnost,
-                            s.nazev AS Stanice
+                            *
                         FROM 
-                            policiste p
-                        INNER JOIN 
-                            hodnosti h ON p.idhodnosti = h.idhodnosti
-                        INNER JOIN 
-                            policejni_stanice s ON p.idstanice = s.idstanice
-                        ORDER BY 
-                            p.prijmeni, h.nazev
+                            kontaktyView
                         ";
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
@@ -429,8 +421,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
-
-
 
                     Window.KontaktyGrid.ItemsSource = dt.DefaultView;
 

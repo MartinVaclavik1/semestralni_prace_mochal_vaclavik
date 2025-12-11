@@ -76,6 +76,7 @@
                         <DataGridTextColumn Header="Jméno" Binding="{Binding JMENO}" Width="*"/>
                         <DataGridTextColumn Header="Příjmení" Binding="{Binding PRIJMENI}" Width="*"/>
                         <DataGridTextColumn Header="Hodnost" Binding="{Binding HODNOST}" Width="*"/>
+                        <DataGridTextColumn Header="Jméno nadřízeného" Binding="{Binding NADRIZENY}" Width="*"/>
                         <DataGridTextColumn Header="Stanice" Binding="{Binding STANICE}" Width="2*"/>
 
                         <DataGridTemplateColumn Header="" Width="SizeToCells">
