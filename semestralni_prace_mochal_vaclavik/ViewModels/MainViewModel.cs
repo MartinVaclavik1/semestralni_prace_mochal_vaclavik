@@ -3,9 +3,14 @@ using CommunityToolkit.Mvvm.Input;
 using Oracle.ManagedDataAccess.Client;
 using semestralni_prace_mochal_vaclavik.Tridy;
 using System.Data;
+using System.IO;
 using System.Reflection.Metadata;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using MessageBox = System.Windows.MessageBox;
 
 namespace semestralni_prace_mochal_vaclavik.ViewModels
@@ -41,6 +46,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
+            Prihlas(("Oli","12345"));
             nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
 
         }
@@ -61,7 +67,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 try
                 {
-                    // Získání ID: Použijte přesný název sloupce z databáze (zde předpokládáme IDUZIVATELE)
                     string jmeno = uzivatelRow["PrihlasovaciJmeno"].ToString();
                     string heslo = uzivatelRow["Heslo"].ToString();
 
@@ -86,8 +91,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             //udělat funkci v databázi která vrátí uživatele?
             try
             {
-                // SQL dotaz - Načteme uživatele pro Admin Grid
-                //id ,prihlasovacijmeno, nazevopravneni, o_jmeno, o_prijmeni, p_jmeno, p_prijmeni
                 string sql = @"
                         select * from datauctuview where id = 
                         (select prihlaseni(:prihlJmeni,:heslo) from Dual)";
@@ -103,6 +106,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         {
                             uzivatel.Id = int.Parse(reader["id"].ToString());
                             uzivatel.Username = reader["prihlasovacijmeno"].ToString();
+                            //uzivatel.ObrazekBytes = reader.GetOracleBlob(["obrazek"]);
+                            if (uzivatel.ObrazekBytes != null) 
+                            { 
+                            //uzivatel.Obrazek = vytvorObrazek(uzivatel.ObrazekBytes);
+                            }   
                             uzivatel.Opravneni = reader["nazevopravneni"].ToString();
 
                             if (uzivatel.Opravneni == "obcan")
@@ -242,6 +250,37 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
         [RelayCommand]
+        private async Task AktualizovatUcet()
+        {
+            try
+            {
+                using (OracleCommand cmdAdresa = new OracleCommand("aktualizuj_ucet", conn))
+                {
+
+
+                        cmdAdresa.CommandType = CommandType.StoredProcedure;
+                        cmdAdresa.BindByName = true;
+
+                        cmdAdresa.Parameters.Add("p_id", OracleDbType.Int32).Value = uzivatel.Id;
+                        cmdAdresa.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatel.Username;
+                        cmdAdresa.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatel.Password;
+                        cmdAdresa.Parameters.Add("p_obrazek", OracleDbType.Blob).Value = uzivatel.ObrazekBytes;
+
+
+                    cmdAdresa.ExecuteNonQuery();
+                }
+                conn.Commit();
+
+                MessageBox.Show($"Uživatel {Uzivatel.Username} Heslo {Uzivatel.Password}.", "Aktualizace", MessageBoxButton.OK, MessageBoxImage.Information);
+                novaRegistrace.Clear();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Chyba při registraci: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        [RelayCommand]
         private void ZmenaOkna()
         {
             if (Window.Kontakty.IsSelected)
@@ -284,7 +323,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
-                    // Použijeme DataAdapter pro naplnění tabulky
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
@@ -438,7 +476,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
-                    // Vazba na nový DataGrid
                     Window.OkrskyGrid.ItemsSource = dt.DefaultView;
                 }
             }
@@ -450,7 +487,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public void UpravitKontakty(object radek)
         {
-            // Převod na DataRowView, protože DataGrid je vázán na DataView
+
             var policistaRow = radek as DataRowView;
 
             if (policistaRow != null)
@@ -475,6 +512,69 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     MessageBox.Show("Chyba při zpracování úpravy kontaktu: " + ex.Message);
                 }
             }
+        }
+        [RelayCommand]
+        private void NahratImg()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            openFileDialog.Filter = "Obrázky (*.jpg, *.jpeg, *.png)|*.jpg;*.jpeg;*.png|Všechny soubory (*.*)|*.*";
+
+                try
+                {
+                    openFileDialog.ShowDialog();
+                    byte[] imageBytes = File.ReadAllBytes(openFileDialog.FileName);
+                    Uzivatel.Obrazek = vytvorObrazek(imageBytes);
+                    Uzivatel.ObrazekBytes = imageBytes;
+
+                    MessageBox.Show("Profilový obrázek byl úspěšně nahrán a uložen.", "Úspěch");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Chyba při nahrávání obrázku: {ex.Message}", "Chyba");
+                }
+        }
+        private BitmapImage vytvorObrazek(byte[] imageBytes)
+        {
+            BitmapImage img = new BitmapImage();
+            using (MemoryStream stream = new MemoryStream(imageBytes))
+            {
+                img.BeginInit();
+                img.CacheOption = BitmapCacheOption.OnLoad;
+                img.StreamSource = stream;
+                img.EndInit();
+                img.Freeze();
+            }
+            return img;
+        }
+        [RelayCommand]
+        private void OdebratImg()
+        {
+            if (Uzivatel.Obrazek != null || true) 
+            {
+                try
+                {
+ 
+                    Uzivatel.Obrazek = null; 
+                    Uzivatel.ObrazekBytes = null;
+
+                    MessageBox.Show("Profilový obrázek byl úspěšně odstraněn.", "Úspěch");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Chyba při odstraňování obrázku: {ex.Message}", "Chyba");
+                }
+            }
+        }
+
+        private void OdebratObrazekZDB()
+        {
+            
+        }
+
+        private void UlozitObrazekDoDB(byte[] imageBytes)
+        {
+           
         }
     }
 }

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 namespace semestralni_prace_mochal_vaclavik.Tridy
 {
@@ -69,6 +70,17 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 this.OnPropertyChanged("Opravneni");
             }
         }
+        private BitmapImage obrazek { get; set; }
+        public  BitmapImage Obrazek
+        {
+            get { return obrazek; }
+            set
+            {
+                obrazek = value;
+                this.OnPropertyChanged("Obrazek");
+            }
+        }
+        public byte[] ObrazekBytes { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
