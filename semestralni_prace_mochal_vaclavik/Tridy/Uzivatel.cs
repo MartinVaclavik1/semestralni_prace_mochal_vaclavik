@@ -69,9 +69,6 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 if(opravneni == "obcan")
                 {
                     MessageBox.Show("Nelze měnit oprávnění občanovi","CHYBA");
-                }else if((opravneni == "administrator" || opravneni == "policista") && value == "obcan")
-                {
-                    MessageBox.Show("Nelze nastavit policistovi/administrátorovi roli občana", "CHYBA");
                 }
                 else
                 {
