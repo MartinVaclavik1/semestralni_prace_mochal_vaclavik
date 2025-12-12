@@ -50,7 +50,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
-            //Prihlas(("Oli","12345"));
+            Prihlas(("Oli","12345"));
             nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
 
         }
@@ -403,20 +403,20 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                using (OracleCommand cmdAdresa = new OracleCommand("aktualizuj_ucet", conn))
+                using (OracleCommand cmdUcet = new OracleCommand("aktualizuj_ucet", conn))
                 {
 
 
-                    cmdAdresa.CommandType = CommandType.StoredProcedure;
-                    cmdAdresa.BindByName = true;
+                    cmdUcet.CommandType = CommandType.StoredProcedure;
+                    cmdUcet.BindByName = true;
 
-                    cmdAdresa.Parameters.Add("p_id", OracleDbType.Int32).Value = uzivatel.Id;
-                    cmdAdresa.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatel.Username;
-                    cmdAdresa.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatel.Password;
-                    cmdAdresa.Parameters.Add("p_obrazek", OracleDbType.Blob).Value = uzivatel.ObrazekBytes;
+                    cmdUcet.Parameters.Add("p_id", OracleDbType.Int32).Value = uzivatel.Id;
+                    cmdUcet.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatel.Username;
+                    cmdUcet.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatel.Password;
+                    cmdUcet.Parameters.Add("p_obrazek", OracleDbType.Blob).Value = uzivatel.ObrazekBytes;
 
 
-                    cmdAdresa.ExecuteNonQuery();
+                    cmdUcet.ExecuteNonQuery();
                 }
                 conn.Commit();
 
@@ -431,19 +431,19 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     volanaMetoda = "aktualizuj_jmeno_prijmeni_policisty";
                 }
 
-                using (OracleCommand cmdAdresa = new OracleCommand(volanaMetoda, conn))
+                using (OracleCommand cmdJmenoPrijmeni = new OracleCommand(volanaMetoda, conn))
                 {
 
 
-                    cmdAdresa.CommandType = CommandType.StoredProcedure;
-                    cmdAdresa.BindByName = true;
+                    cmdJmenoPrijmeni.CommandType = CommandType.StoredProcedure;
+                    cmdJmenoPrijmeni.BindByName = true;
 
                     //p_idUzivatele number, p_jmeno varchar2, p_prijmeni varchar2
-                    cmdAdresa.Parameters.Add("p_idUzivatele", OracleDbType.Int32).Value = Uzivatel.Id;
-                    cmdAdresa.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = Uzivatel.Jmeno;
-                    cmdAdresa.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = Uzivatel.Prijmeni;
+                    cmdJmenoPrijmeni.Parameters.Add("p_idUzivatele", OracleDbType.Int32).Value = Uzivatel.Id;
+                    cmdJmenoPrijmeni.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = Uzivatel.Jmeno;
+                    cmdJmenoPrijmeni.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = Uzivatel.Prijmeni;
 
-                    cmdAdresa.ExecuteNonQuery();
+                    cmdJmenoPrijmeni.ExecuteNonQuery();
                 }
                 conn.Commit();
 
@@ -569,9 +569,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             try
             {
                 string sql = @"
-                    SELECT u.iduzivatele, u.prihlasovacijmeno, u.heslo, o.nazevopravneni 
-                    FROM uzivatele u
-                    LEFT JOIN opravneni o USING(idopravneni)";
+                    SELECT * 
+                    FROM vsichniUzivatele";
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
@@ -592,8 +591,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-
-
                 string sql = @"
                         SELECT * FROM prestupkyview";
 
@@ -623,7 +620,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
 
-                    cmd.Parameters.Add(new OracleParameter("id", uzivatel.Id));
+                    cmd.Parameters.Add(new OracleParameter("id", Uzivatel.Id));
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
@@ -639,8 +636,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             try
             {
 
-                string sql = @"select h.nazevhlidky, t.nazev from hlidky h
-                               join typy_hlidky t using(idtypu)";
+                string sql = @"select * from hlidkyView";
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
@@ -660,7 +656,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             try
             {
                 string sql = @"
-                SELECT * FROM okrsky";
+                SELECT * FROM okrskyView";
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
@@ -675,6 +671,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show("Chyba při načítání okrsků: " + ex.Message);
             }
         }
+
         [RelayCommand]
         public void UpravitKontakty(object radek)
         {
