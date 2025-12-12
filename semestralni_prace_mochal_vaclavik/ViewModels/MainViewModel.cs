@@ -191,7 +191,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                             await commitCmd.ExecuteNonQueryAsync();
                         }
                         MessageBox.Show("Uživatel byl úspěšně odebrán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-
+                        await NacistUzivatele();
                     }
                 }
                 catch (OracleException oraEx)
