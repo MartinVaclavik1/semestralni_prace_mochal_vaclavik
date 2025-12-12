@@ -31,12 +31,21 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [ObservableProperty]
         public DataView kontaktyItemsSource;
         [ObservableProperty]
+        private DataView uzivatelItemsSource;
+        [ObservableProperty]
         private Uzivatel uzivatel = new Uzivatel();
         [ObservableProperty]
         private Registrace novaRegistrace = new Registrace();
+        [ObservableProperty]
+        private DataTable opravneniZdroj;
+        [ObservableProperty]
+        private List<string> opravneniSeznamy = new List<string> { "administrator", "policista", "obcan" };
+
+
         public MainViewModel(MainWindow window)
         {
             this.Window = window;
+            
             //wallis45548 - policista
             //martin25922 - obcan => hesla jsou stejné číslo
             //uzivatel.Id = 80;
@@ -93,17 +102,17 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public async Task UpravitUzivatele(object radek)
         {
             var uzivatelRow = radek as DataRowView;
-            Console.WriteLine(uzivatelRow.ToString());
+            
             if (uzivatelRow != null)
             {
                 try
                 {
                     uzivatelRow.EndEdit();
 
-                    int id = Convert.ToInt32(uzivatelRow["IDUzivatele"]);
-                    string jmeno = uzivatelRow["PrihlasovaciJmeno"].ToString();
-                    string heslo = uzivatelRow["Heslo"].ToString();
-                    string nazevOpravneni = (uzivatelRow["NazevOpravneni"].ToString()).ToLower();
+                    int id = Convert.ToInt32(uzivatelRow["iduzivatele"]);
+                    string jmeno = uzivatelRow["prihlasovacijmeno"].ToString();
+                    string heslo = uzivatelRow["heslo"].ToString();
+                    string nazevOpravneni = (uzivatelRow["nazevopravneni"].ToString()).ToLower();
 
                     int typOpr = 0;
                     if (nazevOpravneni.Equals("administrator", StringComparison.OrdinalIgnoreCase)) typOpr = 3;
@@ -140,8 +149,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                                 await commitCmd.ExecuteNonQueryAsync();
                             }
 
-                            uzivatelRow.Row.AcceptChanges();
-
+                            await NacistUzivatele();
                             MessageBox.Show("Uživatel byl úspěšně upraven.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                         else
@@ -278,7 +286,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
+                MessageBox.Show("Chyba při načítání uživatele: " + ex.Message);
             }
             nastavOknaPodleOpravneni();
             OnPropertyChanged(nameof(PolicistaControlsVisible));
@@ -457,43 +465,66 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             //}
         }
         [RelayCommand]
-        private void ZmenaOkna()
+        private async Task ZmenaOkna()
         {
-            if (Window.Kontakty.IsSelected)
+            if (Window.Admin.IsSelected)
             {
-                NacistKontakty();
+                await NacistUzivatele();
             }
-            else if (Window.Admin.IsSelected)
+            else if (Window.Kontakty.IsSelected)
             {
-                NacistUzivatele();
+                await NacistKontakty();
             }
             else if (Window.Prestupky.IsSelected)
             {
-                NacistPrestupky();
+                await NacistPrestupky();
             }
             else if (Window.MojePrestupky.IsSelected)
             {
-                NacistMojePrestupky();
+                await NacistMojePrestupky();
             }
             else if (Window.Hlidky.IsSelected)
             {
-                NacistHlidky();
+                await NacistHlidky();
             }
             else if (Window.Okrsky.IsSelected)
             {
-                NacistOkrsky();
+                await NacistOkrsky();
             }
             else if (Window.LogovaciTabulka.IsSelected)
             {
-                NacistLogovaciTabulku();
+                await NacistLogovaciTabulku();
             }
             else if (Window.SystemovyKatalog.IsSelected)
             {
-                NacistSystemovyKatalog();
+                await NacistSystemovyKatalog();
             }
         }
 
-        private void NacistSystemovyKatalog()
+        private async Task NacistUzivatele()
+        {
+            try
+            {
+                string sql = @"
+                    SELECT u.iduzivatele, u.prihlasovacijmeno, u.heslo, o.nazevopravneni 
+                    FROM uzivatele u
+                    LEFT JOIN opravneni o ON u.idopravneni = o.idopravneni";
+
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    await Task.Run(() => adapter.Fill(dt));
+
+                    UzivatelItemsSource = dt.DefaultView;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
+            }
+        }
+        private async Task NacistSystemovyKatalog()
         {
             try
             {
@@ -515,7 +546,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        private void NacistLogovaciTabulku()
+        private async Task NacistLogovaciTabulku()
         {
             try
             {
@@ -537,7 +568,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        private void NacistKontakty()
+        private async Task NacistKontakty()
         {
             try
             {
@@ -564,31 +595,31 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        private void NacistUzivatele()
-        {
-            try
-            {
-                string sql = @"
-                    SELECT u.iduzivatele, u.prihlasovacijmeno, u.heslo, o.nazevopravneni 
-                    FROM uzivatele u
-                    LEFT JOIN opravneni o USING(idopravneni)";
+        //private void NacistUzivatele()
+        //{
+        //    try
+        //    {
+        //        string sql = @"
+        //            SELECT u.iduzivatele, u.prihlasovacijmeno, u.heslo, u.idopravneni, o.nazevopravneni 
+        //            FROM uzivatele u
+        //            LEFT JOIN opravneni o ON u.idopravneni = o.idopravneni";
 
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
+        //        using (OracleCommand cmd = new OracleCommand(sql, conn))
+        //        {
+        //            OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+        //            DataTable dt = new DataTable();
+        //            adapter.Fill(dt);
 
-                    Window.UzivateleGrid.ItemsSource = dt.DefaultView;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
-            }
-        }
+        //            Window.UzivateleGrid.ItemsSource = dt.DefaultView;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
+        //    }
+        //}
 
-        private void NacistPrestupky()
+        private async Task NacistPrestupky()
         {
             try
             {
@@ -612,7 +643,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        private void NacistMojePrestupky()
+        private async Task NacistMojePrestupky()
         {
             try
             {
@@ -634,7 +665,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show("Chyba při načítání přestupků: " + ex.Message);
             }
         }
-        private void NacistHlidky()
+        private async Task NacistHlidky()
         {
             try
             {
@@ -655,7 +686,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show("Chyba při načítání hlídek: " + ex.Message);
             }
         }
-        private void NacistOkrsky()
+        private async Task NacistOkrsky()
         {
             try
             {

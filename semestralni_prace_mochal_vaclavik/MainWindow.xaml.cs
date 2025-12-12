@@ -14,6 +14,7 @@ namespace semestralni_prace_mochal_vaclavik
         }
 
 
+
         //// Viditelné pro Občana a vyšší
         //public Visibility KontaktyVisible => IsAtLeastRole("Občan") ? Visibility.Visible : Visibility.Collapsed;
         //// Viditelné pro všechny přihlášené (předpoklad: Občan+)
@@ -71,8 +72,8 @@ namespace semestralni_prace_mochal_vaclavik
         //private void Button_Click_2(object sender, RoutedEventArgs e)
         //{
         //}
-        
-        
+
+
 
     }
 }
