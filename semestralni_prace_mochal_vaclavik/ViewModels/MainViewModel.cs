@@ -30,8 +30,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
         [ObservableProperty]
         public DataView kontaktyItemsSource;
+
         [ObservableProperty]
         private DataView uzivatelItemsSource;
+
         [ObservableProperty]
         private Uzivatel uzivatel = new Uzivatel();
         [ObservableProperty]
@@ -481,10 +483,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                string sql = @"
-                    SELECT u.iduzivatele, u.prihlasovacijmeno, u.heslo, o.nazevopravneni 
-                    FROM uzivatele u
-                    LEFT JOIN opravneni o ON u.idopravneni = o.idopravneni";
+                string sql = @"SELECT * FROM vsichniUzivatele";
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
