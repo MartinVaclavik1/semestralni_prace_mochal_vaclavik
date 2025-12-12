@@ -21,42 +21,94 @@ using MessageBox = System.Windows.MessageBox;
 
 namespace semestralni_prace_mochal_vaclavik.ViewModels
 {
+    /// <summary>
+    /// Hlavní ViewModel pro aplikaci.
+    /// Spravuje přihlášení, registraci, správu uživatelů a zobrazení dat na základě rolí.
+    /// </summary>
+    /// <remarks>
+    /// Třída obsluhuje komunikaci s databází Oracle, správu přihlášeného uživatele a dynamické zobrazení UI prvků
+    /// podle uživatelských oprávnění (obcan, policista, administrator).
+    /// 
+    /// <note>Heslo a údaje o připojení jsou hardcodovány.</note>
+    /// </remarks>
     public partial class MainViewModel : ObservableObject
     {
+        /// <summary>
+        /// Připojovací řetězec k databázi Oracle. (heslo by bylo jinde pokud by šlo o produkci)
+        /// </summary>
         private readonly string connectionString = "User Id=st72536;" +
                                     "Password=killer12;" +
                                     "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fei-sql3.upceucebny.cz)(PORT=1521))" +
                                     "(CONNECT_DATA=(SID=BDAS)));";
+
+        /// <summary>
+        /// Aktivní Oracle připojení k databázi.
+        /// </summary>
         private OracleConnection conn;
+
+        /// <summary>
+        /// Referenční na hlavní okno aplikace.
+        /// </summary>
         private MainWindow Window { get; set; }
 
+        /// <summary>
+        /// Zdroj dat pro DataGrid s kontakty.
+        /// </summary>
         [ObservableProperty]
         public DataView kontaktyItemsSource;
 
+        /// <summary>
+        /// Zdroj dat pro DataGrid se všemi uživateli.
+        /// </summary>
         [ObservableProperty]
         private DataView uzivatelItemsSource;
+
+        /// <summary>
+        /// Kolekce všech načtených uživatelů pro nastavení admina.
+        /// </summary>
         public ObservableCollection<Uzivatel> Users { get; set; } = new ObservableCollection<Uzivatel>();
 
+        /// <summary>
+        /// Aktuálně přihlášený uživatel.
+        /// </summary>
         [ObservableProperty]
         private Uzivatel uzivatel = new Uzivatel();
 
+        /// <summary>
+        /// Data pro nový účet během registrace.
+        /// </summary>
         [ObservableProperty]
         private Registrace novaRegistrace = new Registrace();
 
+        /// <summary>
+        /// Tabulka s oprávněními z databáze.
+        /// </summary>
         [ObservableProperty]
         private DataTable opravneniZdroj;
 
+        /// <summary>
+        /// Seznam dostupných typů oprávnění v systému.
+        /// </summary>
         [ObservableProperty]
         private List<string> opravneniSeznamy = new List<string> { "administrator", "policista", "obcan" };
 
 
+        // Přihlášení 
+        //wallis45548 - policista
+        //martin25922 - obcan => hesla jsou stejné číslo
+        //uzivatel.Id = 80;
+        //uzivatel.Opravneni = "administrator";
+
+        /// <summary>
+        /// Inicializuje novou instanci MainViewModel.
+        /// </summary>
+        /// <param name="window">Referenční na hlavní okno aplikace</param>
+        /// <remarks>
+        /// Nastavuje inicializace databázového připojení a automaticky přihlašuje testovacího uživatele.
+        /// </remarks>
         public MainViewModel(MainWindow window)
         {
             this.Window = window;
-            //wallis45548 - policista
-            //martin25922 - obcan => hesla jsou stejné číslo
-            //uzivatel.Id = 80;
-            //uzivatel.Opravneni = "administrator";
             try
             {
                 conn = new OracleConnection(connectionString);
@@ -66,17 +118,29 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
-            Prihlas(("Oli", "12345"));
+            //Prihlas(("Oli", "12345"));
             nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
-
         }
+
+        /// <summary>
+        /// Určuje viditelnost ovládacích prvků pro policisty.
+        /// </summary>
         public Visibility PolicistaControlsVisible => IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
+
+        /// <summary>
+        /// Určuje viditelnost ovládacích prvků pro administrátory.
+        /// </summary>
         public Visibility AdminControlsVisible => IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
+
+        /// <summary>
+        /// Určuje viditelnost editačních prvků účtu (viditelné pro policisty a vyšší).
+        /// </summary>
         public Visibility UcetEditVisible => IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
 
         /// <summary>
-        /// otevře nové okno kde se nebude nic commitovat do db - půjde jen zobrazovat data
+        /// Emuluje přihlášení jiného uživatele v novém okně bez commitování do databáze.
         /// </summary>
+        /// <param name="radek">Řádek z DataGridu s daty uživatele k emulaci</param>
         [RelayCommand]
         public async void Emulovat(object radek)
         {
@@ -108,7 +172,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        // Manipulace s uživately
+        /// <summary>
+        /// Aktualizuje údaje uživatele v databázi z Admin panelu.
+        /// </summary>
+        /// <param name="radek">Řádek s upravenými daty uživatele</param>
+        /// <remarks>Volá uloženou proceduru UPRAVY_UZIVATELU.upravitUzivatele.</remarks>
         [RelayCommand]
         public async Task UpravitUzivatele(object radek)
         {
@@ -154,6 +222,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 }
             }
         }
+
+        /// <summary>
+        /// Odebere uživatele z databáze po potvrzení.
+        /// </summary>
+        /// <param name="radek">Řádek s daty uživatele k odstranění</param>
+        /// <remarks>
+        /// Vyžaduje potvrzení od uživatele. Volá uloženou proceduru UPRAVY_UZIVATELU.smazUzivatele.
+        /// Nelze odstranit sám sebe.
+        /// </remarks>
         [RelayCommand]
         public async Task OdebratUzivatele(object radek)
         {
@@ -175,7 +252,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 if (result != MessageBoxResult.Yes) return;
 
                 try
-                {   //možná nebude fungovat z package.
+                {
                     using (OracleCommand cmd = new OracleCommand("UPRAVY_UZIVATELU.smazUzivatele", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
@@ -206,10 +283,18 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
+        /// <summary>
+        /// Přihlašuje uživatele do systému na základě přihlašovacích údajů.
+        /// </summary>
+        /// <param name="udaje">Tuple obsahující přihlašovací jméno a heslo</param>
+        /// <remarks>
+        /// Komunikuje s databází, načítá uživatelské údaje a profilový obrázek.
+        /// Automaticky nastavuje viditelnost UI prvků podle role uživatele.
+        /// </remarks>
+        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
         [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniPrihlaseni))]
         private void Prihlas((string PrihlasovaciJmeno, string Heslo) udaje)
         {
-            //udělat funkci v databázi která vrátí uživatele?
             try
             {
                 string sql = @"
@@ -227,7 +312,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         {
                             uzivatel.Id = int.Parse(reader["id"].ToString());
                             uzivatel.Username = reader["prihlasovacijmeno"].ToString();
-                            var blob = reader.GetOracleBlob(2); //2 = pozice blob z view (začíná 0)
+                            var blob = reader.GetOracleBlob(2);
                             if (!blob.IsNull)
                             {
                                 uzivatel.ObrazekBytes = nactiByteZBLOB(blob);
@@ -273,18 +358,30 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             OnPropertyChanged(nameof(UcetEditVisible));
         }
 
+        /// <summary>
+        /// Načítá binární data z Oracle BLOB objektu do pole bajtů.
+        /// </summary>
+        /// <param name="imgBlob">Oracle BLOB objekt s daty obrázku</param>
+        /// <returns>
+        /// Pole bajtů obsahující obsah BLOBu, nebo null pokud je BLOB prázdný
+        /// </returns>
         private byte[] nactiByteZBLOB(OracleBlob imgBlob)
         {
             if (imgBlob == null)
                 return null;
-            // Create byte array to read the blob into
+
             byte[] imgBytes = new byte[imgBlob.Length];
-            // Read the blob into the byte array
             imgBlob.Read(imgBytes, 0, (int)imgBlob.Length);
 
             return imgBytes;
         }
 
+        /// <summary>
+        /// Odhlašuje aktuálně přihlášeného uživatele z systému.
+        /// </summary>
+        /// <remarks>
+        /// Resetuje data uživatele a skrývá všechny prvky UI kromě přihlašovacího formuláře Registrace a karty Domu.
+        /// </remarks>
         [RelayCommand]
         private void Odhlas()
         {
@@ -297,15 +394,21 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
         }
 
-
+        /// <summary>
+        /// Ověřuje, zda jsou vyplněna všechna povinná pole přihlašovacího formuláře.
+        /// </summary>
+        /// <returns>true pokud jsou obě pole (uživatelské jméno i heslo) vyplněna, jinak false</returns>
         public bool ZkontrolovatVyplneniPrihlaseni()
         {
             return Window.UsernameTextBox.Text != string.Empty && Window.PasswordBox.Text != string.Empty;
         }
 
+        /// <summary>
+        /// Ověřuje, zda jsou vyplněna všechna povinná pole registračního formuláře.
+        /// </summary>
+        /// <returns>Vždy vrací true (validace není plně implementována)</returns>
         private bool ZkontrolovatVyplneniRegistrace()
         {
-            return true;
             return Window.jmenoTxt.Text != string.Empty
                 && Window.prijmeniTxt.Text != string.Empty
                 && Window.opTxt.Text != string.Empty
@@ -313,31 +416,47 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 && Window.uliceTxt.Text != string.Empty
                 && Window.cpTxt.Text != string.Empty
                 && Window.obecTxt.Text != string.Empty
-                && Window.zemeTxt.Text != string.Empty;
+                && Window.zemeTxt.Text != string.Empty
+                && Window.usernameTxt.Text != string.Empty
+                && Window.heslotxt.Text != string.Empty;
         }
 
+        /// <summary>
+        /// Nastavuje viditelnost všech oken a ovládacích prvků na základě role přihlášeného uživatele.
+        /// </summary>
+        /// <remarks>
+        /// Tato metoda řídí zobrazení všech sekcí UI podle hierarchie oprávnění:
+        /// - obcan: Vidí Kontakty, Můj účet, Moje přestupky
+        /// - policista: Vidí vše pro obcana + Okrsky, Přestupky, Hlídky
+        /// - administrator: Vidí vše + Admin panel, Logovací tabulka, Systémový katalog
+        /// </remarks>
         private void nastavOknaPodleOpravneni()
         {
             Window.Kontakty.Visibility = IsAtLeastRole("obcan") ? Visibility.Visible : Visibility.Collapsed;
             Window.Ucet.Visibility = IsAtLeastRole("obcan") ? Visibility.Visible : Visibility.Collapsed;
             Window.MojePrestupky.Visibility = uzivatel.Opravneni == "obcan" ? Visibility.Visible : Visibility.Collapsed;
-            //// Tlačítko Potvrdit na Můj účet (Policista a Admin mohou editovat)
-            //public Visibility UcetEditVisible => IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
 
             Window.Okrsky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
             Window.Prestupky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
             Window.Hlidky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
 
-            //// Celý obsah na kartě Admin (DataGrid, Filtry, Akční tlačítka)
             Window.Admin.Visibility = IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
             Window.LogovaciTabulka.Visibility = IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
             Window.SystemovyKatalog.Visibility = IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
-            //public Visibility AdminControlsVisible => IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
 
             Window.Prihlaseni.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
             Window.Registrace.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
 
         }
+
+        /// <summary>
+        /// Ověřuje, zda má uživatel požadované oprávnění nebo vyšší.
+        /// </summary>
+        /// <param name="requiredRole">Požadovaná role: "administrator", "policista", nebo "obcan"</param>
+        /// <returns>true pokud uživatel má požadované oprávnění nebo vyšší, jinak false</returns>
+        /// <remarks>
+        /// Hierarchie rolí: administrator > policista > obcan
+        /// </remarks>
         private bool IsAtLeastRole(string requiredRole)
         {
             // Kontrola role, pokud by se v budoucnu přidaly další úrovně
@@ -347,6 +466,14 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             return false;
         }
 
+        /// <summary>
+        /// Registruje nového občana v systému.
+        /// </summary>
+        /// <remarks>
+        /// Volá uloženou proceduru vytvor_uzivatele_obcana s údaji ze formuláře.
+        /// Po úspěšné registraci automaticky přihlašuje nového uživatele.
+        /// </remarks>
+        /// <exception cref="Exception">Vyvolána při chybě databáze</exception>
         [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniRegistrace))]
         private void Registrovat()
         {
@@ -385,6 +512,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show($"Chyba při registraci: {ex.Message}", "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        /// <summary>
+        /// Aktualizuje údaje přihlášeného uživatele v databázi (sekce "Můj účet").
+        /// </summary>
+        /// <remarks>
+        /// Aktualizuje heslo, uživatelské jméno a profilový obrázek voláním procedury aktualizuj_ucet.
+        /// Dále aktualizuje jméno a příjmení voláním příslušné procedury (obcan/policista).
+        /// </remarks>
+        /// <exception cref="Exception">Vyvolána při chybě databáze</exception>
         [RelayCommand]
         private async Task AktualizovatUcet()
         {
@@ -425,7 +561,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     cmdJmenoPrijmeni.CommandType = CommandType.StoredProcedure;
                     cmdJmenoPrijmeni.BindByName = true;
 
-                    //p_idUzivatele number, p_jmeno varchar2, p_prijmeni varchar2
+                    // p_idUzivatele number, p_jmeno varchar2, p_prijmeni varchar2
                     cmdJmenoPrijmeni.Parameters.Add("p_idUzivatele", OracleDbType.Int32).Value = Uzivatel.Id;
                     cmdJmenoPrijmeni.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = Uzivatel.Jmeno;
                     cmdJmenoPrijmeni.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = Uzivatel.Prijmeni;
@@ -443,6 +579,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show($"Chyba při registraci: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        /// <summary>
+        /// Načítá data z databáze při změně aktivní záložky.
+        /// </summary>
         [RelayCommand]
         private async Task ZmenaOkna()
         {
@@ -480,6 +620,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
+        /// <summary>
+        /// Načítá seznam všech uživatelů z databáze do kolekce.
+        /// </summary>
+        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
         private async Task NacistUzivatele()
         {
             try
@@ -513,6 +657,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
             }
         }
+
+        /// <summary>
+        /// Načítá systémový katalog z databáze a zobrazuje ho v dataGridu.
+        /// </summary>
+        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
         private async Task NacistSystemovyKatalog()
         {
             try
@@ -535,6 +684,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
+        /// <summary>
+        /// Načítá logovací tabulku z databáze.
+        /// </summary>
+        /// <remarks>
+        /// Zobrazuje historii akcí uživatelů v administračním panelu.
+        /// </remarks>
+        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
         private async Task NacistLogovaciTabulku()
         {
             try
@@ -557,6 +713,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
+        /// <summary>
+        /// Načítá seznam policistů z databáze.
+        /// </summary>
+        /// <remarks>
+        /// Zobrazuje policisty na kartě Kontakty.
+        /// </remarks>
+        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
         private async Task NacistKontakty()
         {
             try
@@ -584,6 +747,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
+        /// <summary>
+        /// Načítá seznam všech přestupků z databáze.
+        /// </summary>
+        /// <remarks>
+        /// Zobrazuje přestupky na kartě Přestupky (dostupné pro policisty a administrátory).
+        /// </remarks>
+        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
         private async Task NacistPrestupky()
         {
             try
@@ -606,6 +776,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
+        /// <summary>
+        /// Načítá přestupky přihlášeného občana.
+        /// </summary>
+        /// <remarks>
+        /// Dostupné pouze pro role "obcan". Filtruje data podle ID aktuálně přihlášeného uživatele.
+        /// </remarks>
+        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
         private async Task NacistMojePrestupky()
         {
             try
@@ -628,6 +805,12 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show("Chyba při načítání přestupků: " + ex.Message);
             }
         }
+
+        /// <summary>
+        /// Načítá seznam všech hlídek z databáze.
+        /// Zobrazuje hlídky na kartě Hlídky (dostupné pro policisty a administrátory).
+        /// </Summary>
+        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
         private async Task NacistHlidky()
         {
             try
@@ -648,6 +831,14 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show("Chyba při načítání hlídek: " + ex.Message);
             }
         }
+
+        /// <summary>
+        /// Načítá seznam všech okrsků z databáze.
+        /// </summary>
+        /// <remarks>
+        /// Zobrazuje okrsky na kartě Okrsky (dostupné pro policisty a administrátory).
+        /// </remarks>
+        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
         private async Task NacistOkrsky()
         {
             try
@@ -669,30 +860,14 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        [RelayCommand]
-        public void UpravitKontakty(object radek)
-        {
 
-            var policistaRow = radek as DataRowView;
-
-            if (policistaRow != null)
-            {
-                try
-                {
-
-
-
-                }
-                catch (KeyNotFoundException)
-                {
-                    MessageBox.Show("Chyba: Sloupec s ID policisty nebyl nalezen v datovém zdroji. Ujistěte se, že SQL dotaz vrací ID!", "Chyba datového klíče");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Chyba při zpracování úpravy kontaktu: " + ex.Message);
-                }
-            }
-        }
+        /// <summary>
+        /// Otevře dialog pro výběr a nahrání profilového obrázku.
+        /// </summary>
+        /// <remarks>
+        /// Přijímá formáty JPG, JPEG a PNG. Obrázek se uloží v paměti a bude commitován při úpravě účtu.
+        /// </remarks>
+        /// <exception cref="Exception">Vyvolána při chybě čtení souboru</exception>
         [RelayCommand]
         private void NahratImg()
         {
@@ -714,6 +889,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show($"Chyba při nahrávání obrázku: {ex.Message}", "Chyba");
             }
         }
+
+        /// <summary>
+        /// Konvertuje binární data obrázku na BitmapImage pro zobrazení v UI.
+        /// </summary>
+        /// <param name="imageBytes">Pole bajtů s daty obrázku</param>
+        /// <returns>BitmapImage objekt připravený k zobrazení</returns>
+        /// <remarks>
+        /// Obrázek je "zmrazen" (Freeze) pro optimalizaci výkonu v WPF.
+        /// </remarks>
         private BitmapImage vytvorObrazek(byte[] imageBytes)
         {
             BitmapImage img = new BitmapImage();
@@ -727,6 +911,14 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
             return img;
         }
+
+        /// <summary>
+        /// Odstraňuje profilový obrázek přihlášeného uživatele.
+        /// </summary>
+        /// <remarks>
+        /// Nastavuje vlastnosti Obrazek a ObrazekBytes na null. Změna se commituje při úpravě účtu.
+        /// </remarks>
+        /// <exception cref="Exception">Vyvolána při chybě operace</exception>
         [RelayCommand]
         private void OdebratImg()
         {
@@ -743,6 +935,436 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 catch (Exception ex)
                 {
                     MessageBox.Show($"Chyba při odstraňování obrázku: {ex.Message}", "Chyba");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Aktualizuje údaje policisty v databázi na základě úprav v DataGridu Kontakty.
+        /// </summary>
+        /// <param name="radek">DataRowView s upravenými daty (Jmeno, Prijmeni, Hodnost)</param>
+        [RelayCommand]
+        public async Task UpravitKontakty(object radek)
+        {
+            var policistaRow = radek as DataRowView;
+
+            if (policistaRow != null)
+            {
+                try
+                {
+                    policistaRow.EndEdit();
+
+                    int idPolicisty = Convert.ToInt32(policistaRow["IDPOLICISTY"]);
+
+                    string noveJmeno = policistaRow["JMENO"].ToString();
+                    string novePrijmeni = policistaRow["PRIJMENI"].ToString();
+                    string nazevHodnosti = policistaRow["HODNOST"]?.ToString() ?? string.Empty;
+
+                    int idHodnosti;
+                    string sqlHodnost = "SELECT idhodnosti FROM hodnosti WHERE nazev = :nazev";
+                    using (OracleCommand cmdHodnost = new OracleCommand(sqlHodnost, conn))
+                    {
+                        cmdHodnost.BindByName = true;
+                        cmdHodnost.Parameters.Add("nazev", OracleDbType.Varchar2).Value = nazevHodnosti;
+                        var result = await cmdHodnost.ExecuteScalarAsync();
+                        if (result == null || result is DBNull)
+                        {
+                            MessageBox.Show($"Chyba: Hodnost '{nazevHodnosti}' nebyla nalezena v tabulce HODNOSTI.", "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+                        idHodnosti = Convert.ToInt32((decimal)result);
+                    }
+
+                    // 2. Aktualizace policiste
+                    string sql = @"UPDATE policiste SET jmeno = :jmeno, prijmeni = :prijmeni, idhodnosti = :idhodnosti 
+                           WHERE idpolicisty = :idpolicisty";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        cmd.BindByName = true;
+                        cmd.Parameters.Add("jmeno", OracleDbType.Varchar2).Value = noveJmeno;
+                        cmd.Parameters.Add("prijmeni", OracleDbType.Varchar2).Value = novePrijmeni;
+                        cmd.Parameters.Add("idhodnosti", OracleDbType.Int32).Value = idHodnosti;
+                        cmd.Parameters.Add("idpolicisty", OracleDbType.Int32).Value = idPolicisty;
+
+                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                        if (rowsAffected > 0)
+                        {
+                            await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
+                            MessageBox.Show("Policista byl úspěšně upraven.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                            await NacistKontakty();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Záznam nebyl v databázi nalezen (ID se neshoduje).", "Chyba");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Chyba při zpracování úpravy kontaktu: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Odstraní záznam policisty z databáze.
+        /// </summary>
+        /// <param name="radek">DataRowView s daty policisty k odstranění (Identifikace přes IDPOLICISTY)</param>
+        [RelayCommand]
+        public async Task OdebratKontakty(object radek)
+        {
+            var policistaRow = radek as DataRowView;
+
+            if (policistaRow != null)
+            {
+                try
+                {
+                    int idPolicisty = Convert.ToInt32(policistaRow["IDPOLICISTY"]);
+                    string jmeno = policistaRow["JMENO"].ToString();
+                    string prijmeni = policistaRow["PRIJMENI"].ToString();
+
+                    var result = MessageBox.Show(
+                        $"Opravdu chcete trvale smazat policistu {jmeno} {prijmeni}?",
+                        "Potvrzení smazání",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+
+                    if (result != MessageBoxResult.Yes) return;
+
+                    string sql = "DELETE FROM policiste WHERE idpolicisty = :idpolicisty";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        cmd.BindByName = true;
+                        cmd.Parameters.Add("idpolicisty", OracleDbType.Int32).Value = idPolicisty;
+
+                        await cmd.ExecuteNonQueryAsync();
+                        await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
+
+                        MessageBox.Show("Policista byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await NacistKontakty();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Chyba při odebírání kontaktu: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Aktualizuje název Okrsku v databázi.
+        /// </summary>
+        /// <param name="radek">DataRowView s upraveným názvem (Identifikace přes IDOKRSKU)</param>
+        [RelayCommand]
+        public async Task UpravitOkrsek(object radek)
+        {
+            var okrsekRow = radek as DataRowView;
+
+            if (okrsekRow != null)
+            {
+                try
+                {
+                    okrsekRow.EndEdit();
+
+                    int idOkrsku = Convert.ToInt32(okrsekRow["IDOKRSKU"]);
+                    string novyNazev = okrsekRow["NAZEV"].ToString();
+
+                    string sql = @"UPDATE okrsky SET nazev = :novyNazev WHERE idokrsku = :idokrsku";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        cmd.BindByName = true;
+                        cmd.Parameters.Add("novyNazev", OracleDbType.Varchar2).Value = novyNazev;
+                        cmd.Parameters.Add("idokrsku", OracleDbType.Int32).Value = idOkrsku;
+
+                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                        if (rowsAffected > 0)
+                        {
+                            await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
+                            MessageBox.Show("Okrsek byl úspěšně upraven.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                            await NacistOkrsky();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Záznam nebyl v databázi nalezen (ID se neshoduje).", "Chyba");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Chyba při zpracování úpravy okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Odstraní záznam Okrsku z databáze.
+        /// </summary>
+        /// <param name="radek">DataRowView s daty Okrsku k odstranění (Identifikace přes IDOKRSKU)</param>
+        [RelayCommand]
+        public async Task OdebratOkrsek(object radek)
+        {
+            var okrsekRow = radek as DataRowView;
+
+            if (okrsekRow != null)
+            {
+                try
+                {
+                    int idOkrsku = Convert.ToInt32(okrsekRow["IDOKRSKU"]);
+                    string nazev = okrsekRow["NAZEV"].ToString();
+
+                    var result = MessageBox.Show(
+                        $"Opravdu chcete trvale smazat okrsek '{nazev}'?",
+                        "Potvrzení smazání",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+
+                    if (result != MessageBoxResult.Yes) return;
+
+                    string sql = "DELETE FROM okrsky WHERE idokrsku = :idokrsku";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        cmd.BindByName = true;
+                        cmd.Parameters.Add("idokrsku", OracleDbType.Int32).Value = idOkrsku;
+
+                        await cmd.ExecuteNonQueryAsync();
+                        await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
+
+                        MessageBox.Show("Okrsek byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await NacistOkrsky();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Chyba při odebírání okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Aktualizuje záznam přestupku (typ a poznámku) v databázi.
+        /// </summary>
+        /// <param name="radek">DataRowView s upravenými daty (Identifikace přes IDPRESTUPKU)</param>
+        [RelayCommand]
+        public async Task UpravitPresupek(object radek)
+        {
+            var prestupekRow = radek as DataRowView;
+
+            if (prestupekRow != null)
+            {
+                try
+                {
+                    prestupekRow.EndEdit();
+
+                    int idPrestupku = Convert.ToInt32(prestupekRow["IDPRESTUPKU"]);
+
+                    string novyPrestupekNazev = prestupekRow["PRESTUPEK"].ToString();
+                    string poznamka = prestupekRow["POZNAMKA"]?.ToString() ?? string.Empty;
+
+                    int idTypuPrestupku;
+                    string sqlTyp = "SELECT idtypuprestupku FROM typy_prestupku WHERE prestupek = :nazev";
+                    using (OracleCommand cmdTyp = new OracleCommand(sqlTyp, conn))
+                    {
+                        cmdTyp.BindByName = true;
+                        cmdTyp.Parameters.Add("nazev", OracleDbType.Varchar2).Value = novyPrestupekNazev;
+                        var result = await cmdTyp.ExecuteScalarAsync();
+                        if (result == null || result is DBNull)
+                        {
+                            MessageBox.Show($"Chyba: Typ přestupku '{novyPrestupekNazev}' nebyl nalezen v TYPY_PRESTUPKU.", "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+                        idTypuPrestupku = Convert.ToInt32((decimal)result);
+                    }
+
+                    // 2. Aktualizace tabulky prestupky
+                    string sql = @"UPDATE prestupky SET idtypuprestupku = :idtypuprestupku, poznamka = :poznamka 
+                           WHERE idprestupku = :idprestupku";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        cmd.BindByName = true;
+                        cmd.Parameters.Add("idtypuprestupku", OracleDbType.Int32).Value = idTypuPrestupku;
+                        cmd.Parameters.Add("poznamka", OracleDbType.Varchar2).Value = poznamka;
+                        cmd.Parameters.Add("idprestupku", OracleDbType.Int32).Value = idPrestupku;
+
+                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                        if (rowsAffected > 0)
+                        {
+                            await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
+                            MessageBox.Show("Přestupek byl úspěšně upraven.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                            await NacistPrestupky();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Záznam nebyl v databázi nalezen (ID se neshoduje).", "Chyba");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Chyba při zpracování úpravy přestupku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Odstraní záznam Přestupku z databáze.
+        /// </summary>
+        /// <param name="radek">DataRowView s daty Přestupku k odstranění (Identifikace přes IDPRESTUPKU)</param>
+        [RelayCommand]
+        public async Task OdebratPresupek(object radek)
+        {
+            var prestupekRow = radek as DataRowView;
+
+            if (prestupekRow != null)
+            {
+                try
+                {
+                    int idPrestupku = Convert.ToInt32(prestupekRow["IDPRESTUPKU"]);
+                    string typPrestupku = prestupekRow["PRESTUPEK"].ToString();
+
+                    var result = MessageBox.Show(
+                        $"Opravdu chcete trvale smazat přestupek '{typPrestupku}'?",
+                        "Potvrzení smazání",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+
+                    if (result != MessageBoxResult.Yes) return;
+
+                    string sql = "DELETE FROM prestupky WHERE idprestupku = :idprestupku";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        cmd.BindByName = true;
+                        cmd.Parameters.Add("idprestupku", OracleDbType.Int32).Value = idPrestupku;
+
+                        await cmd.ExecuteNonQueryAsync();
+                        await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
+
+                        MessageBox.Show("Přestupek byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await NacistPrestupky();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Chyba při odebírání přestupku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Aktualizuje záznam Hlídky (název a typ) v databázi.
+        /// </summary>
+        /// <param name="radek">DataRowView s upravenými daty (Identifikace přes IDHLIDKY)</param>
+        [RelayCommand]
+        public async Task UpravitHlidku(object radek)
+        {
+            var hlidkaRow = radek as DataRowView;
+
+            if (hlidkaRow != null)
+            {
+                try
+                {
+                    hlidkaRow.EndEdit();
+
+                    int idHlidky = Convert.ToInt32(hlidkaRow["IDHLIDKY"]);
+
+                    string novyNazevHlidky = hlidkaRow["NAZEVHLIDKY"].ToString();
+                    string novyNazevTypu = hlidkaRow["NAZEV"].ToString();
+
+
+                    int idTypu;
+                    string sqlTyp = "SELECT idtypu FROM typy_hlidky WHERE nazev = :nazev";
+                    using (OracleCommand cmdTyp = new OracleCommand(sqlTyp, conn))
+                    {
+                        cmdTyp.BindByName = true;
+                        cmdTyp.Parameters.Add("nazev", OracleDbType.Varchar2).Value = novyNazevTypu;
+                        var result = await cmdTyp.ExecuteScalarAsync();
+                        if (result == null || result is DBNull)
+                        {
+                            MessageBox.Show($"Chyba: Typ hlídky '{novyNazevTypu}' nebyl nalezen v TYPY_HLIDKY.", "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+                        idTypu = Convert.ToInt32((decimal)result);
+                    }
+
+                    string sql = @"UPDATE hlidky SET nazevhlidky = :novyNazev, idtypu = :idtypu WHERE idhlidky = :idhlidky";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        cmd.BindByName = true;
+                        cmd.Parameters.Add("novyNazev", OracleDbType.Varchar2).Value = novyNazevHlidky;
+                        cmd.Parameters.Add("idtypu", OracleDbType.Int32).Value = idTypu;
+                        cmd.Parameters.Add("idhlidky", OracleDbType.Int32).Value = idHlidky;
+
+                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                        if (rowsAffected > 0)
+                        {
+                            await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
+                            MessageBox.Show("Hlídka byla úspěšně upravena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                            await NacistHlidky();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Záznam nebyl v databázi nalezen (ID se neshoduje).", "Chyba");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Chyba při zpracování úpravy hlídky: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Odstraní záznam Hlídky z databáze.
+        /// </summary>
+        /// <param name="radek">DataRowView s daty Hlídky k odstranění (Identifikace přes IDHLIDKY)</param>
+        [RelayCommand]
+        public async Task OdebratHlidku(object radek)
+        {
+            var hlidkaRow = radek as DataRowView;
+
+            if (hlidkaRow != null)
+            {
+                try
+                {
+                    int idHlidky = Convert.ToInt32(hlidkaRow["IDHLIDKY"]);
+                    string nazev = hlidkaRow["NAZEVHLIDKY"].ToString();
+
+                    var result = MessageBox.Show(
+                        $"Opravdu chcete trvale smazat hlídku '{nazev}'?",
+                        "Potvrzení smazání",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Warning);
+
+                    if (result != MessageBoxResult.Yes) return;
+
+                    string sql = "DELETE FROM hlidky WHERE idhlidky = :idhlidky";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        cmd.BindByName = true;
+                        cmd.Parameters.Add("idhlidky", OracleDbType.Int32).Value = idHlidky;
+
+                        await cmd.ExecuteNonQueryAsync();
+                        await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
+
+                        MessageBox.Show("Hlídka byla úspěšně odstraněna.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await NacistHlidky();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Chyba při odebírání hlídky: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

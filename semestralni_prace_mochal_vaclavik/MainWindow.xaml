@@ -50,7 +50,7 @@
 
         <!-- Karta: Kontakty (OPRÁVNĚNÍ: Občan+) -->
         <TabItem x:Name="Kontakty" Header="Kontakty"
-                 Visibility="{Binding KontaktyVisible}">
+                 Visibility="{Binding KontaktyVisible}" Height="22" Margin="-2,0,-2,0" VerticalAlignment="Bottom">
             <Grid Background="White">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="16*"/>
@@ -75,8 +75,9 @@
                           d:ItemsSource="{d:SampleData ItemCount=5}" 
                           Margin="10,14,10,14" 
                           Grid.ColumnSpan="5" 
-                          SelectionMode="Single" 
-                          IsManipulationEnabled="False"
+                          SelectionMode="Single"
+                            SelectionUnit="Cell"
+                            IsManipulationEnabled="True"
                           AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Jméno" Binding="{Binding JMENO}" Width="*"/>
@@ -89,6 +90,13 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="Upravit" Command="{Binding UpravitKontaktyCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="" Width="SizeToCells">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Odebrat" Command="{Binding OdebratKontaktyCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -115,16 +123,25 @@
                 <DataGrid x:Name="OkrskyGrid" Grid.Row="1" 
                   d:ItemsSource="{d:SampleData ItemCount=5}" 
                   Margin="10,0,10,10"
+                  SelectionMode="Single"
+                  SelectionUnit="Cell"
+                  IsManipulationEnabled="True"
                   AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Název Okrsku" Binding="{Binding NAZEV}" Width="*"/>
-                        <DataGridTextColumn Header="Popis" Binding="{Binding POPIS}" Width="2*"/>
-
                         <DataGridTemplateColumn Header="" Width="SizeToCells"
                             Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Upravit" Command="{Binding UpravitCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
+                                    <Button Content="Upravit" Command="{Binding UpravitOkrsekCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="" Width="SizeToCells"
+                             Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Odebrat" Command="{Binding OdebratOkrsekCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -154,7 +171,10 @@
 
                 <!-- DataGrid -->
                 <DataGrid x:Name="PrestupkyGrid" Grid.Row="2" 
-                  d:ItemsSource="{d:SampleData ItemCount=5}" 
+                  d:ItemsSource="{d:SampleData ItemCount=5}"
+                  SelectionMode="Single"
+                  SelectionUnit="Cell"
+                  IsManipulationEnabled="True"
                   Margin="10,0,10,10"
                   AutoGenerateColumns="False">
                     <DataGrid.Columns>
@@ -166,7 +186,14 @@
                         <DataGridTemplateColumn Header="" Width="SizeToCells">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Upravit" Command="{Binding UpravitCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
+                                    <Button Content="Upravit" Command="{Binding UpravitPrestupekCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="" Width="SizeToCells">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Odebrat" Command="{Binding OdebratPrestupekCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -200,6 +227,9 @@
                 <DataGrid x:Name="HlidkyGrid" Grid.Row="1" 
                   d:ItemsSource="{d:SampleData ItemCount=5}" 
                   Margin="10,0,10,10" 
+                  SelectionMode="Single"
+                  SelectionUnit="Cell"
+                  IsManipulationEnabled="True"
                   AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Název" Binding="{Binding NAZEVHLIDKY}" Width="*"/>
@@ -207,7 +237,14 @@
                         <DataGridTemplateColumn Header="" Width="SizeToCells">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Upravit" Command="{Binding UpravitCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
+                                    <Button Content="Upravit" Command="{Binding UpravitHlidkuCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="" Width="SizeToCells">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Odebrat" Command="{Binding OdebratHlidkuCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -368,7 +405,6 @@
                 </DataGrid>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,0" VerticalAlignment="Center">
                     <Label Content="Akce:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                    <Button x:Name="btnPridat" Content="Přidat" Width="100" Height="20"/>
                 </StackPanel>
             </Grid>
         </TabItem>
