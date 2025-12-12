@@ -50,7 +50,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
-            Prihlas(("Oli","12345"));
+            Prihlas(("Oli", "12345"));
             nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
 
         }
@@ -93,61 +93,36 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public async Task UpravitUzivatele(object radek)
         {
             var uzivatelRow = radek as DataRowView;
-            Console.WriteLine(uzivatelRow.ToString());
+
             if (uzivatelRow != null)
             {
                 try
                 {
                     uzivatelRow.EndEdit();
 
-                    int id = Convert.ToInt32(uzivatelRow["IDUzivatele"]);
-                    string jmeno = uzivatelRow["PrihlasovaciJmeno"].ToString();
-                    string heslo = uzivatelRow["Heslo"].ToString();
-                    string nazevOpravneni = (uzivatelRow["NazevOpravneni"].ToString()).ToLower();
-
-                    int typOpr = 0;
-                    if (nazevOpravneni.Equals("administrator", StringComparison.OrdinalIgnoreCase)) typOpr = 3;
-                    else if (nazevOpravneni.Equals("policista", StringComparison.OrdinalIgnoreCase)) typOpr = 1;
-                    else if (nazevOpravneni.Equals("obcan", StringComparison.OrdinalIgnoreCase)) typOpr = 2;
-                    else
+                    using (OracleCommand cmd = new OracleCommand("upravitUzivatele", conn))
                     {
-                        MessageBox.Show($"Neznámý typ oprávnění: '{nazevOpravneni}'. Změny nebyly uloženy.", "Chyba");
-                        return;
-                    }
-
-                    string sql = @"
-                        UPDATE UZIVATELE 
-                        SET PRIHLASOVACIJMENO = :jmeno, 
-                            HESLO = :heslo,
-                            IDOPRAVNENI = :typOpravneni
-                        WHERE IDUZIVATELE = :id";
-
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
-                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.BindByName = true;
 
-                        cmd.Parameters.Add("jmeno", OracleDbType.Varchar2).Value = jmeno;
-                        cmd.Parameters.Add("heslo", OracleDbType.Varchar2).Value = heslo;
-                        cmd.Parameters.Add("typOpravneni", OracleDbType.Int32).Value = typOpr;
-                        cmd.Parameters.Add("id", OracleDbType.Int32).Value = id;
+                        cmd.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatelRow["PrihlasovaciJmeno"].ToString();
+                        cmd.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatelRow["Heslo"].ToString();
 
-                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                        cmd.Parameters.Add("p_typOpravneni", OracleDbType.Varchar2).Value = uzivatelRow["NazevOpravneni"].ToString();
+                        cmd.Parameters.Add("p_iduzivatele", OracleDbType.Int32).Value = Convert.ToInt32(uzivatelRow["IDUzivatele"]);
 
-                        if (rowsAffected > 0)
+                        await cmd.ExecuteNonQueryAsync();
+
+
+                        using (var commitCmd = new OracleCommand("COMMIT", conn))
                         {
-                            using (var commitCmd = new OracleCommand("COMMIT", conn))
-                            {
-                                await commitCmd.ExecuteNonQueryAsync();
-                            }
-
-                            uzivatelRow.Row.AcceptChanges();
-
-                            MessageBox.Show("Uživatel byl úspěšně upraven.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                            await commitCmd.ExecuteNonQueryAsync();
                         }
-                        else
-                        {
-                            MessageBox.Show("Záznam nebyl v databázi nalezen (ID se neshoduje).", "Chyba");
-                        }
+
+                        uzivatelRow.Row.AcceptChanges();
+
+                        MessageBox.Show("Uživatel byl úspěšně upraven.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+
                     }
                 }
                 catch (Exception ex)
