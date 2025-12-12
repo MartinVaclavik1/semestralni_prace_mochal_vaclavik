@@ -87,6 +87,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 }
             }
         }
+
+        // Manipulace s uživately
         [RelayCommand]
         public async Task UpravitUzivatele(object radek)
         {
@@ -163,7 +165,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 int id = Convert.ToInt32(uzivatelRow["IDUZIVATELE"]);
 
-                // 2. Potvrzovací dialog (bezpečnostní pojistka)
                 var result = MessageBox.Show(
                     $"Opravdu chcete trvale smazat uživatele?",
                     "Potvrzení smazání",
@@ -174,7 +175,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                 try
                 {
-                    // 3. SQL DELETE příkaz
                     string sql = "DELETE FROM UZIVATELE WHERE IDUZIVATELE = :id";
 
                     using (OracleCommand cmd = new OracleCommand(sql, conn))
@@ -186,7 +186,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                         if (rowsAffected > 0)
                         {
-                            // 4. Commit transakce
                             using (var commitCmd = new OracleCommand("COMMIT", conn))
                             {
                                 await commitCmd.ExecuteNonQueryAsync();
