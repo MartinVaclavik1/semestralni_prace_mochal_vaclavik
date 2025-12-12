@@ -125,7 +125,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 try
                 {
 
-                    using (OracleCommand cmd = new OracleCommand("upravitUzivatele", conn))
+                    using (OracleCommand cmd = new OracleCommand("UPRAVY_UZIVATELU.upravitUzivatele", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.BindByName = true;
@@ -175,8 +175,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 if (result != MessageBoxResult.Yes) return;
 
                 try
-                {
-                    using (OracleCommand cmd = new OracleCommand("smazUzivatele", conn))
+                {   //možná nebude fungovat z package.
+                    using (OracleCommand cmd = new OracleCommand("UPRAVY_UZIVATELU.smazUzivatele", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.BindByName = true;
