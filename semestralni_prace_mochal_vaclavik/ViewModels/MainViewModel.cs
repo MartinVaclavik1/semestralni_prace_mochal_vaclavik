@@ -39,10 +39,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
         [ObservableProperty]
         private Uzivatel uzivatel = new Uzivatel();
+
         [ObservableProperty]
         private Registrace novaRegistrace = new Registrace();
+
         [ObservableProperty]
         private DataTable opravneniZdroj;
+
         [ObservableProperty]
         private List<string> opravneniSeznamy = new List<string> { "administrator", "policista", "obcan" };
 
