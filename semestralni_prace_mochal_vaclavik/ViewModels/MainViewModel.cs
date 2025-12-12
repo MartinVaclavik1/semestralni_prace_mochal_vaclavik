@@ -11,8 +11,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using MessageBox = System.Windows.MessageBox;
 
 namespace semestralni_prace_mochal_vaclavik.ViewModels
@@ -84,7 +86,138 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     MessageBox.Show("Chyba při získávání dat řádku: " + ex.Message);
                 }
             }
+        }
+        [RelayCommand]
+        public async Task UpravitUzivatele(object radek)
+        {
+            var uzivatelRow = radek as DataRowView;
+            Console.WriteLine(uzivatelRow.ToString());
+            if (uzivatelRow != null)
+            {
+                try
+                {
+                    uzivatelRow.EndEdit();
 
+                    int id = Convert.ToInt32(uzivatelRow["IDUzivatele"]);
+                    string jmeno = uzivatelRow["PrihlasovaciJmeno"].ToString();
+                    string heslo = uzivatelRow["Heslo"].ToString();
+                    string nazevOpravneni = (uzivatelRow["NazevOpravneni"].ToString()).ToLower();
+
+                    int typOpr = 0;
+                    if (nazevOpravneni.Equals("administrator", StringComparison.OrdinalIgnoreCase)) typOpr = 3;
+                    else if (nazevOpravneni.Equals("policista", StringComparison.OrdinalIgnoreCase)) typOpr = 1;
+                    else if (nazevOpravneni.Equals("obcan", StringComparison.OrdinalIgnoreCase)) typOpr = 2;
+                    else
+                    {
+                        MessageBox.Show($"Neznámý typ oprávnění: '{nazevOpravneni}'. Změny nebyly uloženy.", "Chyba");
+                        return;
+                    }
+
+                    string sql = @"
+                        UPDATE UZIVATELE 
+                        SET PRIHLASOVACIJMENO = :jmeno, 
+                            HESLO = :heslo,
+                            IDOPRAVNENI = :typOpravneni
+                        WHERE IDUZIVATELE = :id";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        cmd.BindByName = true;
+
+                        cmd.Parameters.Add("jmeno", OracleDbType.Varchar2).Value = jmeno;
+                        cmd.Parameters.Add("heslo", OracleDbType.Varchar2).Value = heslo;
+                        cmd.Parameters.Add("typOpravneni", OracleDbType.Int32).Value = typOpr;
+                        cmd.Parameters.Add("id", OracleDbType.Int32).Value = id;
+
+                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                        if (rowsAffected > 0)
+                        {
+                            using (var commitCmd = new OracleCommand("COMMIT", conn))
+                            {
+                                await commitCmd.ExecuteNonQueryAsync();
+                            }
+
+                            uzivatelRow.Row.AcceptChanges();
+
+                            MessageBox.Show("Uživatel byl úspěšně upraven.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Záznam nebyl v databázi nalezen (ID se neshoduje).", "Chyba");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Chyba při aktualizaci uživatele: " + ex.Message, "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+        [RelayCommand]
+        public async Task OdebratUzivatele(object radek)
+        {
+            var uzivatelRow = radek as DataRowView;
+
+            if (uzivatelRow != null)
+            {
+                int id = Convert.ToInt32(uzivatelRow["IDUZIVATELE"]);
+
+                // 2. Potvrzovací dialog (bezpečnostní pojistka)
+                var result = MessageBox.Show(
+                    $"Opravdu chcete trvale smazat uživatele?",
+                    "Potvrzení smazání",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result != MessageBoxResult.Yes) return;
+
+                try
+                {
+                    // 3. SQL DELETE příkaz
+                    string sql = "DELETE FROM UZIVATELE WHERE IDUZIVATELE = :id";
+
+                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    {
+                        cmd.BindByName = true;
+                        cmd.Parameters.Add("id", OracleDbType.Int32).Value = id;
+
+                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+
+                        if (rowsAffected > 0)
+                        {
+                            // 4. Commit transakce
+                            using (var commitCmd = new OracleCommand("COMMIT", conn))
+                            {
+                                await commitCmd.ExecuteNonQueryAsync();
+                            }
+
+                            NacistUzivatele();
+
+                            MessageBox.Show("Uživatel byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Záznam nebyl v databázi nalezen (možná byl již smazán).", "Chyba");
+                        }
+                    }
+                }
+                catch (OracleException oraEx)
+                {
+                    if (oraEx.Number == 2292) 
+                    {
+                        MessageBox.Show("Nelze smazat uživatele, protože je propojen s Občanem nebo Policistou. Nejdříve musíte smazat záznam tam.", "Chyba integrity", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Chyba Oracle: " + oraEx.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Obecná chyba: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniPrihlaseni))]

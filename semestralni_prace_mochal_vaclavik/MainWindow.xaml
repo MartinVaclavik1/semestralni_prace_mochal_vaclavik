@@ -303,6 +303,8 @@
                   d:ItemsSource="{d:SampleData ItemCount=5}"
                   Margin="10,10,25,10"
                   SelectionMode="Single"
+                  SelectionUnit="Cell"
+                  IsManipulationEnabled="True"
                   ScrollViewer.CanContentScroll="True"
                   AutoGenerateColumns="True">
                     <DataGrid.Columns>
@@ -320,7 +322,20 @@
                         <DataGridTemplateColumn>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Upravit" Command="{Binding UpravitCommand}" />
+                                    <Button Content="Upravit"
+                                            Command="{Binding DataContext.UpravitUzivateleCommand, 
+                                                              RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                            CommandParameter="{Binding}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Odebrat"
+                                            Command="{Binding DataContext.OdebratUzivateleCommand, 
+                                                              RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                            CommandParameter="{Binding}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
