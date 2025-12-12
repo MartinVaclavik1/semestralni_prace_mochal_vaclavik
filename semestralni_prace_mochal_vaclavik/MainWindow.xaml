@@ -307,52 +307,54 @@
 
                 <DataGrid x:Name="UzivateleGrid"
                   d:ItemsSource="{d:SampleData ItemCount=5}"
-                  ItemsSource="{Binding UzivatelItemsSource}"
+                  ItemsSource="{Binding Users}"
                   Margin="15,10,20,10"
                   SelectionMode="Single"
                   SelectionUnit="Cell"
                   IsManipulationEnabled="True"
                   AutoGenerateColumns="False">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Id" Binding="{Binding IDUZIVATELE}" Width="*"/>
-                        <DataGridTextColumn Header="Přihlašovací jméno" Binding="{Binding PRIHLASOVACIJMENO}" Width="*"/>
-                        <DataGridTextColumn Header="Heslo" Binding="{Binding HESLO}" Width="*"/>
+                        <DataGridTextColumn Header="Přihlašovací jméno" Binding="{Binding Username}" Width="*"/>
+                        <DataGridTextColumn Header="Heslo" Binding="{Binding Password}" Width="*"/>
                         <DataGridTemplateColumn Header="Oprávnění" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding nazevopravneni}"/>
+                                    <TextBlock Text="{Binding Opravneni}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
+                            
                             <DataGridTemplateColumn.CellEditingTemplate>
                                 <DataTemplate>
-                                    <ComboBox ItemsSource="{Binding DataContext.OpravneniSeznamy, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                                              SelectedValue="{Binding nazevopravneni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <ComboBox ItemsSource="{Binding DataContext.OpravneniSeznamy, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                              
+                                              SelectedItem="{Binding Opravneni, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                                               />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="">
+                        <DataGridTemplateColumn Header="Emulovat">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="Emulovat"
                                             Command="{Binding DataContext.EmulovatCommand, 
-                                                              RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                              RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                             CommandParameter="{Binding}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="">
+                        <DataGridTemplateColumn Header="Upravit">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="Upravit"
                                             Command="{Binding DataContext.UpravitUzivateleCommand, 
-                                                              RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                              RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                             CommandParameter="{Binding}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         
-                        <DataGridTemplateColumn Header="">
+                        <DataGridTemplateColumn Header="Odebrat">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="Odebrat"

@@ -4,6 +4,7 @@ using Microsoft.VisualBasic;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 using semestralni_prace_mochal_vaclavik.Tridy;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using System.Reflection.Metadata;
@@ -15,6 +16,7 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using MessageBox = System.Windows.MessageBox;
 
 namespace semestralni_prace_mochal_vaclavik.ViewModels
@@ -33,6 +35,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
         [ObservableProperty]
         private DataView uzivatelItemsSource;
+        public ObservableCollection<Uzivatel> Users { get; set; } = new ObservableCollection<Uzivatel>();
 
         [ObservableProperty]
         private Uzivatel uzivatel = new Uzivatel();
@@ -47,7 +50,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public MainViewModel(MainWindow window)
         {
             this.Window = window;
-            
             //wallis45548 - policista
             //martin25922 - obcan => hesla jsou stejné číslo
             //uzivatel.Id = 80;
@@ -75,15 +77,19 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public async void Emulovat(object radek)
         {
-            // převod na DataRowView
-            var uzivatelRow = radek as DataRowView;
-
+            var uzivatelRow = radek as Uzivatel;
             if (uzivatelRow != null)
             {
+                if (uzivatelRow.Id == Uzivatel.Id)
+                {
+                    MessageBox.Show("Nelze emulovat sám sebe!");
+                    return;
+                }
+
                 try
                 {
-                    string jmeno = uzivatelRow["PrihlasovaciJmeno"].ToString();
-                    string heslo = uzivatelRow["Heslo"].ToString();
+                    string jmeno = uzivatelRow.Username;
+                    string heslo = uzivatelRow.Password;
 
                     MessageBox.Show($"Emulace uživatele: {jmeno}");
 
@@ -103,24 +109,29 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public async Task UpravitUzivatele(object radek)
         {
-            var uzivatelRow = radek as DataRowView;
+            var uzivatelRow = radek as Uzivatel;
 
-            if (uzivatelRow != null)
+            if (uzivatelRow != null && uzivatelRow.Zmenen)
             {
+                if (uzivatelRow.Id == Uzivatel.Id)
+                {
+                    MessageBox.Show("Nelze editovat sám sebe! \n Pro editaci použijte \"Můj účet\"");
+                    return;
+                }
+
                 try
                 {
-                    uzivatelRow.EndEdit();
 
                     using (OracleCommand cmd = new OracleCommand("upravitUzivatele", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.BindByName = true;
 
-                        cmd.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatelRow["PrihlasovaciJmeno"].ToString();
-                        cmd.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatelRow["Heslo"].ToString();
+                        cmd.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatelRow.Username;
+                        cmd.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatelRow.Password;
 
-                        cmd.Parameters.Add("p_typOpravneni", OracleDbType.Varchar2).Value = uzivatelRow["NazevOpravneni"].ToString();
-                        cmd.Parameters.Add("p_iduzivatele", OracleDbType.Int32).Value = Convert.ToInt32(uzivatelRow["IDUzivatele"]);
+                        cmd.Parameters.Add("p_typOpravneni", OracleDbType.Varchar2).Value = uzivatelRow.Opravneni;
+                        cmd.Parameters.Add("p_iduzivatele", OracleDbType.Int32).Value = uzivatelRow.Id;
 
                         await cmd.ExecuteNonQueryAsync();
 
@@ -129,9 +140,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         {
                             await commitCmd.ExecuteNonQueryAsync();
                         }
-
-                        uzivatelRow.Row.AcceptChanges();
-
+                        uzivatelRow.Zmenen = false;
                         MessageBox.Show("Uživatel byl úspěšně upraven.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     }
@@ -145,17 +154,20 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public async Task OdebratUzivatele(object radek)
         {
-            var uzivatelRow = radek as DataRowView;
+            var uzivatelRow = radek as Uzivatel;
 
             if (uzivatelRow != null)
             {
-                int id = Convert.ToInt32(uzivatelRow["IDUZIVATELE"]);
-
+                if (uzivatelRow.Id == Uzivatel.Id)
+                {
+                    MessageBox.Show("Nelze odstranit sám sebe!");
+                    return;
+                }
                 var result = MessageBox.Show(
-                    $"Opravdu chcete trvale smazat uživatele?",
-                    "Potvrzení smazání",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning);
+                $"Opravdu chcete trvale smazat uživatele?",
+                "Potvrzení smazání",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
 
                 if (result != MessageBoxResult.Yes) return;
 
@@ -166,7 +178,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     using (OracleCommand cmd = new OracleCommand(sql, conn))
                     {
                         cmd.BindByName = true;
-                        cmd.Parameters.Add("id", OracleDbType.Int32).Value = id;
+                        cmd.Parameters.Add("id", OracleDbType.Int32).Value = uzivatelRow.Id;
 
                         int rowsAffected = await cmd.ExecuteNonQueryAsync();
 
@@ -492,6 +504,19 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     await Task.Run(() => adapter.Fill(dt));
 
                     UzivatelItemsSource = dt.DefaultView;
+
+                    foreach (DataRow item in dt.Rows)
+                    {
+
+                        Users.Add(new Uzivatel
+                        {
+                            Id = (int)item.Field<decimal>("iduzivatele"),
+                            Username = item.Field<string>("prihlasovacijmeno"),
+                            Password = item.Field<string>("heslo"),
+                            Opravneni = item.Field<string>("nazevopravneni")
+                        });
+
+                    }
                 }
             }
             catch (Exception ex)

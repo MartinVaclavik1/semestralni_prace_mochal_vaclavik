@@ -66,8 +66,16 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             get { return opravneni; }
             set
             {
-                opravneni = value;
-                this.OnPropertyChanged("Opravneni");
+                if(opravneni == "obcan")
+                {
+                    MessageBox.Show("Nelze měnit oprávnění občanovi","CHYBA");
+                }
+                else
+                {
+                    opravneni = value;
+                    this.OnPropertyChanged("Opravneni");
+                }
+                    
             }
         }
         private BitmapImage? obrazek { get; set; }
@@ -96,12 +104,19 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             ObrazekBytes = null;
         }
 
-        
+        private bool zmenen { get; set; }
+        public bool Zmenen
+        {
+            get { return zmenen; }
+            set {  zmenen = value; }
+            
+        }
 
         private void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
             {
+                zmenen = true;
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
