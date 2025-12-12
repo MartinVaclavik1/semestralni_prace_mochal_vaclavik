@@ -50,7 +50,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
-            Prihlas(("Oli","12345"));
+            //Prihlas(("Oli","12345"));
             nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
 
         }
@@ -203,7 +203,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 }
                 catch (OracleException oraEx)
                 {
-                    if (oraEx.Number == 2292) 
+                    if (oraEx.Number == 2292)
                     {
                         MessageBox.Show("Nelze smazat uživatele, protože je propojen s Občanem nebo Policistou. Nejdříve musíte smazat záznam tam.", "Chyba integrity", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
@@ -246,8 +246,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                                 uzivatel.ObrazekBytes = nactiByteZBLOB(blob);
                                 uzivatel.Obrazek = vytvorObrazek(uzivatel.ObrazekBytes);
                             }
-                            
-                              
+
+
                             uzivatel.Opravneni = reader["nazevopravneni"].ToString();
 
                             if (uzivatel.Opravneni == "obcan")
@@ -383,7 +383,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                     cmdAdresa.Parameters.Add("p_obec", OracleDbType.Varchar2).Value = novaRegistrace.Obec;
                     cmdAdresa.Parameters.Add("p_zeme", OracleDbType.Varchar2).Value = novaRegistrace.Zeme;
-                    
+
                     cmdAdresa.ExecuteNonQuery();
                 }
                 conn.Commit();
@@ -391,7 +391,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show($"Uživatel {NovaRegistrace.Username} Heslo {novaRegistrace.Heslo}.", "Registrace", MessageBoxButton.OK, MessageBoxImage.Information);
                 Prihlas((novaRegistrace.Username, novaRegistrace.Heslo));
                 novaRegistrace.Clear();
-                
+
             }
             catch (Exception ex)
             {
@@ -407,54 +407,54 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
 
 
-                        cmdAdresa.CommandType = CommandType.StoredProcedure;
-                        cmdAdresa.BindByName = true;
+                    cmdAdresa.CommandType = CommandType.StoredProcedure;
+                    cmdAdresa.BindByName = true;
 
-                        cmdAdresa.Parameters.Add("p_id", OracleDbType.Int32).Value = uzivatel.Id;
-                        cmdAdresa.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatel.Username;
-                        cmdAdresa.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatel.Password;
-                        cmdAdresa.Parameters.Add("p_obrazek", OracleDbType.Blob).Value = uzivatel.ObrazekBytes;
+                    cmdAdresa.Parameters.Add("p_id", OracleDbType.Int32).Value = uzivatel.Id;
+                    cmdAdresa.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatel.Username;
+                    cmdAdresa.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatel.Password;
+                    cmdAdresa.Parameters.Add("p_obrazek", OracleDbType.Blob).Value = uzivatel.ObrazekBytes;
 
 
                     cmdAdresa.ExecuteNonQuery();
                 }
                 conn.Commit();
 
-                MessageBox.Show($"Uživatel {Uzivatel.Username} Heslo {Uzivatel.Password}.", "Aktualizace", MessageBoxButton.OK, MessageBoxImage.Information);
-                novaRegistrace.Clear();
+
+                string volanaMetoda;
+                if (Uzivatel.Opravneni == "obcan")
+                {
+                    volanaMetoda = "aktualizuj_jmeno_prijmeni_obcana";
+                }
+                else
+                {
+                    volanaMetoda = "aktualizuj_jmeno_prijmeni_policisty";
+                }
+
+                using (OracleCommand cmdAdresa = new OracleCommand(volanaMetoda, conn))
+                {
+
+
+                    cmdAdresa.CommandType = CommandType.StoredProcedure;
+                    cmdAdresa.BindByName = true;
+
+                    //p_idUzivatele number, p_jmeno varchar2, p_prijmeni varchar2
+                    cmdAdresa.Parameters.Add("p_idUzivatele", OracleDbType.Int32).Value = Uzivatel.Id;
+                    cmdAdresa.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = Uzivatel.Jmeno;
+                    cmdAdresa.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = Uzivatel.Prijmeni;
+
+                    cmdAdresa.ExecuteNonQuery();
+                }
+                conn.Commit();
+
+                MessageBox.Show($"Uživatel {Uzivatel.Jmeno} Heslo {Uzivatel.Prijmeni}.", "Aktualizace", MessageBoxButton.OK, MessageBoxImage.Information);
+                NovaRegistrace.Clear();
 
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Chyba při registraci: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            //try
-            //{
-            //    using (OracleCommand cmdAdresa = new OracleCommand("aktualizuj_ucet", conn))
-            //    {
-
-
-            //        cmdAdresa.CommandType = CommandType.StoredProcedure;
-            //        cmdAdresa.BindByName = true;
-
-            //        cmdAdresa.Parameters.Add("p_id", OracleDbType.Int32).Value = uzivatel.Id;
-            //        cmdAdresa.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatel.Username;
-            //        cmdAdresa.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatel.Password;
-            //        cmdAdresa.Parameters.Add("p_obrazek", OracleDbType.Blob).Value = uzivatel.ObrazekBytes;
-
-
-            //        cmdAdresa.ExecuteNonQuery();
-            //    }
-            //    conn.Commit();
-
-            //    MessageBox.Show($"Uživatel {Uzivatel.Username} Heslo {Uzivatel.Password}.", "Aktualizace", MessageBoxButton.OK, MessageBoxImage.Information);
-            //    novaRegistrace.Clear();
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show($"Chyba při registraci: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-            //}
         }
         [RelayCommand]
         private void ZmenaOkna()
@@ -685,7 +685,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 try
                 {
-                   
+
 
 
                 }
@@ -706,19 +706,19 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
             openFileDialog.Filter = "Obrázky (*.jpg, *.jpeg, *.png)|*.jpg;*.jpeg;*.png|Všechny soubory (*.*)|*.*";
 
-                try
-                {
-                    openFileDialog.ShowDialog();
-                    byte[] imageBytes = File.ReadAllBytes(openFileDialog.FileName);
-                    Uzivatel.Obrazek = vytvorObrazek(imageBytes);
-                    Uzivatel.ObrazekBytes = imageBytes;
+            try
+            {
+                openFileDialog.ShowDialog();
+                byte[] imageBytes = File.ReadAllBytes(openFileDialog.FileName);
+                Uzivatel.Obrazek = vytvorObrazek(imageBytes);
+                Uzivatel.ObrazekBytes = imageBytes;
 
-                    MessageBox.Show("Profilový obrázek byl úspěšně nahrán a uložen.", "Úspěch");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Chyba při nahrávání obrázku: {ex.Message}", "Chyba");
-                }
+                MessageBox.Show("Profilový obrázek byl úspěšně nahrán a uložen.", "Úspěch");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Chyba při nahrávání obrázku: {ex.Message}", "Chyba");
+            }
         }
         private BitmapImage vytvorObrazek(byte[] imageBytes)
         {
@@ -736,12 +736,12 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         private void OdebratImg()
         {
-            if (Uzivatel.Obrazek != null || true) 
+            if (Uzivatel.Obrazek != null || true)
             {
                 try
                 {
- 
-                    Uzivatel.Obrazek = null; 
+
+                    Uzivatel.Obrazek = null;
                     Uzivatel.ObrazekBytes = null;
 
                     MessageBox.Show("Profilový obrázek byl úspěšně odstraněn.", "Úspěch");
