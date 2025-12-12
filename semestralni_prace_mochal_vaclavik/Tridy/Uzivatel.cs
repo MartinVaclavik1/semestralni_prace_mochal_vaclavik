@@ -66,16 +66,22 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             get { return opravneni; }
             set
             {
-                if(opravneni == "obcan")
+                if (opravneni == "obcan" && value != String.Empty)
                 {
-                    MessageBox.Show("Nelze měnit oprávnění občanovi","CHYBA");
+                    MessageBox.Show("Nelze měnit oprávnění občanovi", "CHYBA");
+
+                }
+                else if((opravneni == "administrator" || opravneni == "policista") 
+                    && value == "obcan" && value != String.Empty)
+                {
+                    MessageBox.Show("Nelze měnit oprávnění na občana", "CHYBA");
                 }
                 else
                 {
                     opravneni = value;
                     this.OnPropertyChanged("Opravneni");
                 }
-                    
+
             }
         }
         private BitmapImage? obrazek { get; set; }
