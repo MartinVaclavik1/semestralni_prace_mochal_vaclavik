@@ -570,30 +570,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        //private void NacistUzivatele()
-        //{
-        //    try
-        //    {
-        //        string sql = @"
-        //            SELECT u.iduzivatele, u.prihlasovacijmeno, u.heslo, u.idopravneni, o.nazevopravneni 
-        //            FROM uzivatele u
-        //            LEFT JOIN opravneni o ON u.idopravneni = o.idopravneni";
-
-        //        using (OracleCommand cmd = new OracleCommand(sql, conn))
-        //        {
-        //            OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-        //            DataTable dt = new DataTable();
-        //            adapter.Fill(dt);
-
-        //            Window.UzivateleGrid.ItemsSource = dt.DefaultView;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
-        //    }
-        //}
-
         private async Task NacistPrestupky()
         {
             try
