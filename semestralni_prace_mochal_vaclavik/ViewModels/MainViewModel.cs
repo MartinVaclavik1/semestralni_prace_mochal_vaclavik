@@ -176,42 +176,28 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                 try
                 {
-                    string sql = "DELETE FROM UZIVATELE WHERE IDUZIVATELE = :id";
-
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    using (OracleCommand cmd = new OracleCommand("smazUzivatele", conn))
                     {
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.BindByName = true;
-                        cmd.Parameters.Add("id", OracleDbType.Int32).Value = uzivatelRow.Id;
 
-                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                        cmd.Parameters.Add("p_iduzivatele", OracleDbType.Int32).Value = uzivatelRow.Id;
 
-                        if (rowsAffected > 0)
+                        await cmd.ExecuteNonQueryAsync();
+
+
+                        using (var commitCmd = new OracleCommand("COMMIT", conn))
                         {
-                            using (var commitCmd = new OracleCommand("COMMIT", conn))
-                            {
-                                await commitCmd.ExecuteNonQueryAsync();
-                            }
-
-                            NacistUzivatele();
-
-                            MessageBox.Show("Uživatel byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                            await commitCmd.ExecuteNonQueryAsync();
                         }
-                        else
-                        {
-                            MessageBox.Show("Záznam nebyl v databázi nalezen (možná byl již smazán).", "Chyba");
-                        }
+                        MessageBox.Show("Uživatel byl úspěšně odebrán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+
                     }
                 }
                 catch (OracleException oraEx)
                 {
-                    if (oraEx.Number == 2292)
-                    {
-                        MessageBox.Show("Nelze smazat uživatele, protože je propojen s Občanem nebo Policistou. Nejdříve musíte smazat záznam tam.", "Chyba integrity", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Chyba Oracle: " + oraEx.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+
+                    MessageBox.Show("Chyba Oracle: " + oraEx.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 catch (Exception ex)
                 {
