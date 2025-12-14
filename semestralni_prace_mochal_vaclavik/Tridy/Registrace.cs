@@ -10,14 +10,12 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
 {
     public class Registrace : INotifyPropertyChanged
     {
-        // Implementace INotifyPropertyChanged pro správnou funkčnost Bindingu
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        // Osobní údaje (Občan)
         private string _jmeno;
         public string Jmeno
         {
@@ -39,7 +37,6 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             set { _cisloOP = value; OnPropertyChanged(); }
         }
 
-        // Adresní údaje (Adresa)
         private string _psc;
         public string PSC
         {
@@ -54,7 +51,6 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             set { _ulice = value; OnPropertyChanged(); }
         }
 
-        // Číslo popisné/orientační
         private int? _cisloPopisne;
         public int? CisloPopisne
         {

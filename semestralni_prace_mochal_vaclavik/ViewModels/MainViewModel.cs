@@ -118,7 +118,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
-            //Prihlas(("Oli", "12345"));
+            Prihlas(("Oli", "12345"));
             nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
         }
 
@@ -942,9 +942,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// <summary>
         /// Aktualizuje údaje policisty v databázi na základě úprav v DataGridu Kontakty.
         /// </summary>
-        /// <param name="radek">DataRowView s upravenými daty (Jmeno, Prijmeni, Hodnost)</param>
+        /// <param name="radek">DataRowView s upravenými daty (Jmeno, Prijmeni, Hodnost...)</param>
         [RelayCommand]
-        public async Task UpravitKontakty(object radek)
+        public void UpravitKontakty(object radek)
         {
             var policistaRow = radek as DataRowView;
 
@@ -955,50 +955,32 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     policistaRow.EndEdit();
 
                     int idPolicisty = Convert.ToInt32(policistaRow["IDPOLICISTY"]);
-
                     string noveJmeno = policistaRow["JMENO"].ToString();
                     string novePrijmeni = policistaRow["PRIJMENI"].ToString();
-                    string nazevHodnosti = policistaRow["HODNOST"]?.ToString() ?? string.Empty;
+                    string nazevHodnosti = policistaRow["HODNOST"].ToString();
+                    string nadrizeny = policistaRow["NADRIZENY"]?.ToString() ?? string.Empty;
+                    string stanice = policistaRow["STANICE"].ToString();
 
-                    int idHodnosti;
-                    string sqlHodnost = "SELECT idhodnosti FROM hodnosti WHERE nazev = :nazev";
-                    using (OracleCommand cmdHodnost = new OracleCommand(sqlHodnost, conn))
+                    string storedProcedureName = "upravy_policistu.upravitPolicistu";
+
+                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
                     {
-                        cmdHodnost.BindByName = true;
-                        cmdHodnost.Parameters.Add("nazev", OracleDbType.Varchar2).Value = nazevHodnosti;
-                        var result = await cmdHodnost.ExecuteScalarAsync();
-                        if (result == null || result is DBNull)
-                        {
-                            MessageBox.Show($"Chyba: Hodnost '{nazevHodnosti}' nebyla nalezena v tabulce HODNOSTI.", "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
-                        idHodnosti = Convert.ToInt32((decimal)result);
-                    }
-
-                    // 2. Aktualizace policiste
-                    string sql = @"UPDATE policiste SET jmeno = :jmeno, prijmeni = :prijmeni, idhodnosti = :idhodnosti 
-                           WHERE idpolicisty = :idpolicisty";
-
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
-                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.BindByName = true;
-                        cmd.Parameters.Add("jmeno", OracleDbType.Varchar2).Value = noveJmeno;
-                        cmd.Parameters.Add("prijmeni", OracleDbType.Varchar2).Value = novePrijmeni;
-                        cmd.Parameters.Add("idhodnosti", OracleDbType.Int32).Value = idHodnosti;
-                        cmd.Parameters.Add("idpolicisty", OracleDbType.Int32).Value = idPolicisty;
 
-                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                        cmd.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = noveJmeno;
+                        cmd.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = novePrijmeni;
+                        cmd.Parameters.Add("p_hodnost", OracleDbType.Varchar2).Value = nazevHodnosti;
+                        cmd.Parameters.Add("p_nadrizeny", OracleDbType.Varchar2).Value = nadrizeny;
+                        cmd.Parameters.Add("p_stanice", OracleDbType.Varchar2).Value = stanice;
 
-                        if (rowsAffected > 0)
-                        {
-                            await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
-                            MessageBox.Show("Policista byl úspěšně upraven.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                            await NacistKontakty();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Záznam nebyl v databázi nalezen (ID se neshoduje).", "Chyba");
-                        }
+                        cmd.Parameters.Add("p_idPolicisty", OracleDbType.Int32).Value = idPolicisty;
+
+                        cmd.ExecuteNonQuery();
+                        new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+                        NacistKontakty();
+
+                        MessageBox.Show("Úprava policisty byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
                 catch (Exception ex)
@@ -1164,6 +1146,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     int idPrestupku = Convert.ToInt32(prestupekRow["IDPRESTUPKU"]);
 
                     string novyPrestupekNazev = prestupekRow["PRESTUPEK"].ToString();
+                    string datumVytvoreni = prestupekRow["DATUMVYTVORENI"].ToString();
+                    string jmenoObcana = prestupekRow["JMENOOBCANA"].ToString();
                     string poznamka = prestupekRow["POZNAMKA"]?.ToString() ?? string.Empty;
 
                     int idTypuPrestupku;
@@ -1172,6 +1156,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     {
                         cmdTyp.BindByName = true;
                         cmdTyp.Parameters.Add("nazev", OracleDbType.Varchar2).Value = novyPrestupekNazev;
+
                         var result = await cmdTyp.ExecuteScalarAsync();
                         if (result == null || result is DBNull)
                         {
@@ -1181,7 +1166,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         idTypuPrestupku = Convert.ToInt32((decimal)result);
                     }
 
-                    // 2. Aktualizace tabulky prestupky
                     string sql = @"UPDATE prestupky SET idtypuprestupku = :idtypuprestupku, poznamka = :poznamka 
                            WHERE idprestupku = :idprestupku";
 
