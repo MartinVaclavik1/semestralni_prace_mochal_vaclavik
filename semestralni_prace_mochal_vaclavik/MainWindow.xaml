@@ -88,19 +88,21 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Content="Upravit" 
-                                        Command="{Binding DataContext.UpravitKontaktyCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                    
-                                        CommandParameter="{Binding}" 
-                    
-                                        Margin="1,1" 
-                                        Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                            Command="{Binding DataContext.UpravitKontaktyCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                            CommandParameter="{Binding}" 
+                                            Margin="1,1" 
+                                            Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="" Width="SizeToCells">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Odebrat" Command="{Binding OdebratKontaktyCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
+                                    <Button Content="Odebrat"
+                                            Command="{Binding DataContext.OdebratKontaktyCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                            CommandParameter="{Binding}" 
+                                            Margin="1,1" 
+                                            Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>                                
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

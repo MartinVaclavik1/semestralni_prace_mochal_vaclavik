@@ -958,7 +958,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     string noveJmeno = policistaRow["JMENO"].ToString();
                     string novePrijmeni = policistaRow["PRIJMENI"].ToString();
                     string nazevHodnosti = policistaRow["HODNOST"].ToString();
-                    string nadrizeny = policistaRow["NADRIZENY"]?.ToString() ?? string.Empty;
+                    string nadrizeny = policistaRow["NADRIZENY"]?.ToString() ?? String.Empty;
                     string stanice = policistaRow["STANICE"].ToString();
 
                     string storedProcedureName = "upravy_policistu.upravitPolicistu";
@@ -971,12 +971,17 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         cmd.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = noveJmeno;
                         cmd.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = novePrijmeni;
                         cmd.Parameters.Add("p_hodnost", OracleDbType.Varchar2).Value = nazevHodnosti;
-                        cmd.Parameters.Add("p_nadrizeny", OracleDbType.Varchar2).Value = nadrizeny;
+                        if (nadrizeny == string.Empty)
+                        {
+                            cmd.Parameters.Add("p_nadrizeny", OracleDbType.Varchar2).Value = DBNull.Value;
+                        } else { 
+                            cmd.Parameters.Add("p_nadrizeny", OracleDbType.Varchar2).Value = nadrizeny;
+                        }
                         cmd.Parameters.Add("p_stanice", OracleDbType.Varchar2).Value = stanice;
 
                         cmd.Parameters.Add("p_idPolicisty", OracleDbType.Int32).Value = idPolicisty;
 
-                        cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQueryAsync();
                         new OracleCommand("COMMIT", conn).ExecuteNonQuery();
                         NacistKontakty();
 
@@ -1004,34 +1009,32 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 try
                 {
                     int idPolicisty = Convert.ToInt32(policistaRow["IDPOLICISTY"]);
-                    string jmeno = policistaRow["JMENO"].ToString();
-                    string prijmeni = policistaRow["PRIJMENI"].ToString();
 
                     var result = MessageBox.Show(
-                        $"Opravdu chcete trvale smazat policistu {jmeno} {prijmeni}?",
+                        $"Opravdu chcete záznam smazat??",
                         "Potvrzení smazání",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Warning);
 
                     if (result != MessageBoxResult.Yes) return;
 
-                    string sql = "DELETE FROM policiste WHERE idpolicisty = :idpolicisty";
+                    string storedProcedureName = "upravy_policistu.smazPolicistu";
 
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
                     {
                         cmd.BindByName = true;
-                        cmd.Parameters.Add("idpolicisty", OracleDbType.Int32).Value = idPolicisty;
+                        cmd.Parameters.Add("p_idPolicisty", OracleDbType.Int32).Value = idPolicisty;
 
                         await cmd.ExecuteNonQueryAsync();
                         await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
 
                         MessageBox.Show("Policista byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await NacistKontakty();
+                        NacistKontakty();
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Chyba při odebírání kontaktu: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Chyba při odebírání policisty: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
