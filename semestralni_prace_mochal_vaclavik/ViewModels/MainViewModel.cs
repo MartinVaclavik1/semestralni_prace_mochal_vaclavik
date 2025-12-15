@@ -92,7 +92,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [ObservableProperty]
         private List<string> opravneniSeznamy = new List<string> { "administrator", "policista", "obcan" };
 
-
+        private TabItem posledniVybrany;
         // Přihlášení 
         //wallis45548 - policista
         //martin25922 - obcan => hesla jsou stejné číslo
@@ -120,6 +120,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
             Prihlas(("Oli", "12345"));
             nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
+            posledniVybrany = Window.Domu;
         }
 
         /// <summary>
@@ -586,37 +587,49 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         private async Task ZmenaOkna()
         {
-            if (Window.Admin.IsSelected)
+            if (Window.Admin.IsSelected && posledniVybrany != Window.Admin)
             {
                 await NacistUzivatele();
+                posledniVybrany = Window.Admin;
             }
             else if (Window.Kontakty.IsSelected)
             {
                 await NacistKontakty();
+                posledniVybrany = Window.Kontakty;
             }
             else if (Window.Prestupky.IsSelected)
             {
                 await NacistPrestupky();
+                posledniVybrany= Window.Prestupky;
             }
             else if (Window.MojePrestupky.IsSelected)
             {
                 await NacistMojePrestupky();
+                posledniVybrany = Window.MojePrestupky;
             }
             else if (Window.Hlidky.IsSelected)
             {
                 await NacistHlidky();
+                posledniVybrany = Window.Hlidky;
+
             }
             else if (Window.Okrsky.IsSelected)
             {
                 await NacistOkrsky();
+                posledniVybrany = Window.Okrsky;
+
             }
             else if (Window.LogovaciTabulka.IsSelected)
             {
                 await NacistLogovaciTabulku();
+                posledniVybrany = Window.LogovaciTabulka;
+
             }
             else if (Window.SystemovyKatalog.IsSelected)
             {
                 await NacistSystemovyKatalog();
+                posledniVybrany = Window.SystemovyKatalog;
+
             }
         }
 
@@ -637,7 +650,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     await Task.Run(() => adapter.Fill(dt));
 
                     UzivatelItemsSource = dt.DefaultView;
-
+                    Users.Clear();
                     foreach (DataRow item in dt.Rows)
                     {
 
