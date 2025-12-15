@@ -1205,14 +1205,14 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public void OdebratPresupek(object radek)
         {
-            var prestupekRow = radek as DataRowView;
+            var row = radek as DataRowView;
 
-            if (prestupekRow != null)
+            if (row != null)
             {
                 try
                 {
-                    int idPrestupku = Convert.ToInt32(prestupekRow["IDPRESTUPKU"]);
-                    string typPrestupku = prestupekRow["PRESTUPEK"].ToString();
+                    int idPrestupku = Convert.ToInt32(row["IDPRESTUPKU"]);
+                    string typPrestupku = row["PRESTUPEK"].ToString();
 
                     var result = MessageBox.Show(
                         $"Opravdu chcete trvale smazat přestupek '{typPrestupku}'?",
@@ -1222,12 +1222,12 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                     if (result != MessageBoxResult.Yes) return;
 
-                    string sql = "DELETE FROM prestupky WHERE idprestupku = :idprestupku";
+                    string storedProcedureName = "upravy_prestupku.smazPrestupek";
 
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
                     {
                         cmd.BindByName = true;
-                        cmd.Parameters.Add("idprestupku", OracleDbType.Int32).Value = idPrestupku;
+                        cmd.Parameters.Add("p_idPrestupku", OracleDbType.Int32).Value = row;
 
                         cmd.ExecuteNonQueryAsync();
                         new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
@@ -1248,58 +1248,36 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         /// <param name="radek">DataRowView s upravenými daty (Identifikace přes IDHLIDKY)</param>
         [RelayCommand]
-        public async Task UpravitHlidku(object radek)
+        public void UpravitHlidku(object radek)
         {
-            var hlidkaRow = radek as DataRowView;
+            var row = radek as DataRowView;
 
-            if (hlidkaRow != null)
+            if (row != null)
             {
                 try
                 {
-                    hlidkaRow.EndEdit();
+                    row.EndEdit();
 
-                    int idHlidky = Convert.ToInt32(hlidkaRow["IDHLIDKY"]);
+                    int idHlidky = Convert.ToInt32(row["IDHLIDKY"]);
+                    string nazevTypu = row["NAZEV"].ToString();
+                    string nazevHldiky = row["NAZEVHLIDKY"].ToString();
 
-                    string novyNazevHlidky = hlidkaRow["NAZEVHLIDKY"].ToString();
-                    string novyNazevTypu = hlidkaRow["NAZEV"].ToString();
+                    string storedProcedureName = "upravy_hlidek.upravitHlidku";
 
-
-                    int idTypu;
-                    string sqlTyp = "SELECT idtypu FROM typy_hlidky WHERE nazev = :nazev";
-                    using (OracleCommand cmdTyp = new OracleCommand(sqlTyp, conn))
+                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
                     {
-                        cmdTyp.BindByName = true;
-                        cmdTyp.Parameters.Add("nazev", OracleDbType.Varchar2).Value = novyNazevTypu;
-                        var result = await cmdTyp.ExecuteScalarAsync();
-                        if (result == null || result is DBNull)
-                        {
-                            MessageBox.Show($"Chyba: Typ hlídky '{novyNazevTypu}' nebyl nalezen v TYPY_HLIDKY.", "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
-                        idTypu = Convert.ToInt32((decimal)result);
-                    }
-
-                    string sql = @"UPDATE hlidky SET nazevhlidky = :novyNazev, idtypu = :idtypu WHERE idhlidky = :idhlidky";
-
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
-                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.BindByName = true;
-                        cmd.Parameters.Add("novyNazev", OracleDbType.Varchar2).Value = novyNazevHlidky;
-                        cmd.Parameters.Add("idtypu", OracleDbType.Int32).Value = idTypu;
-                        cmd.Parameters.Add("idhlidky", OracleDbType.Int32).Value = idHlidky;
 
-                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                        cmd.Parameters.Add("p_idHlidky", OracleDbType.Int32).Value = idHlidky;
+                        cmd.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = nazevTypu;
+                        cmd.Parameters.Add("p_nazevHlidky", OracleDbType.Varchar2).Value = nazevHldiky;
 
-                        if (rowsAffected > 0)
-                        {
-                            await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
-                            MessageBox.Show("Hlídka byla úspěšně upravena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                            NacistHlidky();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Záznam nebyl v databázi nalezen (ID se neshoduje).", "Chyba");
-                        }
+                        cmd.ExecuteNonQueryAsync();
+                        new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+                        NacistHlidky();
+
+                        MessageBox.Show("Úprava hlídky byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
                 catch (Exception ex)
@@ -1316,14 +1294,14 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public async Task OdebratHlidku(object radek)
         {
-            var hlidkaRow = radek as DataRowView;
+            var row = radek as DataRowView;
 
-            if (hlidkaRow != null)
+            if (row != null)
             {
                 try
                 {
-                    int idHlidky = Convert.ToInt32(hlidkaRow["IDHLIDKY"]);
-                    string nazev = hlidkaRow["NAZEVHLIDKY"].ToString();
+                    int idHlidky = Convert.ToInt32(row["IDPRESTUPKU"]);
+                    string nazev = row["NAZEV"].ToString();
 
                     var result = MessageBox.Show(
                         $"Opravdu chcete trvale smazat hlídku '{nazev}'?",
@@ -1333,15 +1311,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                     if (result != MessageBoxResult.Yes) return;
 
-                    string sql = "DELETE FROM hlidky WHERE idhlidky = :idhlidky";
+                    string storedProcedureName = "upravy_hlidek.smazHlidku";
 
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
                     {
                         cmd.BindByName = true;
-                        cmd.Parameters.Add("idhlidky", OracleDbType.Int32).Value = idHlidky;
+                        cmd.Parameters.Add("p_idHlidky", OracleDbType.Int32).Value = idHlidky;
 
-                        await cmd.ExecuteNonQueryAsync();
-                        await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
+                        cmd.ExecuteNonQueryAsync();
+                        new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
 
                         MessageBox.Show("Hlídka byla úspěšně odstraněna.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
                         NacistHlidky();
