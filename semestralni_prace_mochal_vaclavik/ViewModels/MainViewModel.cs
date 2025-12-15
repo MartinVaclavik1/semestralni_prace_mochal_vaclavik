@@ -1,22 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.VisualBasic;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 using semestralni_prace_mochal_vaclavik.Tridy;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using MessageBox = System.Windows.MessageBox;
 
 namespace semestralni_prace_mochal_vaclavik.ViewModels
@@ -56,6 +47,12 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         [ObservableProperty]
         public DataView kontaktyItemsSource;
+
+        [ObservableProperty]
+        public DataView okrskyItemsSource;
+
+        [ObservableProperty]
+        public DataView prestupkyItemsSource;
 
         /// <summary>
         /// Zdroj dat pro DataGrid se všemi uživateli.
@@ -119,8 +116,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show(ex.Message);
             }
             Prihlas(("Oli", "12345"));
-            nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
-        }
+            nastavOknaPodleOpravneni();         }
 
         /// <summary>
         /// Určuje viditelnost ovládacích prvků pro policisty.
@@ -268,7 +264,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                             await commitCmd.ExecuteNonQueryAsync();
                         }
                         MessageBox.Show("Uživatel byl úspěšně odebrán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await NacistUzivatele();
+                        NacistUzivatele();
                     }
                 }
                 catch (OracleException oraEx)
@@ -588,35 +584,35 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             if (Window.Admin.IsSelected)
             {
-                await NacistUzivatele();
+                NacistUzivatele();
             }
             else if (Window.Kontakty.IsSelected)
             {
-                await NacistKontakty();
+                NacistKontakty();
             }
             else if (Window.Prestupky.IsSelected)
             {
-                await NacistPrestupky();
+               NacistPrestupky();
             }
             else if (Window.MojePrestupky.IsSelected)
             {
-                await NacistMojePrestupky();
+                NacistMojePrestupky();
             }
             else if (Window.Hlidky.IsSelected)
             {
-                await NacistHlidky();
+                NacistHlidky();
             }
             else if (Window.Okrsky.IsSelected)
             {
-                await NacistOkrsky();
+                 NacistOkrsky();
             }
             else if (Window.LogovaciTabulka.IsSelected)
             {
-                await NacistLogovaciTabulku();
+                NacistLogovaciTabulku();
             }
             else if (Window.SystemovyKatalog.IsSelected)
             {
-                await NacistSystemovyKatalog();
+                NacistSystemovyKatalog();
             }
         }
 
@@ -624,7 +620,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Načítá seznam všech uživatelů z databáze do kolekce.
         /// </summary>
         /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private async Task NacistUzivatele()
+        private void NacistUzivatele()
         {
             try
             {
@@ -634,7 +630,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
-                    await Task.Run(() => adapter.Fill(dt));
+                    adapter.Fill(dt);
 
                     UzivatelItemsSource = dt.DefaultView;
 
@@ -662,7 +658,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Načítá systémový katalog z databáze a zobrazuje ho v dataGridu.
         /// </summary>
         /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private async Task NacistSystemovyKatalog()
+        private void NacistSystemovyKatalog()
         {
             try
             {
@@ -691,7 +687,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Zobrazuje historii akcí uživatelů v administračním panelu.
         /// </remarks>
         /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private async Task NacistLogovaciTabulku()
+        private void NacistLogovaciTabulku()
         {
             try
             {
@@ -720,7 +716,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Zobrazuje policisty na kartě Kontakty.
         /// </remarks>
         /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private async Task NacistKontakty()
+        private void NacistKontakty()
         {
             try
             {
@@ -754,7 +750,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Zobrazuje přestupky na kartě Přestupky (dostupné pro policisty a administrátory).
         /// </remarks>
         /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private async Task NacistPrestupky()
+        private void NacistPrestupky()
         {
             try
             {
@@ -783,7 +779,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Dostupné pouze pro role "obcan". Filtruje data podle ID aktuálně přihlášeného uživatele.
         /// </remarks>
         /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private async Task NacistMojePrestupky()
+        private void NacistMojePrestupky()
         {
             try
             {
@@ -811,7 +807,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Zobrazuje hlídky na kartě Hlídky (dostupné pro policisty a administrátory).
         /// </Summary>
         /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private async Task NacistHlidky()
+        private void NacistHlidky()
         {
             try
             {
@@ -1000,7 +996,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         /// <param name="radek">DataRowView s daty policisty k odstranění (Identifikace přes IDPOLICISTY)</param>
         [RelayCommand]
-        public async Task OdebratKontakty(object radek)
+        public void OdebratKontakty(object radek)
         {
             var policistaRow = radek as DataRowView;
 
@@ -1025,8 +1021,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         cmd.BindByName = true;
                         cmd.Parameters.Add("p_idPolicisty", OracleDbType.Int32).Value = idPolicisty;
 
-                        await cmd.ExecuteNonQueryAsync();
-                        await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
+                        cmd.ExecuteNonQueryAsync();
+                        new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
 
                         MessageBox.Show("Policista byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
                         NacistKontakty();
@@ -1044,39 +1040,34 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         /// <param name="radek">DataRowView s upraveným názvem (Identifikace přes IDOKRSKU)</param>
         [RelayCommand]
-        public async Task UpravitOkrsek(object radek)
+        public void UpravitOkrsek(object radek)
         {
-            var okrsekRow = radek as DataRowView;
+            var row = radek as DataRowView;
 
-            if (okrsekRow != null)
+            if (row != null)
             {
                 try
                 {
-                    okrsekRow.EndEdit();
+                    row.EndEdit();
 
-                    int idOkrsku = Convert.ToInt32(okrsekRow["IDOKRSKU"]);
-                    string novyNazev = okrsekRow["NAZEV"].ToString();
+                    int idOkrsku = Convert.ToInt32(row["IDOKRSKU"]);
+                    string novyNazev = row["NAZEV"].ToString();
 
-                    string sql = @"UPDATE okrsky SET nazev = :novyNazev WHERE idokrsku = :idokrsku";
+                    string storedProcedureName = "upravy_okrsku.upravitOkrsek";
 
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
                     {
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.BindByName = true;
-                        cmd.Parameters.Add("novyNazev", OracleDbType.Varchar2).Value = novyNazev;
-                        cmd.Parameters.Add("idokrsku", OracleDbType.Int32).Value = idOkrsku;
 
-                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
+                        cmd.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = novyNazev;
+                        cmd.Parameters.Add("p_idOkrsku", OracleDbType.Int32).Value = idOkrsku;
 
-                        if (rowsAffected > 0)
-                        {
-                            await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
-                            MessageBox.Show("Okrsek byl úspěšně upraven.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                            await NacistOkrsky();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Záznam nebyl v databázi nalezen (ID se neshoduje).", "Chyba");
-                        }
+                        cmd.ExecuteNonQueryAsync();
+                        new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+
+                        MessageBox.Show("Úprava okrsku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        NacistOkrsky();
                     }
                 }
                 catch (Exception ex)
@@ -1091,42 +1082,41 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         /// <param name="radek">DataRowView s daty Okrsku k odstranění (Identifikace přes IDOKRSKU)</param>
         [RelayCommand]
-        public async Task OdebratOkrsek(object radek)
+        public void OdebratOkrsek(object radek)
         {
-            var okrsekRow = radek as DataRowView;
+            var row = radek as DataRowView;
 
-            if (okrsekRow != null)
+            if (row != null)
             {
                 try
                 {
-                    int idOkrsku = Convert.ToInt32(okrsekRow["IDOKRSKU"]);
-                    string nazev = okrsekRow["NAZEV"].ToString();
+                    int idOkrsku = Convert.ToInt32(row["IDOKRSKU"]);
 
                     var result = MessageBox.Show(
-                        $"Opravdu chcete trvale smazat okrsek '{nazev}'?",
+                        $"Opravdu chcete záznam smazat??",
                         "Potvrzení smazání",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Warning);
 
                     if (result != MessageBoxResult.Yes) return;
 
-                    string sql = "DELETE FROM okrsky WHERE idokrsku = :idokrsku";
+                    string storedProcedureName = "upravy_okrsku.smazOkrsek";
 
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
                     {
                         cmd.BindByName = true;
-                        cmd.Parameters.Add("idokrsku", OracleDbType.Int32).Value = idOkrsku;
+                        cmd.Parameters.Add("p_idOkrsku", OracleDbType.Int32).Value = row;
 
-                        await cmd.ExecuteNonQueryAsync();
-                        await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
+                        cmd.ExecuteNonQueryAsync();
+                        new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
 
                         MessageBox.Show("Okrsek byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await NacistOkrsky();
+                        NacistOkrsky();
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Chyba při odebírání okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Chyba při odebírání Okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -1136,66 +1126,59 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         /// <param name="radek">DataRowView s upravenými daty (Identifikace přes IDPRESTUPKU)</param>
         [RelayCommand]
-        public async Task UpravitPresupek(object radek)
+        public void UpravitPresupek(object radek)
         {
-            var prestupekRow = radek as DataRowView;
+            var row = radek as DataRowView;
 
-            if (prestupekRow != null)
+            if (row != null)
             {
                 try
                 {
-                    prestupekRow.EndEdit();
+                    row.EndEdit();
 
-                    int idPrestupku = Convert.ToInt32(prestupekRow["IDPRESTUPKU"]);
+                    int idPrestupku = Convert.ToInt32(row["IDPRESTUPKU"]);
+                    string prestupek = row["PRESTUPEK"].ToString();
+                    string datum = row["DATUM"].ToString();
+                    string jmenoObcana = row["JMENOOBCANA"]?.ToString() ?? String.Empty;
+                    string poznamka = row["POZNAMKA"].ToString() ?? String.Empty;
 
-                    string novyPrestupekNazev = prestupekRow["PRESTUPEK"].ToString();
-                    string datumVytvoreni = prestupekRow["DATUMVYTVORENI"].ToString();
-                    string jmenoObcana = prestupekRow["JMENOOBCANA"].ToString();
-                    string poznamka = prestupekRow["POZNAMKA"]?.ToString() ?? string.Empty;
+                    string storedProcedureName = "upravy_prestupku.upravitPrestupek";
 
-                    int idTypuPrestupku;
-                    string sqlTyp = "SELECT idtypuprestupku FROM typy_prestupku WHERE prestupek = :nazev";
-                    using (OracleCommand cmdTyp = new OracleCommand(sqlTyp, conn))
+                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
                     {
-                        cmdTyp.BindByName = true;
-                        cmdTyp.Parameters.Add("nazev", OracleDbType.Varchar2).Value = novyPrestupekNazev;
-
-                        var result = await cmdTyp.ExecuteScalarAsync();
-                        if (result == null || result is DBNull)
-                        {
-                            MessageBox.Show($"Chyba: Typ přestupku '{novyPrestupekNazev}' nebyl nalezen v TYPY_PRESTUPKU.", "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
-                            return;
-                        }
-                        idTypuPrestupku = Convert.ToInt32((decimal)result);
-                    }
-
-                    string sql = @"UPDATE prestupky SET idtypuprestupku = :idtypuprestupku, poznamka = :poznamka 
-                           WHERE idprestupku = :idprestupku";
-
-                    using (OracleCommand cmd = new OracleCommand(sql, conn))
-                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
                         cmd.BindByName = true;
-                        cmd.Parameters.Add("idtypuprestupku", OracleDbType.Int32).Value = idTypuPrestupku;
-                        cmd.Parameters.Add("poznamka", OracleDbType.Varchar2).Value = poznamka;
-                        cmd.Parameters.Add("idprestupku", OracleDbType.Int32).Value = idPrestupku;
 
-                        int rowsAffected = await cmd.ExecuteNonQueryAsync();
-
-                        if (rowsAffected > 0)
+                        cmd.Parameters.Add("p_prestupek", OracleDbType.Varchar2).Value = prestupek;
+                        cmd.Parameters.Add("p_datum", OracleDbType.Varchar2).Value = datum;
+                        
+                        if (jmenoObcana == string.Empty)
                         {
-                            await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
-                            MessageBox.Show("Přestupek byl úspěšně upraven.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                            await NacistPrestupky();
+                            cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = DBNull.Value;
                         }
                         else
                         {
-                            MessageBox.Show("Záznam nebyl v databázi nalezen (ID se neshoduje).", "Chyba");
+                            cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = jmenoObcana; ;
                         }
+                        if (poznamka == string.Empty)
+                        {
+                            cmd.Parameters.Add("p_poznamka", OracleDbType.Varchar2).Value = DBNull.Value;
+                        }
+                        else
+                        {
+                            cmd.Parameters.Add("p_poznamka", OracleDbType.Varchar2).Value = poznamka;
+                        }
+
+                        cmd.ExecuteNonQueryAsync();
+                        new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+                        NacistPrestupky();
+
+                        MessageBox.Show("Úprava přestupku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Chyba při zpracování úpravy přestupku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Chyba při zpracování úpravy prestupku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -1205,7 +1188,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         /// <param name="radek">DataRowView s daty Přestupku k odstranění (Identifikace přes IDPRESTUPKU)</param>
         [RelayCommand]
-        public async Task OdebratPresupek(object radek)
+        public void OdebratPresupek(object radek)
         {
             var prestupekRow = radek as DataRowView;
 
@@ -1231,11 +1214,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         cmd.BindByName = true;
                         cmd.Parameters.Add("idprestupku", OracleDbType.Int32).Value = idPrestupku;
 
-                        await cmd.ExecuteNonQueryAsync();
-                        await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
+                        cmd.ExecuteNonQueryAsync();
+                        new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
 
                         MessageBox.Show("Přestupek byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await NacistPrestupky();
+                        NacistPrestupky();
                     }
                 }
                 catch (Exception ex)
@@ -1296,7 +1279,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         {
                             await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
                             MessageBox.Show("Hlídka byla úspěšně upravena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                            await NacistHlidky();
+                            NacistHlidky();
                         }
                         else
                         {
@@ -1346,7 +1329,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
 
                         MessageBox.Show("Hlídka byla úspěšně odstraněna.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await NacistHlidky();
+                        NacistHlidky();
                     }
                 }
                 catch (Exception ex)
