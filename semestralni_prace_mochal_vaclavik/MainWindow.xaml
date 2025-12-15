@@ -124,18 +124,25 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Jméno" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                    <Label Grid.Column="1" Content="Příjmení" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                    <Label Grid.Column="2" Content="Hodnost" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                    <Label Grid.Column="3" Content="Nadřízený" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                    <Label Grid.Column="4" Content="Stanice" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                    <TextBox x:Name="pridatKontaktyJmeno" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="120"/>
-                    <TextBox x:Name="pridatKontaktyPrijmeni" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" Grid.Column="1"/>
-                    <TextBox x:Name="pridatKontaktyHodnost" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" Grid.Column="2"/>
-                    <TextBox x:Name="pridatKontaktyNadrizeny" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" Grid.Column="3"/>
-                    <TextBox x:Name="pridatKontaktyStanice" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="120" Grid.Column="4"/>
-                    <Button Grid.Column="5" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="108"/>
+                    <Label Grid.Column="0" Content="Jméno" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Label Content="Příjmení" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
+                    <Label Grid.Column="1" Content="Hodnost" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
+                    <Label Grid.Column="2" Content="Nadřízený" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
+                    <Label Grid.Column="3" Content="Stanice" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
+                    <Label Grid.Column="4" Content="Plat" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
+                    <Label Grid.Column="6" Content="Datum narození" HorizontalAlignment="Left" Margin="0,3,0,0" VerticalAlignment="Top" Width="96"/>
+                    <TextBox x:Name="pridatKontaktyJmeno" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91"/>
+                    <TextBox x:Name="pridatKontaktyPrijmeni" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="pridatKontaktyNadrizeny" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="2" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="pridatKontaktyStanice" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="3" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="pridatKontaktyDatum" Grid.Column="5" Grid.ColumnSpan="2" Margin="96,0,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                    <TextBox x:Name="pridatKontaktyPlat" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="4" Margin="96,0,0,0" Grid.ColumnSpan="2"></TextBox>
+
+                    <Button Grid.Column="7" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="76"/>
+                    <ComboBox Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="96,0,0,0" Grid.Row="1" VerticalAlignment="Center" Width="91" Height="18"/>
                 </Grid>
             </Grid>
         </TabItem>
@@ -282,12 +289,11 @@
                     <Label Content="Datum" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="10,0,0,0"/>
                     <Label Content="Celé jméno občana" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="2" Margin="10,0,0,0"/>
                     <Label Content="Poznámka" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="3" Margin="10,0,0,0"/>
-
-                    <TextBox x:Name="pridatPrestupekTyp" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="135"/>
                     <TextBox x:Name="pridatPrestupekDatum" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="135" Grid.Column="1"/>
                     <TextBox x:Name="pridatPrestupekObcan" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="134" Grid.Column="2"/>
                     <TextBox x:Name="pridatPrestupekPoznamka" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="135" Grid.Column="3"/>
                     <Button Grid.Column="4" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="134"/>
+                    <ComboBox HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="135" Height="18"/>
 
                 </Grid>
             </Grid>
@@ -358,7 +364,7 @@
                     <Label Content="Typ" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="1"/>
                     <Button Grid.Column="2" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="109"/>
                     <TextBox x:Name="pridatHlidkuNazev" HorizontalAlignment="Center" Margin="0,5,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="pridatHlidkuTyp" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="120"/>
+                    <ComboBox Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="118" Height="18"/>
                 </Grid>
             </Grid>
         </TabItem>
@@ -446,8 +452,8 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
 
                 <!-- Řádek 0: Filtry a Zobrazení (OPRÁVNĚNÍ: Admin) -->
@@ -455,7 +461,7 @@
                 <DataGrid x:Name="UzivateleGrid"
                   d:ItemsSource="{d:SampleData ItemCount=5}"
                   ItemsSource="{Binding Users}"
-                  Margin="15,10,20,10"
+                  Margin="10,10,10,10"
                   SelectionMode="Single"
                   SelectionUnit="Cell"
                   IsManipulationEnabled="True"
@@ -514,9 +520,32 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,0" VerticalAlignment="Center">
-                    <Label Content="Akce:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,0" VerticalAlignment="Center"/>
+                <Grid Grid.Row="1" Margin="10,0,10,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Content="Přihlašovací jméno" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Label Grid.Column="1" Content="Heslo" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Label Grid.Column="2" Content="Celé jméno policisty" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Label Grid.Column="3" Content="Celé jméno občana" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Label Grid.Column="4" Content="Oprávnění" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Column="3" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Width="104" Margin="166,0,0,0" Grid.ColumnSpan="2" Height="17"/>
+                    <TextBox Grid.Column="2" Margin="166,0,10,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
+                    <TextBox Grid.Column="1" Grid.ColumnSpan="2" Margin="110,0,10,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <TextBox Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <Button Grid.Column="5" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="48"/>
+                </Grid>
             </Grid>
         </TabItem>
         <TabItem x:Name="LogovaciTabulka" Header="Logovací tabulka">

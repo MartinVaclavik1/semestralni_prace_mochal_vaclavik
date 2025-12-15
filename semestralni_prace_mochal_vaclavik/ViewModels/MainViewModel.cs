@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using MessageBox = System.Windows.MessageBox;
 
@@ -586,45 +587,45 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             if (Window.Admin.IsSelected && posledniVybrany != Window.Admin)
             {
-                await NacistUzivatele();
+                NacistUzivatele();
                 posledniVybrany = Window.Admin;
             }
             else if (Window.Kontakty.IsSelected)
             {
-                await NacistKontakty();
+                NacistKontakty();
                 posledniVybrany = Window.Kontakty;
             }
             else if (Window.Prestupky.IsSelected)
             {
-                await NacistPrestupky();
+                NacistPrestupky();
                 posledniVybrany= Window.Prestupky;
             }
             else if (Window.MojePrestupky.IsSelected)
             {
-                await NacistMojePrestupky();
+                NacistMojePrestupky();
                 posledniVybrany = Window.MojePrestupky;
             }
             else if (Window.Hlidky.IsSelected)
             {
-                await NacistHlidky();
+                NacistHlidky();
                 posledniVybrany = Window.Hlidky;
 
             }
             else if (Window.Okrsky.IsSelected)
             {
-                await NacistOkrsky();
+                NacistOkrsky();
                 posledniVybrany = Window.Okrsky;
 
             }
             else if (Window.LogovaciTabulka.IsSelected)
             {
-                await NacistLogovaciTabulku();
+                NacistLogovaciTabulku();
                 posledniVybrany = Window.LogovaciTabulka;
 
             }
             else if (Window.SystemovyKatalog.IsSelected)
             {
-                await NacistSystemovyKatalog();
+                NacistSystemovyKatalog();
                 posledniVybrany = Window.SystemovyKatalog;
 
             }
