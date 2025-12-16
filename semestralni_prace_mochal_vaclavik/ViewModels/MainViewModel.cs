@@ -101,7 +101,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [ObservableProperty]
         private List<string> typy_hlidkySeznam = new List<string>();
 
-        private TabItem posledniVybrany;
         // Přihlášení 
         //wallis45548 - policista
         //martin25922 - obcan => hesla jsou stejné číslo
@@ -130,7 +129,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             Prihlas(("Oli", "12345"));
             NastavComboboxy();
             NastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
-            posledniVybrany = Window.Domu;
         }
 
         /// <summary>
@@ -595,51 +593,46 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Načítá data z databáze při změně aktivní záložky.
         /// </summary>
         [RelayCommand]
-        private void ZmenaOkna()
+        private void ZmenaOkna(SelectionChangedEventArgs e)
         {
-            if (Window.Admin.IsSelected && posledniVybrany != Window.Admin)
+            if (e.OriginalSource is System.Windows.Controls.TabControl)
             {
-                NacistUzivatele();
-                posledniVybrany = Window.Admin;
-            }
-            else if (Window.Kontakty.IsSelected && posledniVybrany != Window.Kontakty)
-            {
-                NacistKontakty();
-                posledniVybrany = Window.Kontakty;
-            }
-            else if (Window.Prestupky.IsSelected)
-            {
-                NacistPrestupky();
-                posledniVybrany = Window.Prestupky;
-            }
-            else if (Window.MojePrestupky.IsSelected)
-            {
-                NacistMojePrestupky();
-                posledniVybrany = Window.MojePrestupky;
-            }
-            else if (Window.Hlidky.IsSelected)
-            {
-                NacistHlidky();
-                posledniVybrany = Window.Hlidky;
 
-            }
-            else if (Window.Okrsky.IsSelected)
-            {
-                NacistOkrsky();
-                posledniVybrany = Window.Okrsky;
 
-            }
-            else if (Window.LogovaciTabulka.IsSelected)
-            {
-                NacistLogovaciTabulku();
-                posledniVybrany = Window.LogovaciTabulka;
+                if (Window.Admin.IsSelected)
+                {
+                    NacistUzivatele();
+                }
+                else if (Window.Kontakty.IsSelected)
+                {
+                    NacistKontakty();
+                }
+                else if (Window.Prestupky.IsSelected)
+                {
+                    NacistPrestupky();
+                }
+                else if (Window.MojePrestupky.IsSelected)
+                {
+                    NacistMojePrestupky();
+                }
+                else if (Window.Hlidky.IsSelected)
+                {
+                    NacistHlidky();
 
-            }
-            else if (Window.SystemovyKatalog.IsSelected)
-            {
-                NacistSystemovyKatalog();
-                posledniVybrany = Window.SystemovyKatalog;
+                }
+                else if (Window.Okrsky.IsSelected)
+                {
+                    NacistOkrsky();
+                }
+                else if (Window.LogovaciTabulka.IsSelected)
+                {
+                    NacistLogovaciTabulku();
 
+                }
+                else if (Window.SystemovyKatalog.IsSelected)
+                {
+                    NacistSystemovyKatalog();
+                }
             }
         }
 
@@ -876,7 +869,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Zobrazuje okrsky na kartě Okrsky (dostupné pro policisty a administrátory).
         /// </remarks>
         /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private async Task NacistOkrsky()
+        private void NacistOkrsky()
         {
             try
             {
