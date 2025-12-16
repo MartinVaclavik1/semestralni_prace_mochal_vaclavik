@@ -45,14 +45,22 @@
                 <DataGridTemplateColumn Header="" Width="SizeToCells">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Upravit" Command="{Binding UpravitHlidkuCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
+                            <Button Content="Upravit" 
+                                 Command="{Binding DataContext.UpravitHlidkuCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                 CommandParameter="{Binding}" 
+                                 Margin="1,1" 
+                                 Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="" Width="SizeToCells">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Odebrat" Command="{Binding OdebratHlidkuCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
+                            <Button Content="Odebrat" 
+                                      Command="{Binding DataContext.OdebratHlidkuCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                      CommandParameter="{Binding}" 
+                                      Margin="1,1" 
+                                      Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>                             
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -73,7 +81,7 @@
             <Label Content="Typ" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="1"/>
             <Button Grid.Column="2" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="109"/>
             <TextBox x:Name="pridatHlidkuNazev" HorizontalAlignment="Center" Margin="0,5,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-            <ComboBox Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="118" Height="18"
+            <ComboBox x:Name="pridatHlidkuTyp" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="118" Height="18"
             ItemsSource="{Binding DataContext.Typy_hlidkySeznam, RelativeSource={RelativeSource AncestorType=TabItem}}"/>
         </Grid>
     </Grid>

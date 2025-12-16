@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 using semestralni_prace_mochal_vaclavik.Tridy;
+using semestralni_prace_mochal_vaclavik.Views;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
@@ -700,7 +701,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
-                    //Window.systemovyKatalogGrid.ItemsSource = dt.DefaultView;
+                    Window.SystemovyKatalogView.systemovyKatalogGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -729,7 +730,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
-                    //Window.logovaciTabulkaGrid.ItemsSource = dt.DefaultView;
+                    Window.LogovaciTabulkaView.logovaciTabulkaGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -804,14 +805,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
+                    adapter.Fill(dt);
                     Prestupky.Clear();
                     foreach (DataRow item in dt.Rows)
                     {
                         Prestupky.Add(new Prestupek
                         {  
-                            IdObcana = item.Field<int>("idobcana"),
+                            IdObcana = (int)item.Field<decimal>("idobcana"),
                             TypPrestupku = item.Field<string>("prestupek"),
-                            Datum = item.Field<string>("datum"),
+                            Datum = (item.Field<DateTime>("datum")).ToString(),
                             JmenoObcana = item.Field<string>("jmenoobcana"),
                             Poznamka = item.Field<string>("poznamka")
                         });
@@ -872,13 +874,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
-                    
+                    adapter.Fill(dt);
                     Hlidky.Clear();
                     foreach (DataRow item in dt.Rows)
                     {
                         Hlidky.Add(new Hlidka
                         {
-                            IdHlidky = (int)item.Field<int>("idhlidky"),
+                            IdHlidky = (int)item.Field<decimal>("idhlidky"),
                             NazevHlidky = item.Field<string>("nazevhlidky"),
                             Nazev=item.Field<string>("nazev"),
                         });
@@ -910,12 +912,14 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
+
+                    adapter.Fill(dt);
                     Okrsky.Clear();
                     foreach (DataRow item in dt.Rows)
                     {
                         Okrsky.Add(new Okrsek
                         {
-                            Id = item.Field<int>("idokrsku"),
+                            Id = (int)item.Field<decimal>("idokrsku"),
                             Nazev = item.Field<string>("nazev")
                         });
                     }
@@ -1079,9 +1083,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 DateTime datumNarozeni = Window.PolicisteView.pridatKontaktyDatum.Text != string.Empty ? Convert.ToDateTime(Window.PolicisteView.pridatKontaktyDatum.Text) : DateTime.MinValue;
                 int plat = Window.PolicisteView.pridatKontaktyPlat.Text != string.Empty ? Convert.ToInt32(Window.PolicisteView.pridatKontaktyPlat.Text) : 0;
                 novyPolicista.Pridej(conn, jmeno, prijmeni, hodnost, nadrizeny, stanice, plat, datumNarozeni);
-
-
                 NacistKontakty();
+
                 MessageBox.Show("Nový policista byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -1097,32 +1100,18 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public void UpravitOkrsek(object radek)
         {
-            var row = radek as DataRowView;
+            var row = radek as Okrsek;
 
             if (row != null)
             {
                 try
                 {
-                    row.EndEdit();
-
-                    int idOkrsku = Convert.ToInt32(row["IDOKRSKU"]);
-                    string novyNazev = row["NAZEV"].ToString();
-
-                    string storedProcedureName = "upravy_okrsku.upravitOkrsek";
-
-                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+                    if (row.Zmenen)
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.BindByName = true;
-
-                        cmd.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = novyNazev;
-                        cmd.Parameters.Add("p_idOkrsku", OracleDbType.Int32).Value = idOkrsku;
-
-                        cmd.ExecuteNonQueryAsync();
-                        new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+                        row.Uloz(conn);
+                        NacistOkrsky();
 
                         MessageBox.Show("Úprava okrsku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        NacistOkrsky();
                     }
                 }
                 catch (Exception ex)
@@ -1139,14 +1128,12 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public void OdebratOkrsek(object radek)
         {
-            var row = radek as DataRowView;
+            var row = radek as Okrsek;
 
             if (row != null)
             {
                 try
                 {
-                    int idOkrsku = Convert.ToInt32(row["IDOKRSKU"]);
-
                     var result = MessageBox.Show(
                         $"Opravdu chcete záznam smazat??",
                         "Potvrzení smazání",
@@ -1155,24 +1142,30 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                     if (result != MessageBoxResult.Yes) return;
 
-                    string storedProcedureName = "upravy_okrsku.smazOkrsek";
+                    row.Smaz(conn);
+                    NacistOkrsky();
 
-                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
-                    {
-                        cmd.BindByName = true;
-                        cmd.Parameters.Add("p_idOkrsku", OracleDbType.Int32).Value = row;
-
-                        cmd.ExecuteNonQueryAsync();
-                        new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
-
-                        MessageBox.Show("Okrsek byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        NacistOkrsky();
-                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Chyba při odebírání Okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Chyba při odebírání okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+        }
+        [RelayCommand]
+        public void PridatOkrsek()
+        {
+            try
+            {
+                Okrsek novyOkrsek = new Okrsek();
+                string nazev = Window.OkrskyView.pridatOkrsekNazev.Text;
+                novyOkrsek.Pridej(conn, nazev);
+                NacistOkrsky();
+                MessageBox.Show("Nový policista byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při přidávání nového policisty: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -1183,49 +1176,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public void UpravitPresupek(object radek)
         {
-            var row = radek as DataRowView;
+            var row = radek as Prestupek;
 
             if (row != null)
             {
                 try
                 {
-                    row.EndEdit();
-
-                    int idPrestupku = Convert.ToInt32(row["IDPRESTUPKU"]);
-                    string prestupek = row["PRESTUPEK"].ToString();
-                    string datum = row["DATUM"].ToString();
-                    string jmenoObcana = row["JMENOOBCANA"]?.ToString() ?? String.Empty;
-                    string poznamka = row["POZNAMKA"].ToString() ?? String.Empty;
-
-                    string storedProcedureName = "upravy_prestupku.upravitPrestupek";
-
-                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+                    if (row.Zmenen)
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.BindByName = true;
-
-                        cmd.Parameters.Add("p_prestupek", OracleDbType.Varchar2).Value = prestupek;
-                        cmd.Parameters.Add("p_datum", OracleDbType.Varchar2).Value = datum;
-
-                        if (jmenoObcana == string.Empty)
-                        {
-                            cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = DBNull.Value;
-                        }
-                        else
-                        {
-                            cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = jmenoObcana; ;
-                        }
-                        if (poznamka == string.Empty)
-                        {
-                            cmd.Parameters.Add("p_poznamka", OracleDbType.Varchar2).Value = DBNull.Value;
-                        }
-                        else
-                        {
-                            cmd.Parameters.Add("p_poznamka", OracleDbType.Varchar2).Value = poznamka;
-                        }
-
-                        cmd.ExecuteNonQueryAsync();
-                        new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+                        row.Uloz(conn);
                         NacistPrestupky();
 
                         MessageBox.Show("Úprava přestupku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -1233,7 +1192,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Chyba při zpracování úpravy prestupku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Chyba při zpracování úpravy přestupku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -1245,41 +1204,48 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public void OdebratPresupek(object radek)
         {
-            var row = radek as DataRowView;
+            var row = radek as Prestupek;
 
             if (row != null)
             {
                 try
                 {
-                    int idPrestupku = Convert.ToInt32(row["IDPRESTUPKU"]);
-                    string typPrestupku = row["PRESTUPEK"].ToString();
-
                     var result = MessageBox.Show(
-                        $"Opravdu chcete trvale smazat přestupek '{typPrestupku}'?",
+                        $"Opravdu chcete záznam smazat??",
                         "Potvrzení smazání",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Warning);
 
                     if (result != MessageBoxResult.Yes) return;
 
-                    string storedProcedureName = "upravy_prestupku.smazPrestupek";
+                    row.Smaz(conn);
+                    NacistPrestupky();
 
-                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
-                    {
-                        cmd.BindByName = true;
-                        cmd.Parameters.Add("p_idPrestupku", OracleDbType.Int32).Value = row;
-
-                        cmd.ExecuteNonQueryAsync();
-                        new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
-
-                        MessageBox.Show("Přestupek byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        NacistPrestupky();
-                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Chyba při odebírání přestupku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Chyba při odebírání okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+        }
+
+        public void pridatPrestupek()
+        {
+            try
+            {
+                Prestupek novyPrestupek = new Prestupek();
+                string typPrestupku = Window.EvidencePrestupkuView.pridatPrestupekTyp.Text;
+                string popisPrestupku = Window.EvidencePrestupkuView.pridatPrestupekPopisZasahu.Text;
+                string jmenoObcana = Window.EvidencePrestupkuView.pridatPrestupekObcan.Text;
+                string adresa = Window.EvidencePrestupkuView.pridatPrestupekAdresa.Text;
+                string poznamka = Window.EvidencePrestupkuView.pridatPrestupekPoznamka.Text;
+                novyPrestupek.Pridej(conn, typPrestupku, popisPrestupku, jmenoObcana, adresa, poznamka);
+                NacistPrestupky();
+                MessageBox.Show("Nový přestupek byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při přidávání nového přestupku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -1290,43 +1256,45 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public void UpravitHlidku(object radek)
         {
-            var row = radek as DataRowView;
+            var row = radek as Hlidka;
 
             if (row != null)
             {
                 try
                 {
-                    row.EndEdit();
-
-                    int idHlidky = Convert.ToInt32(row["IDHLIDKY"]);
-                    string nazevTypu = row["NAZEV"].ToString();
-                    string nazevHldiky = row["NAZEVHLIDKY"].ToString();
-
-                    string storedProcedureName = "upravy_hlidek.upravitHlidku";
-
-                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+                    if (row.Zmenen)
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.BindByName = true;
-
-                        cmd.Parameters.Add("p_idHlidky", OracleDbType.Int32).Value = idHlidky;
-                        cmd.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = nazevTypu;
-                        cmd.Parameters.Add("p_nazevHlidky", OracleDbType.Varchar2).Value = nazevHldiky;
-
-                        cmd.ExecuteNonQueryAsync();
-                        new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+                        row.Uloz(conn);
                         NacistHlidky();
 
-                        MessageBox.Show("Úprava hlídky byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show("Úprava okrsku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Chyba při zpracování úpravy hlídky: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Chyba při zpracování úpravy okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
+        // Nefunkční !!
+        [RelayCommand]
+        public void PridatHlidku()
+        {
+            try
+            {
+                Hlidka novaHlidka = new Hlidka();
+                string nazev = Window.HlidkyView.pridatHlidkuNazev.Text;
+                string typ = Window.HlidkyView.pridatHlidkuTyp.Text;
+                novaHlidka.Pridej(conn, nazev, typ);
+                NacistHlidky();
+                MessageBox.Show("Nová hlídka byla úspěšně přidána.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při přidávání nové hlídky: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         /// <summary>
         /// Odstraní záznam Hlídky z databáze.
         /// </summary>
@@ -1334,40 +1302,27 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public async Task OdebratHlidku(object radek)
         {
-            var row = radek as DataRowView;
+            var row = radek as Hlidka;
 
             if (row != null)
             {
                 try
                 {
-                    int idHlidky = Convert.ToInt32(row["IDPRESTUPKU"]);
-                    string nazev = row["NAZEV"].ToString();
-
                     var result = MessageBox.Show(
-                        $"Opravdu chcete trvale smazat hlídku '{nazev}'?",
+                        $"Opravdu chcete záznam smazat??",
                         "Potvrzení smazání",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Warning);
 
                     if (result != MessageBoxResult.Yes) return;
 
-                    string storedProcedureName = "upravy_hlidek.smazHlidku";
+                    row.Smaz(conn);
+                    NacistHlidky();
 
-                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
-                    {
-                        cmd.BindByName = true;
-                        cmd.Parameters.Add("p_idHlidky", OracleDbType.Int32).Value = idHlidky;
-
-                        cmd.ExecuteNonQueryAsync();
-                        new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
-
-                        MessageBox.Show("Hlídka byla úspěšně odstraněna.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        NacistHlidky();
-                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Chyba při odebírání hlídky: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Chyba při odebírání okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }

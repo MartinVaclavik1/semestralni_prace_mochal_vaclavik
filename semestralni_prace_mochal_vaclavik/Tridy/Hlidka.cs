@@ -80,7 +80,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
 
         public void Smaz(OracleConnection conn)
         {
-            string storedProcedureName = "upravy_hlidek.smazatHlidku";
+            string storedProcedureName = "upravy_hlidek.smazHlidku";
             using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -91,15 +91,15 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             }
         }
 
-        public void pridej(OracleConnection conn)
+        public void Pridej(OracleConnection conn, string nazev, string typ)
         {
             string storedProcedureName = "upravy_hlidek.pridatHlidku";
             using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.BindByName = true;
-                cmd.Parameters.Add("p_nazevHlidky", OracleDbType.Varchar2).Value = _nazevHlidky;
-                cmd.Parameters.Add("p_nazevTypu", OracleDbType.Varchar2).Value = _nazev;
+                cmd.Parameters.Add("p_nazevHlidky", OracleDbType.Varchar2).Value = nazev;
+                cmd.Parameters.Add("p_nazevTypu", OracleDbType.Varchar2).Value = typ;
                 cmd.ExecuteNonQuery();
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();
                 

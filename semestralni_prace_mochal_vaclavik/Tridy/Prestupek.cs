@@ -156,17 +156,20 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();
             }
         }
-        public void Pridej(OracleConnection conn)
+
+        // TODO : opravit ve view nebo v DB aby to šlo vložit (nefunkční) 
+        // není tam políčko na popis zasahu
+        public void Pridej(OracleConnection conn, string typPrestupku, string popisZasahu, string jmenoObcana, string adresa, string poznamka)
         {
             string storedProcedureName = "upravy_prestupku.pridatPrestupek";
             using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("p_adresaZasahu", OracleDbType.Int32).Value = _adresaZasahu;
-                cmd.Parameters.Add("p_popisZasahu", OracleDbType.Varchar2).Value = _popisZasahu;
-                cmd.Parameters.Add("p_typPrestupku", OracleDbType.Varchar2).Value = _typPrestupku;
-                cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = _typPrestupku;
-                cmd.Parameters.Add("p_poznamka", OracleDbType.Varchar2).Value = _poznamka;
+                cmd.Parameters.Add("p_adresaZasahu", OracleDbType.Varchar2).Value = adresa;
+                cmd.Parameters.Add("p_popisZasahu", OracleDbType.Varchar2).Value = popisZasahu;
+                cmd.Parameters.Add("p_typPrestupku", OracleDbType.Varchar2).Value = typPrestupku;
+                cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = jmenoObcana;
+                cmd.Parameters.Add("p_poznamka", OracleDbType.Varchar2).Value = poznamka;
                 cmd.ExecuteNonQuery();
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();
             }

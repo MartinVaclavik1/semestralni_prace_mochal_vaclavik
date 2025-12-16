@@ -10,8 +10,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
         private int _id { get; set; }
         public int Id
         {
-            get
-            { return _id; }
+            get { return _id; }
             set
             {
                 _id = value;
@@ -39,7 +38,6 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
         {
             Id = 0;
             Nazev = String.Empty;
-            
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -51,7 +49,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-        private void Uloz(OracleConnection conn)
+        public void Uloz(OracleConnection conn)
         {
             string storedProcedureName = "upravy_okrsku.upravitOkrsek";
 
@@ -67,7 +65,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();
             }    
         }
-        private void Smaz(OracleConnection conn)
+        public void Smaz(OracleConnection conn)
         {
             string storedProcedureName = "upravy_okrsku.smazOkrsek";
 
@@ -82,7 +80,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();
             }
         }
-        private void Pridej(OracleConnection conn)
+        public void Pridej(OracleConnection conn, string nazev)
         {
             string storedProcedureName = "upravy_okrsku.pridatOkrsek";
 
@@ -91,7 +89,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.BindByName = true;
 
-                cmd.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = _nazev;
+                cmd.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = nazev;
 
                 cmd.ExecuteNonQueryAsync();
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();

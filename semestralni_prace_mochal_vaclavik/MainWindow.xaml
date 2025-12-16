@@ -53,53 +53,53 @@
         <TabItem x:Name="Okrsky" Header="Okrsky"
                  Visibility="{Binding OkrskyVisible}">
 
-            <views:OkrskyView/>
+            <views:OkrskyView x:Name="OkrskyView"/>
         </TabItem>
 
         <!-- Karta: Evidence přestupků (OPRÁVNĚNÍ: Policista+) -->
         <TabItem x:Name="Prestupky" Header="Evidence přestupků"
                  Visibility="{Binding PrestupkyVisible}">
 
-            <views:EvidencePrestupkuView/>
+            <views:EvidencePrestupkuView x:Name="EvidencePrestupkuView"/>
         </TabItem>
 
         <TabItem x:Name="MojePrestupky" Header="Moje Přestupky">
-            <views:MojePrestupkyView/>
+            <views:MojePrestupkyView x:Name="MojePrestupkyView"/>
         </TabItem>
 
         <!-- Karta: Hlídky a Zásahy (OPRÁVNĚNÍ: Policista+) - PŘIDÁNY FILTRY -->
         <TabItem x:Name="Hlidky" Header="Hlídky"
                  Visibility="{Binding HlidkyVisible}">
 
-            <views:HlidkyView/>
+            <views:HlidkyView x:Name="HlidkyView"/>
         </TabItem>
 
         <!-- Karta: Můj účet (OPRÁVNĚNÍ: Všichni přihlášení, Editace pro Policista+) -->
         <TabItem x:Name="Ucet" Header="Můj účet"
                  Visibility="{Binding UcetVisible}">
-            <views:UcetView/>
+            <views:UcetView x:Name="UcetView"/>
         </TabItem>
 
         <!-- Karta: Admin nastavení (OPRÁVNĚNÍ: Admin) -->
         <TabItem x:Name="Admin" Header="Admin nastavení"
                  Visibility="{Binding AdminVisible}">
-            <views:AdminView/>
+            <views:AdminView x:Name="AdminView"/>
         </TabItem>
         
         <TabItem x:Name="LogovaciTabulka" Header="Logovací tabulka">
-            <views:LogovaciTabulkaView/>
+            <views:LogovaciTabulkaView x:Name="LogovaciTabulkaView"/>
         </TabItem>
         
         <TabItem x:Name="SystemovyKatalog" Header="Systémový katalog">
-            <views:SystemovyKatalogView/>
+            <views:SystemovyKatalogView x:Name="SystemovyKatalogView"/>
         </TabItem>
         
         <TabItem x:Name="Prihlaseni" Header="Přihlášení">
-            <views:PrihlaseniView/>
+            <views:PrihlaseniView x:Name="PrihlaseniView"/>
         </TabItem>
         
         <TabItem x:Name="Registrace" Header="Registrace">
-            <views:RegistraceView/>
+            <views:RegistraceView x:Name="RegistraceView"/>
         </TabItem>
         
     </TabControl>

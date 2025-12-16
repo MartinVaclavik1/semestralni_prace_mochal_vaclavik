@@ -81,20 +81,24 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Label Content="Typ přestupku" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
-            <Label Content="Datum" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="10,0,0,0"/>
+            <Label Content="Popis" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="10,0,0,0"/>
             <Label Content="Celé jméno občana" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="2" Margin="10,0,0,0"/>
-            <Label Content="Poznámka" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="3" Margin="10,0,0,0"/>
-            <TextBox x:Name="pridatPrestupekDatum" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="135" Grid.Column="1"/>
-            <TextBox x:Name="pridatPrestupekObcan" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="134" Grid.Column="2"/>
-            <TextBox x:Name="pridatPrestupekPoznamka" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="135" Grid.Column="3"/>
-            <Button Grid.Column="4" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="134"/>
-            <ComboBox HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="135" Height="18"
+            <Label Content="Adresa" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="3" Margin="10,0,0,0"/>
+            <Label Content="Poznámka" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="4
+                   " Margin="10,0,0,0"/>
+            <TextBox x:Name="pridatPrestupekPopisZasahu" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="116" Grid.Column="1"/>
+            <TextBox x:Name="pridatPrestupekObcan" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="114" Grid.Column="2"/>
+            <TextBox x:Name="pridatPrestupekAdresa" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="110" Grid.Column="3"/>
+            <TextBox x:Name="pridatPrestupekPoznamka" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="110" Grid.Column="4"/>
+            <Button Grid.Column="5" Content="Přidat" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Width="124" Margin="10,0,0,0"/>
+            <ComboBox x:Name="pridatPrestupekTyp" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="110" Height="18"
                    ItemsSource="{Binding DataContext.Typy_prestupkuSeznam, RelativeSource={RelativeSource AncestorType=TabItem}}"/>
 
         </Grid>
