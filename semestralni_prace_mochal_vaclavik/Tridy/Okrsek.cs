@@ -1,5 +1,6 @@
 ﻿using Oracle.ManagedDataAccess.Client;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 
 namespace semestralni_prace_mochal_vaclavik.Tridy
@@ -17,7 +18,6 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 this.OnPropertyChanged(nameof(Id));
             }
         }
-        
         private string _nazev { get; set; }
         public string Nazev
         {

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.VisualBasic;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 using semestralni_prace_mochal_vaclavik.Tridy;
@@ -664,7 +665,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     Users.Clear();
                     foreach (DataRow item in dt.Rows)
                     {
-
                         Users.Add(new Uzivatel
                         {
                             Id = (int)item.Field<decimal>("iduzivatele"),
@@ -803,20 +803,20 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
+                    adapter.Fill(dt);
                     Prestupky.Clear();
                     foreach (DataRow item in dt.Rows)
                     {
+                        
                         Prestupky.Add(new Prestupek
                         {  
-                            IdObcana = item.Field<int>("idobcana"),
+                            IdObcana = (int)item.Field<decimal>("idobcana"),
                             TypPrestupku = item.Field<string>("prestupek"),
-                            Datum = item.Field<string>("datum"),
+                            Datum = (item.Field<DateTime>("datum")).ToString(),
                             JmenoObcana = item.Field<string>("jmenoobcana"),
                             Poznamka = item.Field<string>("poznamka")
                         });
                     }
-
-                    Window.PrestupkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -871,18 +871,17 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
-                    
+                    adapter.Fill(dt);
                     Hlidky.Clear();
                     foreach (DataRow item in dt.Rows)
                     {
                         Hlidky.Add(new Hlidka
                         {
-                            IdHlidky = (int)item.Field<int>("idhlidky"),
+                            IdHlidky = (int)item.Field<decimal>("idhlidky"),
                             NazevHlidky = item.Field<string>("nazevhlidky"),
-                            Nazev=item.Field<string>("nazev"),
+                            Nazev = item.Field<string>("nazev")
                         });
                     }
-                    Window.HlidkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -909,12 +908,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
+                    adapter.Fill(dt);
                     Okrsky.Clear();
                     foreach (DataRow item in dt.Rows)
                     {
                         Okrsky.Add(new Okrsek
                         {
-                            Id = item.Field<int>("idokrsku"),
+                            Id = (int)item.Field<decimal>("idokrsku"),
                             Nazev = item.Field<string>("nazev")
                         });
                     }
@@ -1054,19 +1054,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                     if (result != MessageBoxResult.Yes) return;
 
-                    string storedProcedureName = "upravy_policistu.smazPolicistu";
-
-                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
-                    {
-                        cmd.BindByName = true;
-                        cmd.Parameters.Add("p_idPolicisty", OracleDbType.Int32).Value = policistaRow.Id;
-
-                        cmd.ExecuteNonQueryAsync();
-                        new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
-
-                        MessageBox.Show("Policista byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        NacistKontakty();
-                    }
+                    policistaRow.Smaz(conn);
+                    NacistKontakty();
+                    
                 }
                 catch (Exception ex)
                 {
@@ -1075,6 +1065,30 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
+        [RelayCommand]
+        public void PridatKontakty()
+        {
+            try
+            {
+                var novyPolicista = new Policista();
+                string jmeno = Window.pridatKontaktyJmeno.Text;
+                string prijmeni = Window.pridatKontaktyPrijmeni.Text;
+                string hodnost = Window.pridatKontaktHodnost.Text;
+                string nadrizeny = Window.pridatKontaktyNadrizeny.Text;
+                string stanice = Window.pridatKontaktyStanice.Text;
+                DateTime datumNarozeni = Window.pridatKontaktyDatum.Text != string.Empty ? Convert.ToDateTime(Window.pridatKontaktyDatum.Text) : DateTime.MinValue;
+                int plat = Window.pridatKontaktyPlat.Text != string.Empty ? Convert.ToInt32(Window.pridatKontaktyPlat.Text) : 0;
+                novyPolicista.Pridej(conn, jmeno, prijmeni, hodnost, nadrizeny, stanice, plat, datumNarozeni);
+
+
+                NacistKontakty();
+                MessageBox.Show("Nový policista byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při přidávání nového policisty: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
         /// <summary>
         /// Aktualizuje název Okrsku v databázi.
         /// </summary>
