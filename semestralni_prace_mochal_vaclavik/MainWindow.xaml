@@ -253,10 +253,20 @@
                   IsManipulationEnabled="True"
                   Margin="10,0,10,10"
                   AutoGenerateColumns="False"
-                          CanUserAddRows="false">
+                  CanUserAddRows="false">
+
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID přestupku" Binding="{Binding IDPRESTUPKU}" Width="*" Visibility="Collapsed"/>
-                        <DataGridTextColumn Header="Typ přestupku" Binding="{Binding PRESTUPEK}" Width="*"/>
+                       
+                        <DataGridTemplateColumn Header="Typ přestupku" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding DataContext.Typy_prestupkuSeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    SelectedItem="{Binding PRESTUPEK, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        
                         <DataGridTextColumn Header="Datum" Binding="{Binding DATUM}" Width="*"/>
                         <DataGridTextColumn Header="Jméno Občana" Binding="{Binding JMENOOBCANA}" Width="*"/>
                         <DataGridTextColumn Header="Poznámka" Binding="{Binding POZNAMKA}" Width="*"/>
@@ -345,7 +355,16 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID Hlídky" Binding="{Binding IDHLIDKY}" Width="*" Visibility="Hidden"/>
                         <DataGridTextColumn Header="Název" Binding="{Binding NAZEVHLIDKY}" Width="*"/>
-                        <DataGridTextColumn Header="Typ" Binding="{Binding NAZEV}" Width="*"/>
+
+                        <DataGridTemplateColumn Header="Typ" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding DataContext.Typy_hlidkySeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                SelectedItem="{Binding NAZEV, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
                         <DataGridTemplateColumn Header="" Width="SizeToCells">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -484,6 +503,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Přihlašovací jméno" Binding="{Binding Username}" Width="*"/>
                         <DataGridTextColumn Header="Heslo" Binding="{Binding Password}" Width="*"/>
+                        
                         <DataGridTemplateColumn Header="Oprávnění" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
