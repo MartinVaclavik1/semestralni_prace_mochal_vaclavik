@@ -126,7 +126,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
-            Prihlas(("Oli", "12345"));
+            Prihlas(("martin25922", "25922"));
             NastavComboboxy();
             NastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
         }
@@ -140,6 +140,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Určuje viditelnost ovládacích prvků pro administrátory.
         /// </summary>
         public Visibility AdminControlsVisible => IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
+
+        public Visibility AdminBtnsVisible => IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Hidden;
 
         /// <summary>
         /// Určuje viditelnost editačních prvků účtu (viditelné pro policisty a vyšší).
@@ -456,6 +458,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             Window.Prihlaseni.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
             Window.Registrace.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
 
+            Window.KontaktyAdminGrid.IsEnabled = IsAtLeastRole("administrator") ? true : false;
         }
 
         /// <summary>
@@ -512,8 +515,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 conn.Commit();
 
                 MessageBox.Show($"Uživatel {NovaRegistrace.Username} Heslo {novaRegistrace.Heslo}.", "Registrace", MessageBoxButton.OK, MessageBoxImage.Information);
-                Prihlas((novaRegistrace.Username, novaRegistrace.Heslo));
-                novaRegistrace.Clear();
+                Prihlas((NovaRegistrace.Username, NovaRegistrace.Heslo));
+                NovaRegistrace.Clear();
 
             }
             catch (Exception ex)
@@ -1004,14 +1007,12 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public void OdebratKontakty(object radek)
         {
-            var policistaRow = radek as DataRowView;
+            var policistaRow = radek as Policista;
 
             if (policistaRow != null)
             {
                 try
                 {
-                    int idPolicisty = Convert.ToInt32(policistaRow["IDPOLICISTY"]);
-
                     var result = MessageBox.Show(
                         $"Opravdu chcete záznam smazat??",
                         "Potvrzení smazání",
@@ -1025,7 +1026,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
                     {
                         cmd.BindByName = true;
-                        cmd.Parameters.Add("p_idPolicisty", OracleDbType.Int32).Value = idPolicisty;
+                        cmd.Parameters.Add("p_idPolicisty", OracleDbType.Int32).Value = policistaRow.Id;
 
                         cmd.ExecuteNonQueryAsync();
                         new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
