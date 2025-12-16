@@ -30,14 +30,14 @@
       AutoGenerateColumns="False" Grid.Row="1"
               CanUserAddRows="false">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID Hlídky" Binding="{Binding IDHLIDKY}" Width="*" Visibility="Hidden"/>
-                <DataGridTextColumn Header="Název" Binding="{Binding NAZEVHLIDKY}" Width="*"/>
+                <DataGridTextColumn Header="ID Hlídky" Binding="{Binding IdHlidky}" Width="*" Visibility="Hidden"/>
+                <DataGridTextColumn Header="Název" Binding="{Binding NazevHlidky}" Width="*"/>
 
                 <DataGridTemplateColumn Header="Typ" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ComboBox ItemsSource="{Binding DataContext.Typy_hlidkySeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                    SelectedItem="{Binding NAZEV, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    SelectedItem="{Binding Nazev, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
