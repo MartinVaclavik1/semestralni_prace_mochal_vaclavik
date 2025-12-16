@@ -163,6 +163,7 @@
 
         <TabItem x:Name="Okrsky" Header="Okrsky"
                  Visibility="{Binding OkrskyVisible}">
+
             <Grid Background="White">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="429*"/>
@@ -181,6 +182,7 @@
                 <!-- DataGrid -->
                 <DataGrid x:Name="OkrskyGrid" 
                   d:ItemsSource="{d:SampleData ItemCount=5}" 
+                  ItemsSource="{Binding Okrsky}"
                   Margin="10,10,10,10"
                   SelectionMode="Single"
                   SelectionUnit="Cell"
@@ -234,7 +236,8 @@
 
         <!-- Karta: Evidence přestupků (OPRÁVNĚNÍ: Policista+) -->
         <TabItem x:Name="Prestupky" Header="Evidence přestupků"
-                 Visibility="{Binding PrestupkyVisible}">
+                 Visibility="{Binding PrestupkyVisible}"
+                >
             <Grid Background="White">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -254,6 +257,7 @@
                 <!-- DataGrid -->
                 <DataGrid x:Name="PrestupkyGrid" Grid.Row="1" 
                   d:ItemsSource="{d:SampleData ItemCount=5}"
+                  ItemsSource="{Binding Prestupky}"
                   SelectionMode="Single"
                   SelectionUnit="Cell"
                   IsManipulationEnabled="True"
@@ -336,7 +340,8 @@
 
         <!-- Karta: Hlídky a Zásahy (OPRÁVNĚNÍ: Policista+) - PŘIDÁNY FILTRY -->
         <TabItem x:Name="Hlidky" Header="Hlídky"
-                 Visibility="{Binding HlidkyVisible}">
+                 Visibility="{Binding HlidkyVisible}"
+            >
             <Grid Background="White">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
@@ -353,6 +358,7 @@
                 <!-- DataGrid -->
                 <DataGrid x:Name="HlidkyGrid" 
                   d:ItemsSource="{d:SampleData ItemCount=5}" 
+                          ItemsSource="{Binding Hlidky}"
                   Margin="10,10,10,6" 
                   SelectionMode="Single"
                   SelectionUnit="Cell"

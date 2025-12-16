@@ -68,6 +68,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
         public ObservableCollection<Policista> Policiste { get; set; } = new ObservableCollection<Policista>();
 
+        public ObservableCollection<Okrsek> Okrsky { get; set; } = new ObservableCollection<Okrsek>();
+        public ObservableCollection<Prestupek> Prestupky { get; set; } = new ObservableCollection<Prestupek>();
+        public ObservableCollection<Hlidka> Hlidky { get; set; } = new ObservableCollection<Hlidka>();
+
         /// <summary>
         /// Aktuálně přihlášený uživatel.
         /// </summary>
@@ -126,7 +130,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
-            Prihlas(("martin25922", "25922"));
+            Prihlas(("Oli", "12345"));
             NastavComboboxy();
             NastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
         }
@@ -420,16 +424,17 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// <returns>Vždy vrací true (validace není plně implementována)</returns>
         private bool ZkontrolovatVyplneniRegistrace()
         {
-            return Window.jmenoTxt.Text != string.Empty
-                && Window.prijmeniTxt.Text != string.Empty
-                && Window.opTxt.Text != string.Empty
-                && Window.pscTxt.Text != string.Empty
-                && Window.uliceTxt.Text != string.Empty
-                && Window.cpTxt.Text != string.Empty
-                && Window.obecTxt.Text != string.Empty
-                && Window.zemeTxt.Text != string.Empty
-                && Window.usernameTxt.Text != string.Empty
-                && Window.heslotxt.Text != string.Empty;
+            return true;
+                //Window.jmenoTxt.Text != string.Empty
+                //&& Window.prijmeniTxt.Text != string.Empty
+                //&& Window.opTxt.Text != string.Empty
+                //&& Window.pscTxt.Text != string.Empty
+                //&& Window.uliceTxt.Text != string.Empty
+                //&& Window.cpTxt.Text != string.Empty
+                //&& Window.obecTxt.Text != string.Empty
+                //&& Window.zemeTxt.Text != string.Empty
+                //&& Window.usernameTxt.Text != string.Empty
+                //&& Window.heslotxt.Text != string.Empty;
         }
 
         /// <summary>
@@ -798,7 +803,18 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
-                    adapter.Fill(dt);
+                    Prestupky.Clear();
+                    foreach (DataRow item in dt.Rows)
+                    {
+                        Prestupky.Add(new Prestupek
+                        {  
+                            IdObcana = (int)item.Field<decimal>("idobcana"),
+                            TypPrestupku = item.Field<string>("prestupek"),
+                            Datum = item.Field<string>("datum"),
+                            JmenoObcana = item.Field<string>("jmenoobcana"),
+                            Poznamka = item.Field<string>("poznamka")
+                        });
+                    }
 
                     Window.PrestupkyGrid.ItemsSource = dt.DefaultView;
                 }
@@ -855,7 +871,17 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
-                    adapter.Fill(dt);
+                    
+                    Hlidky.Clear();
+                    foreach (DataRow item in dt.Rows)
+                    {
+                        Hlidky.Add(new Hlidka
+                        {
+                            IdHlidky = (int)item.Field<int>("idhlidky"),
+                            NazevHlidky = item.Field<string>("nazevhlidky"),
+                            Nazev=item.Field<string>("nazev"),
+                        });
+                    }
                     Window.HlidkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
@@ -883,8 +909,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
-                    adapter.Fill(dt);
-                    Window.OkrskyGrid.ItemsSource = dt.DefaultView;
+                    Okrsky.Clear();
+                    foreach (DataRow item in dt.Rows)
+                    {
+                        Okrsky.Add(new Okrsek
+                        {
+                            Id = (int)item.Field<decimal>("idokrsku"),
+                            Nazev = item.Field<string>("nazev")
+                        });
+                    }
                 }
             }
             catch (Exception ex)
