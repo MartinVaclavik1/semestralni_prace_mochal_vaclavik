@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Oracle.ManagedDataAccess.Client;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,23 +12,32 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
 {
     public class Hlidka : INotifyPropertyChanged
     {
-        private int idHlidky { get; set; }
+        private int _idHlidky { get; set; }
         public int IdHlidky
         {
-            get { return idHlidky; }
-            set { idHlidky = value; }
+            get { return _idHlidky; }
+            set {
+                _idHlidky = value;
+                this.OnPropertyChanged(nameof(IdHlidky));
+            }
         }
-        private string nazevHlidky { get; set; }
+        private string _nazevHlidky { get; set; }
         public string NazevHlidky
         {
-            get { return nazevHlidky; }
-            set { nazevHlidky = value; }
+            get { return _nazevHlidky; }
+            set {
+                _nazevHlidky = value;
+                this.OnPropertyChanged(nameof(NazevHlidky));
+            }
         }
-        private string nazev { get; set; }
+        private string _nazev { get; set; }
         public string Nazev
         {
-            get { return nazev; }
-            set { nazev = value; }
+            get { return _nazev; }
+            set {
+                _nazev = value;
+                this.OnPropertyChanged(nameof(Nazev));
+            }
         }
         public void Resetuj()
         {
@@ -49,6 +60,49 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             {
                 zmenen = true;
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        public void Uloz(OracleConnection conn)
+        {
+            string storedProcedureName = "upravy_hlidek.upravitHlidku";
+            using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.BindByName = true;
+                cmd.Parameters.Add("p_idHlidky", OracleDbType.Int32).Value = _idHlidky;
+                cmd.Parameters.Add("p_nazevHlidky", OracleDbType.Varchar2).Value = _nazevHlidky;
+                cmd.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = _nazev;
+                cmd.ExecuteNonQuery();
+                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+                zmenen = false;
+            }
+        }
+
+        public void Smaz(OracleConnection conn)
+        {
+            string storedProcedureName = "upravy_hlidek.smazatHlidku";
+            using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.BindByName = true;
+                cmd.Parameters.Add("p_idHlidky", OracleDbType.Int32).Value = _idHlidky;
+                cmd.ExecuteNonQuery();
+                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+            }
+        }
+
+        public void pridej(OracleConnection conn)
+        {
+            string storedProcedureName = "upravy_hlidek.pridatHlidku";
+            using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.BindByName = true;
+                cmd.Parameters.Add("p_nazevHlidky", OracleDbType.Varchar2).Value = _nazevHlidky;
+                cmd.Parameters.Add("p_nazevTypu", OracleDbType.Varchar2).Value = _nazev;
+                cmd.ExecuteNonQuery();
+                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+                
             }
         }
     }

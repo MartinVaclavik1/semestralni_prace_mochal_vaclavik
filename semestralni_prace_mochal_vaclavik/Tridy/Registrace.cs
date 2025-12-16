@@ -84,8 +84,6 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             get => _heslo;
             set { _heslo = value; OnPropertyChanged(); }
         }
-
-        // Můžete přidat metodu pro rychlé vymazání (resetování) dat
         public void Clear()
         {
             Jmeno = string.Empty;
