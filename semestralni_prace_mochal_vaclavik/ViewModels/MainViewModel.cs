@@ -349,8 +349,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                                 uzivatel.Prijmeni = reader["p_prijmeni"].ToString();
                             }
                             Window.Okna.SelectedIndex = 0;
-                            Window.UsernameTextBox.Clear();
-                            Window.PasswordBox.Clear();
+                            //Window.UsernameTextBox.Clear();
+                            //Window.PasswordBox.Clear();
 
                             Task.Run(() => { MessageBox.Show("Uživatel přihlášen"); });
 
@@ -415,7 +415,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// <returns>true pokud jsou obě pole (uživatelské jméno i heslo) vyplněna, jinak false</returns>
         public bool ZkontrolovatVyplneniPrihlaseni()
         {
-            return Window.UsernameTextBox.Text != string.Empty && Window.PasswordBox.Text != string.Empty;
+            return true;
+            //return Window.UsernameTextBox.Text != string.Empty && Window.PasswordBox.Text != string.Empty;
         }
 
         /// <summary>
@@ -463,7 +464,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             Window.Prihlaseni.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
             Window.Registrace.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
 
-            Window.KontaktyAdminGrid.IsEnabled = IsAtLeastRole("administrator") ? true : false;
+            //Window.KontaktyAdminGrid.IsEnabled = IsAtLeastRole("administrator") ? true : false;
         }
 
         /// <summary>
@@ -699,7 +700,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
-                    Window.systemovyKatalogGrid.ItemsSource = dt.DefaultView;
+                    //Window.systemovyKatalogGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -728,7 +729,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
-                    Window.logovaciTabulkaGrid.ItemsSource = dt.DefaultView;
+                    //Window.logovaciTabulkaGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -816,7 +817,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         });
                     }
 
-                    Window.PrestupkyGrid.ItemsSource = dt.DefaultView;
+                    //Window.PrestupkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -882,7 +883,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                             Nazev=item.Field<string>("nazev"),
                         });
                     }
-                    Window.HlidkyGrid.ItemsSource = dt.DefaultView;
+                    //Window.HlidkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)

@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace semestralni_prace_mochal_vaclavik
 {
-    public partial class MainWindow : Window//, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
         public MainWindow()
         {

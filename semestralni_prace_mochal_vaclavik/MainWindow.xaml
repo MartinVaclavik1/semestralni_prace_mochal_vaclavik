@@ -5,20 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:semestralni_prace_mochal_vaclavik"
+        xmlns:views = "clr-namespace:semestralni_prace_mochal_vaclavik.Views" 
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="Informační systém Policie České Rapubliky" 
         Height="460" 
         Width="800">
 
-    <Window.Resources>
-        <local:TupleConverter x:Key="TupleConverter"/>
-        <x:Array x:Key="SeznamRoli" Type="sys:String">
-            <sys:String>administrator</sys:String>
-            <sys:String>policista</sys:String>
-            <sys:String>obcan</sys:String>
-        </x:Array>
-    </Window.Resources>
+    
 
     <TabControl Name="Okna" 
                 HorizontalAlignment="Stretch" 
@@ -51,656 +45,62 @@
         <!-- Karta: Kontakty (OPRÁVNĚNÍ: Občan+) -->
         <TabItem x:Name="Kontakty" Header="Policiste"
                  Visibility="{Binding KontaktyVisible}" Height="22" Margin="-2,0,-2,0" VerticalAlignment="Bottom">
-            <Grid Background="White">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="16*"/>
-                    <ColumnDefinition Width="11*"/>
-                    <ColumnDefinition Width="42*"/>
-                    <ColumnDefinition Width="388*"/>
-                    <ColumnDefinition Width="83*"/>
-                    <ColumnDefinition Width="254*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition Height="10*"/>
-                    <RowDefinition Height="3*"/>
-                </Grid.RowDefinitions>
 
-                <Label x:Name="KontaktyNazev" Content="Policisté" Margin="10,10,0,171" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="6" Grid.RowSpan="2"/>
+            <views:PolicisteView x:Name="PolicisteView"/>
 
-                <StackPanel Orientation="Horizontal" Margin="10,2,10,233" Grid.ColumnSpan="6" Grid.Row="1"/>
-
-                <DataGrid x:Name="KontaktyGrid" Grid.Row="1" 
-                          d:ItemsSource="{d:SampleData ItemCount=5}" 
-                          ItemsSource="{Binding Policiste}"
-                          Margin="10,14,10,4" 
-                          Grid.ColumnSpan="6" 
-                          SelectionMode="Single"
-                          SelectionUnit="Cell"
-                          IsManipulationEnabled="True"
-                          AutoGenerateColumns="False"
-                          CanUserAddRows="false">
-
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Jméno" Binding="{Binding Jmeno}" Width="*"/>
-                        <DataGridTextColumn Header="Příjmení" Binding="{Binding Prijmeni}" Width="*"/>
-                        <DataGridTemplateColumn Header="Oprávnění" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ComboBox ItemsSource="{Binding DataContext.HodnostiSeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                        SelectedItem="{Binding Hodnost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-
-                        </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="Jméno nadřízeného" Binding="{Binding Nadrizeny}" Width="*"/>
-                        <DataGridTextColumn Header="Stanice" Binding="{Binding Stanice}" Width="2*"/>
-
-                        <DataGridTemplateColumn Header="Upravit" Width="SizeToCells" 
-                                                Visibility="{Binding DataContext.AdminBtnsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Upravit" 
-                                            Command="{Binding DataContext.UpravitKontaktyCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                            CommandParameter="{Binding}" 
-                                            Margin="1,1" 
-                                            />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Odebrat" Width="SizeToCells"
-                                                Visibility="{Binding DataContext.AdminBtnsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Odebrat"
-                                            Command="{Binding DataContext.OdebratKontaktyCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                            CommandParameter="{Binding}" 
-                                            Margin="1,1" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-                
-                <Grid x:Name="KontaktyAdminGrid" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="5" Margin="0,10,10,10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <Label Grid.Column="0" Content="Jméno" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <Label Content="Příjmení" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
-                    <Label Grid.Column="1" Content="Hodnost" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
-                    <Label Grid.Column="2" Content="Nadřízený" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
-                    <Label Grid.Column="3" Content="Stanice" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
-                    <Label Grid.Column="4" Content="Plat" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
-                    <Label Grid.Column="6" Content="Datum narození" HorizontalAlignment="Left" Margin="0,3,0,0" VerticalAlignment="Top" Width="96"/>
-                    <TextBox x:Name="pridatKontaktyJmeno" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91"/>
-                    <TextBox x:Name="pridatKontaktyPrijmeni" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
-                    <TextBox x:Name="pridatKontaktyNadrizeny" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="2" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
-                    <TextBox x:Name="pridatKontaktyStanice" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="3" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
-                    <TextBox x:Name="pridatKontaktyDatum" Grid.Column="5" Grid.ColumnSpan="2" Margin="96,0,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                    <TextBox x:Name="pridatKontaktyPlat" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="4" Margin="96,0,0,0" Grid.ColumnSpan="2"></TextBox>
-
-                    <Button Grid.Column="7" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="76"/>
-                    <ComboBox Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="96,0,0,0" Grid.Row="1" VerticalAlignment="Center" Width="91" Height="18"
-                              ItemsSource="{Binding DataContext.HodnostiSeznam, RelativeSource={RelativeSource AncestorType=TabItem}}"/>
-                
-                
-                </Grid>
-            </Grid>
         </TabItem>
 
         <TabItem x:Name="Okrsky" Header="Okrsky"
                  Visibility="{Binding OkrskyVisible}">
 
-            <Grid Background="White">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="429*"/>
-                    <ColumnDefinition Width="365*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition Height="10*"/>
-                    <RowDefinition Height="3*"/>
-                </Grid.RowDefinitions>
-
-                <!-- Nadpis -->
-                <Label x:Name="OkrskyNazev" Content="Přehled Okrsků" Margin="10,5,0,5" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="2"/>
-
-
-                <!-- DataGrid -->
-                <DataGrid x:Name="OkrskyGrid" 
-                  d:ItemsSource="{d:SampleData ItemCount=5}" 
-                  ItemsSource="{Binding Okrsky}"
-                  Margin="10,10,10,10"
-                  SelectionMode="Single"
-                  SelectionUnit="Cell"
-                  IsManipulationEnabled="True"
-                  AutoGenerateColumns="False" Grid.Row="1"
-                          CanUserAddRows="false" Grid.ColumnSpan="2">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID Okrsku" Binding="{Binding IDOKRSKU}" Width="*" Visibility="Collapsed"/>
-                        <DataGridTextColumn Header="Název Okrsku" Binding="{Binding NAZEV}" Width="*"/>
-                        <DataGridTemplateColumn Header="" Width="SizeToCells">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Upravit" 
-                                            Command="{Binding DataContext.UpravitOkrsekCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                            CommandParameter="{Binding}" 
-                                            Margin="1,1" 
-                                            Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="" Width="SizeToCells">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Odebrat" 
-                                            Command="{Binding DataContext.OdebratOkrsekCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                            CommandParameter="{Binding}" 
-                                            Margin="1,1" 
-                                            Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Grid Grid.Row="2" Margin="10,10,10,10" Visibility="{Binding KontaktyVisible}" Grid.ColumnSpan="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="155*"/>
-                        <ColumnDefinition Width="141*"/>
-                        <ColumnDefinition Width="478*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Button Grid.Column="1" Content="Přidat" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Width="90" Height="20" Margin="10,0,0,0"/>
-                    <Label Content="Název Okrsku" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Height="26" Width="120"/>
-                    <TextBox x:Name="pridatOkrsekNazev" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="135" Height="18"/>
-                </Grid>
-
-            </Grid>
+            <views:OkrskyView/>
         </TabItem>
 
         <!-- Karta: Evidence přestupků (OPRÁVNĚNÍ: Policista+) -->
         <TabItem x:Name="Prestupky" Header="Evidence přestupků"
-                 Visibility="{Binding PrestupkyVisible}"
-                >
-            <Grid Background="White">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="61*"/>
-                    <RowDefinition Height="255*"/>
-                    <RowDefinition Height="76*"/>
-                </Grid.RowDefinitions>
+                 Visibility="{Binding PrestupkyVisible}">
 
-                <!-- Nadpis -->
-                <Label x:Name="KontaktyNazev1" Content="Evidence Přestupků" Margin="10,10,10,10" FontSize="20" FontWeight="Bold"/>
-
-                <!-- Filtry -->
-                <StackPanel Orientation="Horizontal" Margin="10,51,10,10"/>
-
-                <!-- DataGrid -->
-                <DataGrid x:Name="PrestupkyGrid" Grid.Row="1" 
-                  d:ItemsSource="{d:SampleData ItemCount=5}"
-                  ItemsSource="{Binding Prestupky}"
-                  SelectionMode="Single"
-                  SelectionUnit="Cell"
-                  IsManipulationEnabled="True"
-                  Margin="10,0,10,10"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="false">
-
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID přestupku" Binding="{Binding IDPRESTUPKU}" Width="*" Visibility="Collapsed"/>
-                       
-                        <DataGridTemplateColumn Header="Typ přestupku" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ComboBox ItemsSource="{Binding DataContext.Typy_prestupkuSeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                    SelectedItem="{Binding PRESTUPEK, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        
-                        <DataGridTextColumn Header="Datum" Binding="{Binding DATUM}" Width="*"/>
-                        <DataGridTextColumn Header="Jméno Občana" Binding="{Binding JMENOOBCANA}" Width="*"/>
-                        <DataGridTextColumn Header="Poznámka" Binding="{Binding POZNAMKA}" Width="*"/>
-
-                        <DataGridTemplateColumn Header="" Width="SizeToCells">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Upravit" 
-                                            Command="{Binding DataContext.UpravitPrestupekCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                            CommandParameter="{Binding}" 
-                                            Margin="1,1" 
-                                            Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="" Width="SizeToCells">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Odebrat" 
-                                            Command="{Binding DataContext.OdebratPrestupekCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                            CommandParameter="{Binding}" 
-                                            Margin="1,1" 
-                                            Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Grid Grid.Row="2" Margin="10,10,10,10" Visibility="{Binding KontaktyVisible}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Label Content="Typ přestupku" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                    <Label Content="Datum" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="10,0,0,0"/>
-                    <Label Content="Celé jméno občana" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="2" Margin="10,0,0,0"/>
-                    <Label Content="Poznámka" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="3" Margin="10,0,0,0"/>
-                    <TextBox x:Name="pridatPrestupekDatum" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="135" Grid.Column="1"/>
-                    <TextBox x:Name="pridatPrestupekObcan" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="134" Grid.Column="2"/>
-                    <TextBox x:Name="pridatPrestupekPoznamka" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap"  VerticalAlignment="Center" Width="135" Grid.Column="3"/>
-                    <Button Grid.Column="4" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="134"/>
-                    <ComboBox HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="135" Height="18"
-                              ItemsSource="{Binding DataContext.Typy_prestupkuSeznam, RelativeSource={RelativeSource AncestorType=TabItem}}"/>
-
-                </Grid>
-            </Grid>
+            <views:EvidencePrestupkuView/>
         </TabItem>
 
         <TabItem x:Name="MojePrestupky" Header="Moje Přestupky">
-            <Grid >
-                <DataGrid CanUserAddRows="false" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,10"/>
-            </Grid>
+            <views:MojePrestupkyView/>
         </TabItem>
 
         <!-- Karta: Hlídky a Zásahy (OPRÁVNĚNÍ: Policista+) - PŘIDÁNY FILTRY -->
         <TabItem x:Name="Hlidky" Header="Hlídky"
-                 Visibility="{Binding HlidkyVisible}"
-            >
-            <Grid Background="White">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="2*"/>
-                    <RowDefinition Height="10*"/>
-                    <RowDefinition Height="3*"/>
-                </Grid.RowDefinitions>
+                 Visibility="{Binding HlidkyVisible}">
 
-                <!-- Nadpis -->
-                <Label Content="Evidence Hlídek" Margin="10,5,0,5" FontSize="20" FontWeight="Bold"/>
-
-                <!-- Filtry -->
-                <StackPanel Orientation="Horizontal" Margin="10,37,10,312" Grid.Row="1"/>
-
-                <!-- DataGrid -->
-                <DataGrid x:Name="HlidkyGrid" 
-                  d:ItemsSource="{d:SampleData ItemCount=5}" 
-                          ItemsSource="{Binding Hlidky}"
-                  Margin="10,10,10,6" 
-                  SelectionMode="Single"
-                  SelectionUnit="Cell"
-                  IsManipulationEnabled="True"
-                  AutoGenerateColumns="False" Grid.Row="1"
-                          CanUserAddRows="false">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID Hlídky" Binding="{Binding IDHLIDKY}" Width="*" Visibility="Hidden"/>
-                        <DataGridTextColumn Header="Název" Binding="{Binding NAZEVHLIDKY}" Width="*"/>
-
-                        <DataGridTemplateColumn Header="Typ" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ComboBox ItemsSource="{Binding DataContext.Typy_hlidkySeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                SelectedItem="{Binding NAZEV, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-
-                        <DataGridTemplateColumn Header="" Width="SizeToCells">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Upravit" Command="{Binding UpravitHlidkuCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="" Width="SizeToCells">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Odebrat" Command="{Binding OdebratHlidkuCommand}" Margin="1,1" Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <Grid Grid.Row="2" Margin="10,10,10,10" Visibility="{Binding KontaktyVisible}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="3*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Label Content="Název hlídky" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
-                    <Label Content="Typ" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="1"/>
-                    <Button Grid.Column="2" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="109"/>
-                    <TextBox x:Name="pridatHlidkuNazev" HorizontalAlignment="Center" Margin="0,5,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                    <ComboBox Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="118" Height="18"
-                        ItemsSource="{Binding DataContext.Typy_hlidkySeznam, RelativeSource={RelativeSource AncestorType=TabItem}}"/>
-                </Grid>
-            </Grid>
+            <views:HlidkyView/>
         </TabItem>
 
         <!-- Karta: Můj účet (OPRÁVNĚNÍ: Všichni přihlášení, Editace pro Policista+) -->
         <TabItem x:Name="Ucet" Header="Můj účet"
                  Visibility="{Binding UcetVisible}">
-            <Grid x:Name="UcetGrid" Margin="10" Background="White">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="148*"/>
-                    <ColumnDefinition Width="115*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-
-                <!-- Nadpis -->
-                <Label x:Name="Nazev" Content="VÁŠ ÚČET" FontSize="24" FontWeight="Bold" Margin="10,5,0,10" HorizontalAlignment="Left" Width="434"/>
-
-                <!-- Formulář pro editaci účtu -->
-                <Grid Grid.Row="1" Margin="0,0,0,24" Grid.ColumnSpan="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- Popisky a pole -->
-                    <Label Content="Jméno:" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
-                    <Label Content="Příjmení:" Grid.Row="1" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
-                    <Label Content="Přihlašovací Jméno:" Grid.Row="2" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
-                    <Label Content="Heslo:" Grid.Row="3" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
-                    <!--<Label Content="PSČ:" Grid.Row="4" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
-                    <Label Content="Země:" Grid.Row="5" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>-->
-
-                    <TextBox x:Name="JmenoTxt" Text="{Binding Uzivatel.Jmeno, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="131,10,0,0" Grid.ColumnSpan="2"/>
-                    <TextBox x:Name="PrijmeniTxt" Text="{Binding Uzivatel.Prijmeni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Margin="0,5,0,5"/>
-                    <TextBox x:Name="UsernameTxt" Text="{Binding Uzivatel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Margin="0,5,0,5"/>
-                    <TextBox x:Name="HesloTxt" Text="{Binding Uzivatel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" Margin="0,5,0,5"/>
-                    <!--<TextBox x:Name="PSCTxt" Text="000 00" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="4" Grid.Column="1" Margin="0,5,0,5"/>
-                    <TextBox x:Name="ZemeTxt" Text="Česká republika" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1" Margin="0,5,0,5"/>-->
-                </Grid>
-
-                <!-- Tlačítko Potvrdit (OPRÁVNĚNÍ: Policista+) -->
-                <Button x:Name="PotvrditBtn" 
-                        Grid.Row="1" 
-                        Content="Potvrdit" 
-                        HorizontalAlignment="Left" 
-                        VerticalAlignment="Top" 
-                        Width="100" 
-                        FontWeight="Bold"
-                        Command="{Binding AktualizovatUcetCommand}"
-                        IsEnabled="True" Height="20" Margin="194,165,0,0"/>
-
-                <Button x:Name="OdhlasitBtn" 
-                    Grid.Row="1" 
-                    Content="Odhlásit se" 
-                    HorizontalAlignment="Left" 
-                    VerticalAlignment="Top" 
-                    Width="100" 
-                    Command="{Binding OdhlasCommand}"
-                    FontWeight="Bold" 
-                    Height="20" Margin="194,190,0,0"/>
-                <Image Margin="10,10,16,90" Grid.Row="1" Source="{Binding Uzivatel.Obrazek, Mode=TwoWay, UpdateSourceTrigger=propertyChanged}" Grid.Column="1"/>
-                <Label Content="Profilový obrázek" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Button Grid.Column="1" Content="Nahrát obrázek" Margin="68,247,177,0" Grid.Row="1" Command="{Binding NahratImgCommand}" Height="29" VerticalAlignment="Top"/>
-                <Button Grid.Column="1" Content="Odebrat" Margin="172,247,71,0" Grid.Row="1" Command="{Binding OdebratImgCommand}" Height="29" VerticalAlignment="Top"/>
-
-            </Grid>
+            <views:UcetView/>
         </TabItem>
 
         <!-- Karta: Admin nastavení (OPRÁVNĚNÍ: Admin) -->
         <TabItem x:Name="Admin" Header="Admin nastavení"
                  Visibility="{Binding AdminVisible}">
-            <Grid Background="White">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="10*"/>
-                    <RowDefinition Height="2*"/>
-                </Grid.RowDefinitions>
-
-                <!-- Řádek 0: Filtry a Zobrazení (OPRÁVNĚNÍ: Admin) -->
-
-                <DataGrid x:Name="UzivateleGrid"
-                  d:ItemsSource="{d:SampleData ItemCount=5}"
-                  ItemsSource="{Binding Users}"
-                  Margin="10,10,10,10"
-                  SelectionMode="Single"
-                  SelectionUnit="Cell"
-                  IsManipulationEnabled="True"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="false">
-
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Přihlašovací jméno" Binding="{Binding Username}" Width="*"/>
-                        <DataGridTextColumn Header="Heslo" Binding="{Binding Password}" Width="*"/>
-                        
-                        <DataGridTemplateColumn Header="Oprávnění" Width="*">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ComboBox ItemsSource="{Binding DataContext.OpravneniSeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                SelectedItem="{Binding Opravneni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Emulovat">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Emulovat"
-                                            Command="{Binding DataContext.EmulovatCommand, 
-                                                              RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                            CommandParameter="{Binding}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-
-                        <DataGridTemplateColumn Header="Uložit">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Uložit"
-                                            Command="{Binding DataContext.UpravitUzivateleCommand, 
-                                                              RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                            CommandParameter="{Binding}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-
-                        <DataGridTemplateColumn Header="Odebrat">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Odebrat"
-                                            Command="{Binding DataContext.OdebratUzivateleCommand, 
-                                                              RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                                            CommandParameter="{Binding}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="15,0,15,0" VerticalAlignment="Center"/>
-                <Grid Grid.Row="1" Margin="10,0,10,10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="3*"/>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Label Content="Přihlašovací jméno" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <Label Grid.Column="1" Content="Heslo" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <Label Grid.Column="2" Content="Celé jméno policisty" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <Label Grid.Column="3" Content="Celé jméno občana" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <Label Grid.Column="4" Content="Oprávnění" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <ComboBox Grid.Column="3" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Width="104" Margin="166,0,0,0" Grid.ColumnSpan="2" Height="17"
-                             ItemsSource="{Binding DataContext.OpravneniSeznam, RelativeSource={RelativeSource AncestorType=TabItem}}"/>
-                    <TextBox Grid.Column="2" Margin="166,0,10,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
-                    <TextBox Grid.Column="1" Grid.ColumnSpan="2" Margin="110,0,10,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center"/>
-                    <TextBox Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                    <TextBox Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                    <Button Grid.Column="5" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="48"/>
-                </Grid>
-            </Grid>
+            <views:AdminView/>
         </TabItem>
+        
         <TabItem x:Name="LogovaciTabulka" Header="Logovací tabulka">
-            <Grid Margin="20">
-                <DataGrid CanUserAddRows="false" x:Name="logovaciTabulkaGrid" d:ItemsSource="{d:SampleData ItemCount=5}" AutoGenerateColumns="True"/>
-
-            </Grid>
+            <views:LogovaciTabulkaView/>
         </TabItem>
+        
         <TabItem x:Name="SystemovyKatalog" Header="Systémový katalog">
-            <Grid Margin="20">
-                <DataGrid CanUserAddRows="false" x:Name="systemovyKatalogGrid" d:ItemsSource="{d:SampleData ItemCount=5}" AutoGenerateColumns="True"/>
-
-            </Grid>
+            <views:SystemovyKatalogView/>
         </TabItem>
+        
         <TabItem x:Name="Prihlaseni" Header="Přihlášení">
-            <Grid Margin="10,0,0,0" HorizontalAlignment="Left" Width="779">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="29.96"/>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="130"/>
-                </Grid.RowDefinitions>
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Text="Přihlašovací jméno:" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="278,0,0,0" Height="16" Width="101"/>
-
-                <TextBox x:Name="UsernameTextBox" Margin="12,5,177,5" Grid.Row="0" Grid.Column="1"/>
-
-                <TextBlock Text="Heslo:" VerticalAlignment="Center" Margin="347,0,0,0" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" Height="16" Width="32"/>
-
-                <!--TODO předělat pak na passwordBox -->
-                <TextBox x:Name="PasswordBox"  Margin="12,5,177,5" Grid.Row="1" Grid.Column="1"/>
-
-                <Button Content="Přihlásit" Command="{Binding PrihlasCommand}" Width="100" HorizontalAlignment="Left" Margin="12,5,0,5" Grid.Row="2" Grid.Column="1">
-                    <Button.CommandParameter>
-                        <MultiBinding Converter="{StaticResource TupleConverter}">
-                            <Binding ElementName="UsernameTextBox" Path="Text"/>
-                            <Binding ElementName="PasswordBox" Path="Text"/>
-                        </MultiBinding>
-                    </Button.CommandParameter>
-                </Button>
-
-            </Grid>
+            <views:PrihlaseniView/>
         </TabItem>
+        
         <TabItem x:Name="Registrace" Header="Registrace">
-            <Grid Margin="19,20,21,20" Background="White">
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="10*"/>
-                </Grid.RowDefinitions>
-
-                <Label Content="Registrace" FontSize="16" FontWeight="Bold" Margin="331,2,331,0"/>
-
-                <StackPanel Width="483" HorizontalAlignment="Center" Margin="0,2,0,12" Grid.Row="1">
-
-                    <StackPanel Orientation="Horizontal" Margin="1,1">
-                        <Label Content="Jméno:" Width="120"/>
-                        <TextBox x:Name="jmenoTxt" Text="{Binding NovaRegistrace.Jmeno, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="1,1">
-                        <Label Content="Příjmení:" Width="120"/>
-                        <TextBox x:Name="prijmeniTxt" Text="{Binding NovaRegistrace.Prijmeni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="1,1">
-                        <Label Content="Číslo OP:" Width="120"/>
-                        <TextBox x:Name="opTxt" Text="{Binding NovaRegistrace.CisloOP, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="1,1">
-                        <Label Content="PSČ:" Width="120"/>
-                        <TextBox x:Name="pscTxt" Text="{Binding NovaRegistrace.PSC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="1,1">
-                        <Label Content="Ulice:" Width="120"/>
-                        <TextBox x:Name="uliceTxt" Text="{Binding NovaRegistrace.Ulice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="1,1">
-                        <Label Content="Číslo popsiné:" Width="120"/>
-                        <TextBox x:Name="cpTxt" Text="{Binding NovaRegistrace.CisloPopisne, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="1,1">
-                        <Label Content="Obec:" Width="120"/>
-                        <TextBox x:Name="obecTxt" Text="{Binding NovaRegistrace.Obec, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="1,1">
-                        <Label Content="Země:" Width="120"/>
-                        <TextBox x:Name="zemeTxt" Text="{Binding NovaRegistrace.Zeme, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="1,1">
-                        <Label Content="Uživatleské jméno:" Width="120"/>
-                        <TextBox x:Name="usernameTxt" Text="{Binding NovaRegistrace.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="1,1">
-                        <Label Content="Heslo:" Width="120"/>
-                        <TextBox x:Name="heslotxt" Text="{Binding NovaRegistrace.Heslo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
-                    </StackPanel>
-
-                    <Button Content="Registrovat" Command="{Binding RegistrovatCommand}" Width="150" Height="24"/>
-                </StackPanel>
-            </Grid>
+            <views:RegistraceView/>
         </TabItem>
+        
     </TabControl>
 </Window>
