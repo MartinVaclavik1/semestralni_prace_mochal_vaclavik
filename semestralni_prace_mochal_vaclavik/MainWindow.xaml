@@ -55,9 +55,10 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="16*"/>
                     <ColumnDefinition Width="11*"/>
-                    <ColumnDefinition Width="438*"/>
-                    <ColumnDefinition Width="85*"/>
-                    <ColumnDefinition Width="259*"/>
+                    <ColumnDefinition Width="42*"/>
+                    <ColumnDefinition Width="388*"/>
+                    <ColumnDefinition Width="83*"/>
+                    <ColumnDefinition Width="254*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
@@ -65,26 +66,35 @@
                     <RowDefinition Height="3*"/>
                 </Grid.RowDefinitions>
 
-                <Label x:Name="KontaktyNazev" Content="Policisté" Margin="10,10,0,171" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="5" Grid.RowSpan="2"/>
+                <Label x:Name="KontaktyNazev" Content="Policisté" Margin="10,10,0,171" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="6" Grid.RowSpan="2"/>
 
-                <StackPanel Orientation="Horizontal" Margin="10,2,10,233" Grid.ColumnSpan="5" Grid.Row="1"/>
+                <StackPanel Orientation="Horizontal" Margin="10,2,10,233" Grid.ColumnSpan="6" Grid.Row="1"/>
 
                 <DataGrid x:Name="KontaktyGrid" Grid.Row="1" 
                           d:ItemsSource="{d:SampleData ItemCount=5}" 
+                          ItemsSource="{Binding Policiste}"
                           Margin="10,14,10,4" 
-                          Grid.ColumnSpan="5" 
+                          Grid.ColumnSpan="6" 
                           SelectionMode="Single"
                           SelectionUnit="Cell"
                           IsManipulationEnabled="True"
-                          AutoGenerateColumns="False">
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="false">
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding IDPOLICISTY}" Width="*" Visibility="Collapsed"/>
-                        <DataGridTextColumn Header="Jméno" Binding="{Binding JMENO}" Width="*"/>
-                        <DataGridTextColumn Header="Příjmení" Binding="{Binding PRIJMENI}" Width="*"/>
-                        <DataGridTextColumn Header="Hodnost" Binding="{Binding HODNOST}" Width="*"/>
-                        <DataGridTextColumn Header="Jméno nadřízeného" Binding="{Binding NADRIZENY}" Width="*"/>
-                        <DataGridTextColumn Header="Stanice" Binding="{Binding STANICE}" Width="2*"/>
+                        <DataGridTextColumn Header="Jméno" Binding="{Binding Jmeno}" Width="*"/>
+                        <DataGridTextColumn Header="Příjmení" Binding="{Binding Prijmeni}" Width="*"/>
+                        <DataGridTemplateColumn Header="Oprávnění" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ComboBox ItemsSource="{Binding DataContext.HodnostiSeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                        SelectedItem="{Binding Hodnost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Jméno nadřízeného" Binding="{Binding Nadrizeny}" Width="*"/>
+                        <DataGridTextColumn Header="Stanice" Binding="{Binding Stanice}" Width="2*"/>
 
                         <DataGridTemplateColumn Header="" Width="SizeToCells">
                             <DataGridTemplateColumn.CellTemplate>
@@ -110,7 +120,7 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Grid Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="4" Margin="0,10,10,10">
+                <Grid Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="5" Margin="0,10,10,10">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
@@ -148,6 +158,10 @@
         <TabItem x:Name="Okrsky" Header="Okrsky"
                  Visibility="{Binding OkrskyVisible}">
             <Grid Background="White">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="429*"/>
+                    <ColumnDefinition Width="365*"/>
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*"/>
                     <RowDefinition Height="10*"/>
@@ -155,7 +169,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- Nadpis -->
-                <Label x:Name="OkrskyNazev" Content="Přehled Okrsků" Margin="10,5,0,5" FontSize="20" FontWeight="Bold"/>
+                <Label x:Name="OkrskyNazev" Content="Přehled Okrsků" Margin="10,5,0,5" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="2"/>
 
 
                 <!-- DataGrid -->
@@ -165,7 +179,8 @@
                   SelectionMode="Single"
                   SelectionUnit="Cell"
                   IsManipulationEnabled="True"
-                  AutoGenerateColumns="False" Grid.Row="1">
+                  AutoGenerateColumns="False" Grid.Row="1"
+                          CanUserAddRows="false" Grid.ColumnSpan="2">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID Okrsku" Binding="{Binding IDOKRSKU}" Width="*" Visibility="Collapsed"/>
                         <DataGridTextColumn Header="Název Okrsku" Binding="{Binding NAZEV}" Width="*"/>
@@ -193,7 +208,7 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
-                <Grid Grid.Row="2" Margin="10,10,10,10" Visibility="{Binding KontaktyVisible}">
+                <Grid Grid.Row="2" Margin="10,10,10,10" Visibility="{Binding KontaktyVisible}" Grid.ColumnSpan="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="155*"/>
                         <ColumnDefinition Width="141*"/>
@@ -237,7 +252,8 @@
                   SelectionUnit="Cell"
                   IsManipulationEnabled="True"
                   Margin="10,0,10,10"
-                  AutoGenerateColumns="False">
+                  AutoGenerateColumns="False"
+                          CanUserAddRows="false">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID přestupku" Binding="{Binding IDPRESTUPKU}" Width="*" Visibility="Collapsed"/>
                         <DataGridTextColumn Header="Typ přestupku" Binding="{Binding PRESTUPEK}" Width="*"/>
@@ -296,8 +312,8 @@
         </TabItem>
 
         <TabItem x:Name="MojePrestupky" Header="Moje Přestupky">
-            <Grid>
-                <DataGrid d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,10"/>
+            <Grid >
+                <DataGrid CanUserAddRows="false" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="10,10"/>
             </Grid>
         </TabItem>
 
@@ -324,7 +340,8 @@
                   SelectionMode="Single"
                   SelectionUnit="Cell"
                   IsManipulationEnabled="True"
-                  AutoGenerateColumns="False" Grid.Row="1">
+                  AutoGenerateColumns="False" Grid.Row="1"
+                          CanUserAddRows="false">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="ID Hlídky" Binding="{Binding IDHLIDKY}" Width="*" Visibility="Hidden"/>
                         <DataGridTextColumn Header="Název" Binding="{Binding NAZEVHLIDKY}" Width="*"/>
@@ -461,26 +478,20 @@
                   SelectionMode="Single"
                   SelectionUnit="Cell"
                   IsManipulationEnabled="True"
-                  AutoGenerateColumns="False">
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="false">
+
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Přihlašovací jméno" Binding="{Binding Username}" Width="*"/>
                         <DataGridTextColumn Header="Heslo" Binding="{Binding Password}" Width="*"/>
                         <DataGridTemplateColumn Header="Oprávnění" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <ComboBox ItemsSource="{Binding DataContext.OpravneniSeznamy, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    <ComboBox ItemsSource="{Binding DataContext.OpravneniSeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                                 SelectedItem="{Binding Opravneni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
 
-                            <DataGridTemplateColumn.CellEditingTemplate>
-                                <DataTemplate>
-                                    <ComboBox ItemsSource="{Binding DataContext.OpravneniSeznamy, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                              
-                                              SelectedItem="{Binding Opravneni, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
-                                               />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellEditingTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="Emulovat">
                             <DataGridTemplateColumn.CellTemplate>
@@ -546,13 +557,13 @@
         </TabItem>
         <TabItem x:Name="LogovaciTabulka" Header="Logovací tabulka">
             <Grid Margin="20">
-                <DataGrid x:Name="logovaciTabulkaGrid" d:ItemsSource="{d:SampleData ItemCount=5}" AutoGenerateColumns="True"/>
+                <DataGrid CanUserAddRows="false" x:Name="logovaciTabulkaGrid" d:ItemsSource="{d:SampleData ItemCount=5}" AutoGenerateColumns="True"/>
 
             </Grid>
         </TabItem>
         <TabItem x:Name="SystemovyKatalog" Header="Systémový katalog">
             <Grid Margin="20">
-                <DataGrid x:Name="systemovyKatalogGrid" d:ItemsSource="{d:SampleData ItemCount=5}" AutoGenerateColumns="True"/>
+                <DataGrid CanUserAddRows="false" x:Name="systemovyKatalogGrid" d:ItemsSource="{d:SampleData ItemCount=5}" AutoGenerateColumns="True"/>
 
             </Grid>
         </TabItem>

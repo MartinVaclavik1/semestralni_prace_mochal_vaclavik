@@ -66,6 +66,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         public ObservableCollection<Uzivatel> Users { get; set; } = new ObservableCollection<Uzivatel>();
 
+        public ObservableCollection<Policista> Policiste { get; set; } = new ObservableCollection<Policista>();
+
         /// <summary>
         /// Aktuálně přihlášený uživatel.
         /// </summary>
@@ -88,7 +90,16 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Seznam dostupných typů oprávnění v systému.
         /// </summary>
         [ObservableProperty]
-        private List<string> opravneniSeznamy = new List<string> { "administrator", "policista", "obcan" };
+        private List<string> opravneniSeznam = new List<string>();
+
+        [ObservableProperty]
+        private List<string> hodnostiSeznam = new List<string>();
+
+        [ObservableProperty]
+        private List<string> typy_prestupkuSeznam = new List<string>();
+
+        [ObservableProperty]
+        private List<string> typy_hlidkySeznam = new List<string>();
 
         private TabItem posledniVybrany;
         // Přihlášení 
@@ -117,7 +128,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show(ex.Message);
             }
             Prihlas(("Oli", "12345"));
-            nastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
+            NastavComboboxy();
+            NastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
             posledniVybrany = Window.Domu;
         }
 
@@ -162,7 +174,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     var emulace = new MainWindow();
                     emulace.Title = emulace.Title + " - EMULACE";
                     ((MainViewModel)emulace.DataContext).Prihlas((jmeno, heslo));
-                    emulace.Show();
+                    emulace.ShowDialog();
                 }
                 catch (Exception ex)
                 {
@@ -351,7 +363,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show("Chyba při načítání uživatele: " + ex.Message);
             }
-            nastavOknaPodleOpravneni();
+            NastavOknaPodleOpravneni();
             OnPropertyChanged(nameof(PolicistaControlsVisible));
             OnPropertyChanged(nameof(AdminControlsVisible));
             OnPropertyChanged(nameof(UcetEditVisible));
@@ -386,7 +398,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             Uzivatel.Resetuj();
             Window.Okna.SelectedIndex = 0;
-            nastavOknaPodleOpravneni();
+            NastavOknaPodleOpravneni();
             OnPropertyChanged(nameof(PolicistaControlsVisible));
             OnPropertyChanged(nameof(AdminControlsVisible));
             OnPropertyChanged(nameof(UcetEditVisible));
@@ -429,11 +441,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// - policista: Vidí vše pro obcana + Okrsky, Přestupky, Hlídky
         /// - administrator: Vidí vše + Admin panel, Logovací tabulka, Systémový katalog
         /// </remarks>
-        private void nastavOknaPodleOpravneni()
+        private void NastavOknaPodleOpravneni()
         {
             Window.Kontakty.Visibility = IsAtLeastRole("obcan") ? Visibility.Visible : Visibility.Collapsed;
             Window.Ucet.Visibility = IsAtLeastRole("obcan") ? Visibility.Visible : Visibility.Collapsed;
-            Window.MojePrestupky.Visibility = uzivatel.Opravneni == "obcan" ? Visibility.Visible : Visibility.Collapsed;
+            Window.MojePrestupky.Visibility = Uzivatel.Opravneni == "obcan" ? Visibility.Visible : Visibility.Collapsed;
 
             Window.Okrsky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
             Window.Prestupky.Visibility = IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
@@ -459,9 +471,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         private bool IsAtLeastRole(string requiredRole)
         {
             // Kontrola role, pokud by se v budoucnu přidaly další úrovně
-            if (uzivatel.Opravneni == "administrator") return true;
-            if (uzivatel.Opravneni == "policista" && (requiredRole == "policista" || requiredRole == "obcan")) return true;
-            if (uzivatel.Opravneni == "obcan" && requiredRole == "obcan") return true;
+            if (Uzivatel.Opravneni == "administrator") return true;
+            if (Uzivatel.Opravneni == "policista" && (requiredRole == "policista" || requiredRole == "obcan")) return true;
+            if (Uzivatel.Opravneni == "obcan" && requiredRole == "obcan") return true;
             return false;
         }
 
@@ -521,7 +533,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </remarks>
         /// <exception cref="Exception">Vyvolána při chybě databáze</exception>
         [RelayCommand]
-        private async Task AktualizovatUcet()
+        private void AktualizovatUcet()
         {
             try
             {
@@ -583,14 +595,14 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Načítá data z databáze při změně aktivní záložky.
         /// </summary>
         [RelayCommand]
-        private async Task ZmenaOkna()
+        private void ZmenaOkna()
         {
             if (Window.Admin.IsSelected && posledniVybrany != Window.Admin)
             {
                 NacistUzivatele();
                 posledniVybrany = Window.Admin;
             }
-            else if (Window.Kontakty.IsSelected)
+            else if (Window.Kontakty.IsSelected && posledniVybrany != Window.Kontakty)
             {
                 NacistKontakty();
                 posledniVybrany = Window.Kontakty;
@@ -598,7 +610,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             else if (Window.Prestupky.IsSelected)
             {
                 NacistPrestupky();
-                posledniVybrany= Window.Prestupky;
+                posledniVybrany = Window.Prestupky;
             }
             else if (Window.MojePrestupky.IsSelected)
             {
@@ -748,8 +760,22 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
 
-                    Window.KontaktyGrid.ItemsSource = dt.DefaultView;
+                    UzivatelItemsSource = dt.DefaultView;
+                    Policiste.Clear();
+                    foreach (DataRow item in dt.Rows)
+                    {
 
+                        Policiste.Add(new Policista
+                        {
+                            Id = (int)item.Field<decimal>("idpolicisty"),
+                            Jmeno = item.Field<string>("jmeno"),
+                            Prijmeni = item.Field<string>("prijmeni"),
+                            Hodnost = item.Field<string>("hodnost"),
+                            Nadrizeny = item.Field<string>("nadrizeny"),
+                            Stanice = item.Field<string>("stanice")
+                        });
+
+                    }
                 }
             }
             catch (Exception ex)
@@ -957,43 +983,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public void UpravitKontakty(object radek)
         {
-            var policistaRow = radek as DataRowView;
+            var policistaRow = radek as Policista;
 
             if (policistaRow != null)
             {
                 try
                 {
-                    policistaRow.EndEdit();
-
-                    int idPolicisty = Convert.ToInt32(policistaRow["IDPOLICISTY"]);
-                    string noveJmeno = policistaRow["JMENO"].ToString();
-                    string novePrijmeni = policistaRow["PRIJMENI"].ToString();
-                    string nazevHodnosti = policistaRow["HODNOST"].ToString();
-                    string nadrizeny = policistaRow["NADRIZENY"]?.ToString() ?? String.Empty;
-                    string stanice = policistaRow["STANICE"].ToString();
-
-                    string storedProcedureName = "upravy_policistu.upravitPolicistu";
-
-                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+                    if (policistaRow.Zmenen)
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.BindByName = true;
-
-                        cmd.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = noveJmeno;
-                        cmd.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = novePrijmeni;
-                        cmd.Parameters.Add("p_hodnost", OracleDbType.Varchar2).Value = nazevHodnosti;
-                        if (nadrizeny == string.Empty)
-                        {
-                            cmd.Parameters.Add("p_nadrizeny", OracleDbType.Varchar2).Value = DBNull.Value;
-                        } else { 
-                            cmd.Parameters.Add("p_nadrizeny", OracleDbType.Varchar2).Value = nadrizeny;
-                        }
-                        cmd.Parameters.Add("p_stanice", OracleDbType.Varchar2).Value = stanice;
-
-                        cmd.Parameters.Add("p_idPolicisty", OracleDbType.Int32).Value = idPolicisty;
-
-                        cmd.ExecuteNonQueryAsync();
-                        new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+                        policistaRow.Uloz(conn);
                         NacistKontakty();
 
                         MessageBox.Show("Úprava policisty byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -1166,7 +1164,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                         cmd.Parameters.Add("p_prestupek", OracleDbType.Varchar2).Value = prestupek;
                         cmd.Parameters.Add("p_datum", OracleDbType.Varchar2).Value = datum;
-                        
+
                         if (jmenoObcana == string.Empty)
                         {
                             cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = DBNull.Value;
@@ -1329,6 +1327,128 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
                     MessageBox.Show("Chyba při odebírání hlídky: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+        }
+        private void NastavComboboxy()
+        {
+            NactiOpravneni();
+            NacistHodnosti();
+            NacistTypyPrestupku();
+            NacistTypyHlidky();
+        }
+
+        private void NactiOpravneni()
+        {
+            try
+            {
+                string sql = @"select * from opravneniView";
+
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    OpravneniSeznam.Clear();
+                    foreach (DataRow item in dt.Rows)
+                    {
+                        OpravneniSeznam.Add(item.Field<string>("nazevopravneni"));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
+            }
+        }
+        private void NacistHodnosti()
+        {
+            try
+            {
+                string sql = @"select * from hodnostiView";
+
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    HodnostiSeznam.Clear();
+                    foreach (DataRow item in dt.Rows)
+                    {
+                        HodnostiSeznam.Add(item.Field<string>("nazev"));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
+            }
+        }
+
+        private void NacistTypyPrestupku()
+        {
+            try
+            {
+                string sql = @"select * from typy_prestupkuView";
+
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    Typy_prestupkuSeznam.Clear();
+                    foreach (DataRow item in dt.Rows)
+                    {
+                        Typy_prestupkuSeznam.Add(item.Field<string>("prestupek"));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
+            }
+        }
+
+        private void NacistTypyHlidky()
+        {
+            try
+            {
+                string sql = @"select * from typy_hlidkyView";
+
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    Typy_hlidkySeznam.Clear();
+                    foreach (DataRow item in dt.Rows)
+                    {
+                        Typy_hlidkySeznam.Add(item.Field<string>("nazev"));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
+            }
+        }
+
+        //TODO potom smazat
+        private void VytvorVieNecoVDB(string sql)
+        {
+            try
+            {
+                using (OracleCommand cmd = new OracleCommand(sql, conn))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
             }
         }
     }
