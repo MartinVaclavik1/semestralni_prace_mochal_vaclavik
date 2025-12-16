@@ -1055,24 +1055,38 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                     if (result != MessageBoxResult.Yes) return;
 
-                    string storedProcedureName = "upravy_policistu.smazPolicistu";
+                    policistaRow.Smaz(conn);
+                    NacistKontakty();
 
-                    using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
-                    {
-                        cmd.BindByName = true;
-                        cmd.Parameters.Add("p_idPolicisty", OracleDbType.Int32).Value = policistaRow.Id;
-
-                        cmd.ExecuteNonQueryAsync();
-                        new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
-
-                        MessageBox.Show("Policista byl úspěšně odstraněn.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        NacistKontakty();
-                    }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Chyba při odebírání policisty: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+        }
+        [RelayCommand]
+        public void PridatKontakty()
+        {
+            try
+            {
+                var novyPolicista = new Policista();
+                string jmeno = Window.PolicisteView.pridatKontaktyJmeno.Text;
+                string prijmeni = Window.PolicisteView.pridatKontaktyPrijmeni.Text;
+                string hodnost = Window.PolicisteView.pridatKontaktHodnost.Text;
+                string nadrizeny = Window.PolicisteView.pridatKontaktyNadrizeny.Text;
+                string stanice = Window.PolicisteView.pridatKontaktyStanice.Text;
+                DateTime datumNarozeni = Window.PolicisteView.pridatKontaktyDatum.Text != string.Empty ? Convert.ToDateTime(Window.PolicisteView.pridatKontaktyDatum.Text) : DateTime.MinValue;
+                int plat = Window.PolicisteView.pridatKontaktyPlat.Text != string.Empty ? Convert.ToInt32(Window.PolicisteView.pridatKontaktyPlat.Text) : 0;
+                novyPolicista.Pridej(conn, jmeno, prijmeni, hodnost, nadrizeny, stanice, plat, datumNarozeni);
+
+
+                NacistKontakty();
+                MessageBox.Show("Nový policista byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při přidávání nového policisty: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
