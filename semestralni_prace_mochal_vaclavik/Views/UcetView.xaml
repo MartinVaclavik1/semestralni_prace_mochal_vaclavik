@@ -1,0 +1,79 @@
+﻿<UserControl x:Class="semestralni_prace_mochal_vaclavik.Views.UcetView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:semestralni_prace_mochal_vaclavik.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid x:Name="UcetGrid" Margin="10" Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="148*"/>
+            <ColumnDefinition Width="115*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <!-- Nadpis -->
+        <Label x:Name="Nazev" Content="VÁŠ ÚČET" FontSize="24" FontWeight="Bold" Margin="10,5,0,10" HorizontalAlignment="Left" Width="434"/>
+
+        <!-- Formulář pro editaci účtu -->
+        <Grid Grid.Row="1" Margin="0,0,0,24" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Popisky a pole -->
+            <Label Content="Jméno:" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+            <Label Content="Příjmení:" Grid.Row="1" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+            <Label Content="Přihlašovací Jméno:" Grid.Row="2" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+            <Label Content="Heslo:" Grid.Row="3" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+            <!--<Label Content="PSČ:" Grid.Row="4" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>
+        <Label Content="Země:" Grid.Row="5" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,10,5"/>-->
+
+            <TextBox x:Name="JmenoTxt" Text="{Binding Uzivatel.Jmeno, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="131,10,0,0" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="PrijmeniTxt" Text="{Binding Uzivatel.Prijmeni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Margin="0,5,0,5"/>
+            <TextBox x:Name="UsernameTxt" Text="{Binding Uzivatel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Margin="0,5,0,5"/>
+            <TextBox x:Name="HesloTxt" Text="{Binding Uzivatel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" Margin="0,5,0,5"/>
+            <!--<TextBox x:Name="PSCTxt" Text="000 00" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="4" Grid.Column="1" Margin="0,5,0,5"/>
+        <TextBox x:Name="ZemeTxt" Text="Česká republika" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1" Margin="0,5,0,5"/>-->
+        </Grid>
+
+        <!-- Tlačítko Potvrdit (OPRÁVNĚNÍ: Policista+) -->
+        <Button x:Name="PotvrditBtn" 
+            Grid.Row="1" 
+            Content="Potvrdit" 
+            HorizontalAlignment="Left" 
+            VerticalAlignment="Top" 
+            Width="100" 
+            FontWeight="Bold"
+            Command="{Binding AktualizovatUcetCommand}"
+            IsEnabled="True" Height="20" Margin="194,165,0,0"/>
+
+        <Button x:Name="OdhlasitBtn" 
+        Grid.Row="1" 
+        Content="Odhlásit se" 
+        HorizontalAlignment="Left" 
+        VerticalAlignment="Top" 
+        Width="100" 
+        Command="{Binding OdhlasCommand}"
+        FontWeight="Bold" 
+        Height="20" Margin="194,190,0,0"/>
+        <Image Margin="10,10,16,90" Grid.Row="1" Source="{Binding Uzivatel.Obrazek, Mode=TwoWay, UpdateSourceTrigger=propertyChanged}" Grid.Column="1"/>
+        <Label Content="Profilový obrázek" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Button Grid.Column="1" Content="Nahrát obrázek" Margin="68,247,177,0" Grid.Row="1" Command="{Binding NahratImgCommand}" Height="29" VerticalAlignment="Top"/>
+        <Button Grid.Column="1" Content="Odebrat" Margin="172,247,71,0" Grid.Row="1" Command="{Binding OdebratImgCommand}" Height="29" VerticalAlignment="Top"/>
+
+    </Grid>
+</UserControl>
