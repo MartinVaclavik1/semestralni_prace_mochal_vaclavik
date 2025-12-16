@@ -808,7 +808,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     {
                         Prestupky.Add(new Prestupek
                         {  
-                            IdObcana = (int)item.Field<decimal>("idobcana"),
+                            IdObcana = item.Field<int>("idobcana"),
                             TypPrestupku = item.Field<string>("prestupek"),
                             Datum = item.Field<string>("datum"),
                             JmenoObcana = item.Field<string>("jmenoobcana"),
@@ -914,7 +914,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     {
                         Okrsky.Add(new Okrsek
                         {
-                            Id = (int)item.Field<decimal>("idokrsku"),
+                            Id = item.Field<int>("idokrsku"),
                             Nazev = item.Field<string>("nazev")
                         });
                     }

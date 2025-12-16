@@ -37,7 +37,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             set
             {
                 prijmeni = value;
-                this.OnPropertyChanged("Prijmeni");
+                this.OnPropertyChanged(nameof(Prijmeni));
             }
         }
         private string username { get; set; }
@@ -47,7 +47,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             set
             {
                 username = value;
-                this.OnPropertyChanged("Username");
+                this.OnPropertyChanged(nameof(Username));
             }
         }
         private string password { get; set; }
@@ -57,7 +57,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             set
             {
                 password = value;
-                this.OnPropertyChanged("Password");
+                this.OnPropertyChanged(nameof(Password));
             }
         }
         private string opravneni { get; set; }
@@ -79,7 +79,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 else
                 {
                     opravneni = value;
-                    this.OnPropertyChanged("Opravneni");
+                    this.OnPropertyChanged(nameof(Opravneni));
                 }
 
             }
@@ -126,5 +126,6 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
     }
 }

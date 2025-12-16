@@ -190,8 +190,8 @@
                   AutoGenerateColumns="False" Grid.Row="1"
                           CanUserAddRows="false" Grid.ColumnSpan="2">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID Okrsku" Binding="{Binding IDOKRSKU}" Width="*" Visibility="Collapsed"/>
-                        <DataGridTextColumn Header="Název Okrsku" Binding="{Binding NAZEV}" Width="*"/>
+                        <DataGridTextColumn Header="ID Okrsku" Binding="{Binding Id}" Width="*" Visibility="Collapsed"/>
+                        <DataGridTextColumn Header="Název Okrsku" Binding="{Binding Nazev}" Width="*"/>
                         <DataGridTemplateColumn Header="" Width="SizeToCells">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -266,20 +266,20 @@
                   CanUserAddRows="false">
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID přestupku" Binding="{Binding IDPRESTUPKU}" Width="*" Visibility="Collapsed"/>
+                        <DataGridTextColumn Header="ID přestupku" Binding="{Binding IdPrestupku}" Width="*" Visibility="Collapsed"/>
                        
                         <DataGridTemplateColumn Header="Typ přestupku" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <ComboBox ItemsSource="{Binding DataContext.Typy_prestupkuSeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                    SelectedItem="{Binding PRESTUPEK, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    SelectedItem="{Binding TypPrestupku, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                         
-                        <DataGridTextColumn Header="Datum" Binding="{Binding DATUM}" Width="*"/>
-                        <DataGridTextColumn Header="Jméno Občana" Binding="{Binding JMENOOBCANA}" Width="*"/>
-                        <DataGridTextColumn Header="Poznámka" Binding="{Binding POZNAMKA}" Width="*"/>
+                        <DataGridTextColumn Header="Datum" Binding="{Binding Datum}" Width="*"/>
+                        <DataGridTextColumn Header="Jméno Občana" Binding="{Binding JmenoObcana}" Width="*"/>
+                        <DataGridTextColumn Header="Poznámka" Binding="{Binding Poznamka}" Width="*"/>
 
                         <DataGridTemplateColumn Header="" Width="SizeToCells">
                             <DataGridTemplateColumn.CellTemplate>
@@ -366,14 +366,14 @@
                   AutoGenerateColumns="False" Grid.Row="1"
                           CanUserAddRows="false">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID Hlídky" Binding="{Binding IDHLIDKY}" Width="*" Visibility="Hidden"/>
-                        <DataGridTextColumn Header="Název" Binding="{Binding NAZEVHLIDKY}" Width="*"/>
+                        <DataGridTextColumn Header="ID Hlídky" Binding="{Binding IdHlidky}" Width="*" Visibility="Hidden"/>
+                        <DataGridTextColumn Header="Název" Binding="{Binding NazevHlidky}" Width="*"/>
 
                         <DataGridTemplateColumn Header="Typ" Width="*">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <ComboBox ItemsSource="{Binding DataContext.Typy_hlidkySeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                SelectedItem="{Binding NAZEV, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                SelectedItem="{Binding Nazev, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

@@ -1,33 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Oracle.ManagedDataAccess.Client;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
 
 namespace semestralni_prace_mochal_vaclavik.Tridy
 {
     public class Okrsek : INotifyPropertyChanged
     {
-        private int id { get; set; }
+        private int _id { get; set; }
         public int Id
         {
             get
-            { return id; }
+            { return _id; }
             set
             {
-                id = value;
+                _id = value;
                 this.OnPropertyChanged(nameof(Id));
             }
         }
-        private string nazev { get; set; }
+        
+        private string _nazev { get; set; }
         public string Nazev
         {
-            get { return nazev; }
+            get { return _nazev; }
             set
             {
-                nazev = value;
-                this.OnPropertyChanged(nameof(nazev));
+                _nazev = value;
+                this.OnPropertyChanged(nameof(_nazev));
             }
         }
         private bool zmenen { get; set; }
@@ -53,10 +51,51 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        public void Uloz()
+        private void Uloz(OracleConnection conn)
         {
-            zmenen = false;
+            string storedProcedureName = "upravy_okrsku.upravitOkrsek";
+
+            using(OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.BindByName = true;
+
+                cmd.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = _nazev;
+                cmd.Parameters.Add("p_idOkrsku", OracleDbType.Int32).Value = _id;
+
+                cmd.ExecuteNonQueryAsync();
+                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+            }    
+        }
+        private void Smaz(OracleConnection conn)
+        {
+            string storedProcedureName = "upravy_okrsku.smazOkrsek";
+
+            using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.BindByName = true;
+
+                cmd.Parameters.Add("p_idOkrsku", OracleDbType.Int32).Value = _id;
+
+                cmd.ExecuteNonQueryAsync();
+                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+            }
+        }
+        private void Pridej(OracleConnection conn)
+        {
+            string storedProcedureName = "upravy_okrsku.pridatOkrsek";
+
+            using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.BindByName = true;
+
+                cmd.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = _nazev;
+
+                cmd.ExecuteNonQueryAsync();
+                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+            }
         }
     }
 }

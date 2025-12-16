@@ -132,5 +132,40 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
 
             zmenen = false;
         }
+        public void Smaz(OracleConnection conn)
+        {
+            string storedProcedureName = "upravy_policistu.smazatPolicistu";
+            using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.BindByName = true;
+                cmd.Parameters.Add("p_idPolicisty", OracleDbType.Int32).Value = id;
+                cmd.ExecuteNonQuery();
+                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+            }
+        }
+        public void pridej(OracleConnection conn)
+        {
+            string storedProcedureName = "upravy_policistu.pridatPolicistu";
+            using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.BindByName = true;
+                cmd.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = jmeno;
+                cmd.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = prijmeni;
+                cmd.Parameters.Add("p_hodnost", OracleDbType.Varchar2).Value = hodnost;
+                if (nadrizeny == string.Empty)
+                {
+                    cmd.Parameters.Add("p_nadrizeny", OracleDbType.Varchar2).Value = DBNull.Value;
+                }
+                else
+                {
+                    cmd.Parameters.Add("p_nadrizeny", OracleDbType.Varchar2).Value = nadrizeny;
+                }
+                cmd.Parameters.Add("p_stanice", OracleDbType.Varchar2).Value = stanice;
+                cmd.ExecuteNonQuery();
+                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+            }
+        }
     }
 }
