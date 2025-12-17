@@ -108,6 +108,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [ObservableProperty]
         private List<string> typy_hlidkySeznam = new List<string>();
         public PolicisteView PolicisteView { get; }
+        public OkrskyView OkrskyView { get; }
         // Přihlášení 
         //wallis45548 - policista
         //martin25922 - obcan => hesla jsou stejné číslo
@@ -123,9 +124,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </remarks>
         /// public PolicisteViewModel PolicisteVM { get; }
 
-        public MainViewModel(PolicisteView view)
+        public MainViewModel(PolicisteView policisteView, OkrskyView okrskyView)
         {
-            PolicisteView = view ?? throw new ArgumentNullException(nameof(view));
+            PolicisteView = policisteView ?? throw new ArgumentNullException(nameof(policisteView));
+            OkrskyView = okrskyView ?? throw new ArgumentNullException(nameof(okrskyView));
             try
             {
                 conn = new OracleConnection(connectionString);
@@ -902,35 +904,35 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Zobrazuje okrsky na kartě Okrsky (dostupné pro policisty a administrátory).
         /// </remarks>
         /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private void NacistOkrsky()
-        {
-            try
-            {
-                string sql = @"
-                SELECT * FROM okrskyView";
+        //private void NacistOkrsky()
+        //{
+        //    try
+        //    {
+        //        string sql = @"
+        //        SELECT * FROM okrskyView";
 
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                    DataTable dt = new DataTable();
+        //        using (OracleCommand cmd = new OracleCommand(sql, conn))
+        //        {
+        //            OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+        //            DataTable dt = new DataTable();
 
-                    adapter.Fill(dt);
-                    Okrsky.Clear();
-                    foreach (DataRow item in dt.Rows)
-                    {
-                        Okrsky.Add(new Okrsek
-                        {
-                            Id = (int)item.Field<decimal>("idokrsku"),
-                            Nazev = item.Field<string>("nazev")
-                        });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při načítání okrsků: " + ex.Message);
-            }
-        }
+        //            adapter.Fill(dt);
+        //            Okrsky.Clear();
+        //            foreach (DataRow item in dt.Rows)
+        //            {
+        //                Okrsky.Add(new Okrsek
+        //                {
+        //                    Id = (int)item.Field<decimal>("idokrsku"),
+        //                    Nazev = item.Field<string>("nazev")
+        //                });
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Chyba při načítání okrsků: " + ex.Message);
+        //    }
+        //}
 
 
         /// <summary>
@@ -1110,7 +1112,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     if (row.Zmenen)
                     {
                         row.Uloz(conn);
-                        NacistOkrsky();
+                        //NacistOkrsky();
 
                         MessageBox.Show("Úprava okrsku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
@@ -1144,7 +1146,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     if (result != MessageBoxResult.Yes) return;
 
                     row.Smaz(conn);
-                    NacistOkrsky();
+                    //NacistOkrsky();
 
                 }
                 catch (Exception ex)
@@ -1161,7 +1163,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 Okrsek novyOkrsek = new Okrsek();
                 string nazev = "";//Window.OkrskyView.pridatOkrsekNazev.Text;
                 novyOkrsek.Pridej(conn, nazev);
-                NacistOkrsky();
+                //NacistOkrsky();
                 MessageBox.Show("Nový okrsek byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -1242,22 +1244,22 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 //string poznamka = Window.EvidencePrestupkuView.pridatPrestupekPoznamka.Text;
                 //novyPrestupek.Pridej(conn, typPrestupku, popisPrestupku, jmenoObcana, adresa, poznamka);
          
-                string typPrestupku = Window.EvidencePrestupkuView.pridatPrestupekTyp.Text;
-                string popisPrestupku = Window.EvidencePrestupkuView.pridatPrestupekPopisZasahu.Text;
-                string jmenoObcana = Window.EvidencePrestupkuView.pridatPrestupekObcan.Text;
-                //string adresa = Window.EvidencePrestupkuView.pridatPrestupekAdresa.Text;
-                string ulice = Window.EvidencePrestupkuView.pridatPrestupekUlice.Text;
-                string cisloPopisne = Window.EvidencePrestupkuView.pridatPrestupekCisloPopisne.Text;
-                int cp = int.Parse(cisloPopisne);
+                //string typPrestupku = Window.EvidencePrestupkuView.pridatPrestupekTyp.Text;
+                //string popisPrestupku = Window.EvidencePrestupkuView.pridatPrestupekPopisZasahu.Text;
+                //string jmenoObcana = Window.EvidencePrestupkuView.pridatPrestupekObcan.Text;
+                ////string adresa = Window.EvidencePrestupkuView.pridatPrestupekAdresa.Text;
+                //string ulice = Window.EvidencePrestupkuView.pridatPrestupekUlice.Text;
+                //string cisloPopisne = Window.EvidencePrestupkuView.pridatPrestupekCisloPopisne.Text;
+                //int cp = int.Parse(cisloPopisne);
 
-                string psc = Window.EvidencePrestupkuView.pridatPrestupekPSC.Text;
-                if (psc.Length < 5)
-                {
-                    MessageBox.Show("PSČ musí mít 5 znaků.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-                string obec = Window.EvidencePrestupkuView.pridatPrestupekObec.Text;
-                novyPrestupek.Pridej(conn,ulice, cp,obec, psc, typPrestupku, popisPrestupku, jmenoObcana);
+                //string psc = Window.EvidencePrestupkuView.pridatPrestupekPSC.Text;
+                //if (psc.Length < 5)
+                //{
+                //    MessageBox.Show("PSČ musí mít 5 znaků.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                //    return;
+                //}
+                //string obec = Window.EvidencePrestupkuView.pridatPrestupekObec.Text;
+                //novyPrestupek.Pridej(conn,ulice, cp,obec, psc, typPrestupku, popisPrestupku, jmenoObcana);
                 NacistPrestupky();
                 MessageBox.Show("Nový přestupek byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
             }

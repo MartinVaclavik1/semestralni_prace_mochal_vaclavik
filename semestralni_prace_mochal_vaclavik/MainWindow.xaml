@@ -55,7 +55,7 @@
         <TabItem x:Name="Okrsky" Header="Okrsky"
                  Visibility="{Binding PolicistaVisible}" >
 
-            <views:OkrskyView x:Name="OkrskyView"/>
+            <ContentControl Content="{Binding OkrskyView}" />
         </TabItem>
 
         <!-- Karta: Evidence přestupků (OPRÁVNĚNÍ: Policista+) -->

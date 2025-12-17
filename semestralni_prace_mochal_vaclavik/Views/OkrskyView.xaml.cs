@@ -1,4 +1,5 @@
-﻿using System;
+﻿using semestralni_prace_mochal_vaclavik.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,10 @@ namespace semestralni_prace_mochal_vaclavik.Views
     /// </summary>
     public partial class OkrskyView : System.Windows.Controls.UserControl
     {
-        public OkrskyView()
+        public OkrskyView(OkrskyViewModel okrskyViewModel)
         {
             InitializeComponent();
+            DataContext = okrskyViewModel;
         }
     }
 }
