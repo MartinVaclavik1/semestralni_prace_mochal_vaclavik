@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:semestralni_prace_mochal_vaclavik.Views"
+             
+                xmlns:local="clr-namespace:semestralni_prace_mochal_vaclavik.Views"
+             xmlns:vm="clr-namespace:semestralni_prace_mochal_vaclavik.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="858">
     <Grid Background="White">
@@ -20,14 +22,14 @@
         <StackPanel Orientation="Horizontal" Margin="10,37,10,312" Grid.Row="1"/>
 
         <!-- DataGrid -->
-        <DataGrid x:Name="HlidkyGrid" 
-      d:ItemsSource="{d:SampleData ItemCount=5}" 
+        <DataGrid x:Name="HlidkyGrid" Grid.Row="1"
+              d:ItemsSource="{d:SampleData ItemCount=5}" 
               ItemsSource="{Binding Hlidky}"
-      Margin="10,10,10,6" 
-      SelectionMode="Single"
-      SelectionUnit="Cell"
-      IsManipulationEnabled="True"
-      AutoGenerateColumns="False" Grid.Row="1"
+              Margin="10,10,10,6" 
+              SelectionMode="Single"
+              SelectionUnit="Cell"
+              IsManipulationEnabled="True"
+              AutoGenerateColumns="False"
               CanUserAddRows="false">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID Hlídky" Binding="{Binding IdHlidky}" Width="*" Visibility="Hidden"/>
@@ -36,8 +38,9 @@
                 <DataGridTemplateColumn Header="Typ" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ComboBox ItemsSource="{Binding DataContext.Typy_hlidkySeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                    SelectedItem="{Binding Nazev, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ComboBox
+                                ItemsSource="{Binding DataContext.TypyHlidkySeznam, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                SelectedItem="{Binding Nazev, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -84,7 +87,7 @@
 
             <TextBox x:Name="pridatHlidkuNazev" HorizontalAlignment="Center" Margin="0,5,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Height="20"/>
             <ComboBox x:Name="pridatHlidkuTyp" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Top" Width="118" Height="20"
-            ItemsSource="{Binding DataContext.Typy_hlidkySeznam, RelativeSource={RelativeSource AncestorType=TabItem}}" Margin="0,5,0,0"/>
+            ItemsSource="{Binding DataContext.TypyHlidkySeznam, RelativeSource={RelativeSource AncestorType=Grid}}" Margin="0,5,0,0"/>
         </Grid>
     </Grid>
 </UserControl>

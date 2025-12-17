@@ -1,4 +1,5 @@
-﻿using System;
+﻿using semestralni_prace_mochal_vaclavik.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,11 @@ namespace semestralni_prace_mochal_vaclavik.Views
     /// </summary>
     public partial class HlidkyView : System.Windows.Controls.UserControl
     {
-        public HlidkyView()
+        public HlidkyView(HlidkyViewModel hlidkyViewModel)
         {
             InitializeComponent();
+            DataContext = hlidkyViewModel;
         }
+
     }
 }

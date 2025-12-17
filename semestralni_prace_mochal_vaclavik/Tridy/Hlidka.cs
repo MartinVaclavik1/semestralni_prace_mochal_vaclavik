@@ -12,30 +12,30 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
 {
     public class Hlidka : INotifyPropertyChanged
     {
-        private int _idHlidky { get; set; }
+        private int idHlidky { get; set; }
         public int IdHlidky
         {
-            get { return _idHlidky; }
+            get { return idHlidky; }
             set {
-                _idHlidky = value;
+                idHlidky = value;
                 this.OnPropertyChanged(nameof(IdHlidky));
             }
         }
-        private string _nazevHlidky { get; set; }
+        private string nazevHlidky { get; set; }
         public string NazevHlidky
         {
-            get { return _nazevHlidky; }
+            get { return nazevHlidky; }
             set {
-                _nazevHlidky = value;
+                nazevHlidky = value;
                 this.OnPropertyChanged(nameof(NazevHlidky));
             }
         }
-        private string _nazev { get; set; }
+        private string nazev { get; set; }
         public string Nazev
         {
-            get { return _nazev; }
+            get { return nazev; }
             set {
-                _nazev = value;
+                nazev = value;
                 this.OnPropertyChanged(nameof(Nazev));
             }
         }
@@ -69,9 +69,9 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.BindByName = true;
-                cmd.Parameters.Add("p_idHlidky", OracleDbType.Int32).Value = _idHlidky;
-                cmd.Parameters.Add("p_nazevHlidky", OracleDbType.Varchar2).Value = _nazevHlidky;
-                cmd.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = _nazev;
+                cmd.Parameters.Add("p_idHlidky", OracleDbType.Int32).Value = idHlidky;
+                cmd.Parameters.Add("p_nazevHlidky", OracleDbType.Varchar2).Value = nazevHlidky;
+                cmd.Parameters.Add("p_nazev", OracleDbType.Varchar2).Value = nazev;
                 cmd.ExecuteNonQuery();
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();
                 zmenen = false;
@@ -85,7 +85,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.BindByName = true;
-                cmd.Parameters.Add("p_idHlidky", OracleDbType.Int32).Value = _idHlidky;
+                cmd.Parameters.Add("p_idHlidky", OracleDbType.Int32).Value = idHlidky;
                 cmd.ExecuteNonQuery();
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();
             }

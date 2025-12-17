@@ -4,6 +4,7 @@ using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 using semestralni_prace_mochal_vaclavik.Repository;
 using semestralni_prace_mochal_vaclavik.Tridy;
+using semestralni_prace_mochal_vaclavik.Views;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
@@ -104,9 +105,14 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [ObservableProperty]
         private List<string> typy_prestupkuSeznam = new List<string>();
 
-        [ObservableProperty]
-        private List<string> typy_hlidkySeznam = new List<string>();
+        //[ObservableProperty]
+        //private List<string> typy_hlidkySeznam = new List<string>();
+
+
         public PolicisteView PolicisteView { get; }
+        public OkrskyView OkrskyView { get; }
+
+        public HlidkyView HlidkyView { get; }
         // Přihlášení 
         //wallis45548 - policista
         //martin25922 - obcan => hesla jsou stejné číslo
@@ -122,9 +128,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </remarks>
         /// public PolicisteViewModel PolicisteVM { get; }
 
-        public MainViewModel(PolicisteView view)
+        public MainViewModel(PolicisteView policisteView, HlidkyView hlidkyView)
         {
-            PolicisteView = view ?? throw new ArgumentNullException(nameof(view));
+            PolicisteView = policisteView ?? throw new ArgumentNullException(nameof(policisteView));
+            HlidkyView = hlidkyView ?? throw new ArgumentNullException(nameof(hlidkyView));
             try
             {
                 conn = new OracleConnection(connectionString);
@@ -549,17 +556,12 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 using (OracleCommand cmdUcet = new OracleCommand("aktualizuj_ucet", conn))
                 {
-
-
                     cmdUcet.CommandType = CommandType.StoredProcedure;
                     cmdUcet.BindByName = true;
-
                     cmdUcet.Parameters.Add("p_id", OracleDbType.Int32).Value = uzivatel.Id;
                     cmdUcet.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatel.Username;
                     cmdUcet.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatel.Password;
                     cmdUcet.Parameters.Add("p_obrazek", OracleDbType.Blob).Value = uzivatel.ObrazekBytes;
-
-
                     cmdUcet.ExecuteNonQuery();
                 }
                 conn.Commit();
@@ -577,8 +579,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                 using (OracleCommand cmdJmenoPrijmeni = new OracleCommand(volanaMetoda, conn))
                 {
-
-
                     cmdJmenoPrijmeni.CommandType = CommandType.StoredProcedure;
                     cmdJmenoPrijmeni.BindByName = true;
 
@@ -882,7 +882,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         {
                             IdHlidky = (int)item.Field<decimal>("idhlidky"),
                             NazevHlidky = item.Field<string>("nazevhlidky"),
-                            Nazev=item.Field<string>("nazev"),
+                            Nazev = item.Field<string>("nazev"),
                         });
                     }
                     //Window.HlidkyView.HlidkyGrid.ItemsSource = dt.DefaultView;
@@ -1241,21 +1241,21 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 //string poznamka = Window.EvidencePrestupkuView.pridatPrestupekPoznamka.Text;
                 //novyPrestupek.Pridej(conn, typPrestupku, popisPrestupku, jmenoObcana, adresa, poznamka);
          
-                string typPrestupku = Window.EvidencePrestupkuView.pridatPrestupekTyp.Text;
-                string popisPrestupku = Window.EvidencePrestupkuView.pridatPrestupekPopisZasahu.Text;
-                string jmenoObcana = Window.EvidencePrestupkuView.pridatPrestupekObcan.Text;
-                string ulice = Window.EvidencePrestupkuView.pridatPrestupekUlice.Text;
-                string cisloPopisne = Window.EvidencePrestupkuView.pridatPrestupekCisloPopisne.Text;
-                int cp = int.Parse(cisloPopisne);
+                //string typPrestupku = Window.EvidencePrestupkuView.pridatPrestupekTyp.Text;
+                //string popisPrestupku = Window.EvidencePrestupkuView.pridatPrestupekPopisZasahu.Text;
+                //string jmenoObcana = Window.EvidencePrestupkuView.pridatPrestupekObcan.Text;
+                //string ulice = Window.EvidencePrestupkuView.pridatPrestupekUlice.Text;
+                //string cisloPopisne = Window.EvidencePrestupkuView.pridatPrestupekCisloPopisne.Text;
+                //int cp = int.Parse(cisloPopisne);
 
-                string psc = Window.EvidencePrestupkuView.pridatPrestupekPSC.Text;
-                if (psc.Length < 5)
-                {
-                    MessageBox.Show("PSČ musí mít 5 znaků.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-                string obec = Window.EvidencePrestupkuView.pridatPrestupekObec.Text;
-                novyPrestupek.Pridej(conn,ulice, cp,obec, psc, typPrestupku, popisPrestupku, jmenoObcana);
+                //string psc = Window.EvidencePrestupkuView.pridatPrestupekPSC.Text;
+                //if (psc.Length < 5)
+                //{
+                //    MessageBox.Show("PSČ musí mít 5 znaků.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                //    return;
+                //}
+                //string obec = Window.EvidencePrestupkuView.pridatPrestupekObec.Text;
+                //novyPrestupek.Pridej(conn,ulice, cp,obec, psc, typPrestupku, popisPrestupku, jmenoObcana);
                 MessageBox.Show("Nový přestupek byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
                 NacistPrestupky();
             }
@@ -1299,10 +1299,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             try
             {
                 Hlidka novaHlidka = new Hlidka();
-                //string nazev = Window.HlidkyView.pridatHlidkuNazev.Text;
-                //string typ = Window.HlidkyView.pridatHlidkuTyp.Text;
-                //novaHlidka.Pridej(conn, nazev, typ);
-                NacistHlidky();
+                string nazev = HlidkyView.pridatHlidkuNazev.Text;
+                string typ = HlidkyView.pridatHlidkuTyp.Text;
+                novaHlidka.Pridej(conn, nazev, typ);
+                //NacistHlidky();
                 MessageBox.Show("Nová hlídka byla úspěšně přidána.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -1310,10 +1310,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show("Chyba při přidávání nové hlídky: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-        /// <summary>
-        /// Odstraní záznam Hlídky z databáze.
-        /// </summary>
-        /// <param name="radek">DataRowView s daty Hlídky k odstranění (Identifikace přes IDHLIDKY)</param>
+
         [RelayCommand]
         public async Task OdebratHlidku(object radek)
         {
@@ -1346,7 +1343,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             NactiOpravneni();
             //NacistHodnosti();
             NacistTypyPrestupku();
-            NacistTypyHlidky();
+            //NacistTypyHlidky();
         }
 
         private void NactiOpravneni()
@@ -1427,20 +1424,20 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                string sql = @"select * from typy_hlidkyView";
+                //string sql = @"select * from typy_hlidkyView";
 
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
+                //using (OracleCommand cmd = new OracleCommand(sql, conn))
+                //{
+                //    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+                //    DataTable dt = new DataTable();
+                //    adapter.Fill(dt);
 
-                    Typy_hlidkySeznam.Clear();
-                    foreach (DataRow item in dt.Rows)
-                    {
-                        Typy_hlidkySeznam.Add(item.Field<string>("nazev"));
-                    }
-                }
+                //    Typy_hlidkySeznam.Clear();
+                //    foreach (DataRow item in dt.Rows)
+                //    {
+                //        Typy_hlidkySeznam.Add(item.Field<string>("nazev"));
+                //    }
+                //}
             }
             catch (Exception ex)
             {

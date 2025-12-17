@@ -32,13 +32,17 @@ namespace semestralni_prace_mochal_vaclavik
                                     "(CONNECT_DATA=(SID=BDAS)));"));
 
             services.AddTransient<IPolicisteRepository, PolicisteRepository>();
+            services.AddTransient<IHlidkyRepository, HlidkyRepository>();
 
             services.AddTransient<IPolicisteService, PolicisteService>();
+            services.AddTransient<IHlidkyService, HlidkyService>();
 
             services.AddSingleton<PolicisteViewModel>(); 
+            services.AddSingleton<HlidkyViewModel>();
             services.AddSingleton<MainViewModel>();
 
             services.AddSingleton<PolicisteView>();
+            services.AddSingleton<HlidkyView>();
             services.AddSingleton<MainWindow>();
 
             Services = services.BuildServiceProvider();

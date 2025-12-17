@@ -12,90 +12,90 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
     public class Prestupek : INotifyPropertyChanged
     {
 
-        private int _idPrestupku { get; set; }
+        private int idPrestupku { get; set; }
         public int IdPrestupku
         {
             get
-            { return _idPrestupku; }
+            { return idPrestupku; }
             set
             {
-                _idPrestupku = value;
+                idPrestupku = value;
                 this.OnPropertyChanged(nameof(IdPrestupku));
             }
         }
-        private int _idObcana { get; set; }
+        private int idObcana { get; set; }
         public int IdObcana
         {
             get
-            { return _idObcana; }
+            { return idObcana; }
             set
             {
-                _idObcana = value;
+                idObcana = value;
                 this.OnPropertyChanged(nameof(IdObcana));
             }
         }
         
-        private string _typPrestupku { get; set; }
+        private string typPrestupku { get; set; }
         public string TypPrestupku
         {
-            get { return _typPrestupku; }
+            get { return typPrestupku; }
             set
             {
-                _typPrestupku = value;
+                typPrestupku = value;
                 this.OnPropertyChanged(nameof(TypPrestupku));
             }
         }
         
-        private DateTime _datum { get; set; }
+        private DateTime datum { get; set; }
         public DateTime Datum
         {
-            get { return _datum.Date; }
+            get { return datum.Date; }
             set
             {
-                _datum = value.Date;
+                datum = value.Date;
                 this.OnPropertyChanged(nameof(Datum));
             }
         }
 
-        private string _jmenoObcana { get; set; }
+        private string jmenoObcana { get; set; }
         public string  JmenoObcana
         {
-            get { return _jmenoObcana; }
+            get { return jmenoObcana; }
             set
             {
-                _jmenoObcana = value;
+                jmenoObcana = value;
                 this.OnPropertyChanged(nameof(JmenoObcana));
             }
         }
 
-        private string _poznamka { get; set; }
+        private string poznamka { get; set; }
         public string Poznamka
         {
-            get { return _poznamka; }
+            get { return poznamka; }
             set
             {
-                _poznamka = value;
+                poznamka = value;
                 this.OnPropertyChanged(nameof(Poznamka));
             }
 
         }
-        private string _adresaZasahu { get; set; }
+        private string adresaZasahu { get; set; }
         public string AdresaZasahu
         {
-            get { return _adresaZasahu; }
+            get { return adresaZasahu; }
             set
             {
-                _adresaZasahu = value;
+                adresaZasahu = value;
                 this.OnPropertyChanged(nameof(AdresaZasahu));
             }
         }
-        private string _popisZasahu { get; set; }
+        private string popisZasahu { get; set; }
         public string PopisZasahu
         {
-            get { return _popisZasahu; }
+            get { return popisZasahu; }
             set
             {
-                _popisZasahu = value;
+                popisZasahu = value;
                 this.OnPropertyChanged(nameof(PopisZasahu));
             }
         }
@@ -135,12 +135,12 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             using(OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("p_idPrestupku", OracleDbType.Int32).Value = _idPrestupku;
-                cmd.Parameters.Add("p_idObcana", OracleDbType.Int32).Value = _idObcana;
-                cmd.Parameters.Add("p_nazevPrestupku", OracleDbType.Varchar2).Value = _typPrestupku;
-                cmd.Parameters.Add("p_datumZasahu", OracleDbType.Date).Value = _datum.Date;
-                cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = _jmenoObcana;
-                cmd.Parameters.Add("p_poznamka", OracleDbType.Varchar2).Value = _poznamka;
+                cmd.Parameters.Add("p_idPrestupku", OracleDbType.Int32).Value = idPrestupku;
+                cmd.Parameters.Add("p_idObcana", OracleDbType.Int32).Value = idObcana;
+                cmd.Parameters.Add("p_nazevPrestupku", OracleDbType.Varchar2).Value = typPrestupku;
+                cmd.Parameters.Add("p_datumZasahu", OracleDbType.Date).Value = datum.Date;
+                cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = jmenoObcana;
+                cmd.Parameters.Add("p_poznamka", OracleDbType.Varchar2).Value = poznamka;
                 cmd.ExecuteNonQuery();
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();
                 zmenen = false;
@@ -152,7 +152,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("p_idPrestupku", OracleDbType.Varchar2).Value = _idPrestupku;
+                cmd.Parameters.Add("p_idPrestupku", OracleDbType.Varchar2).Value = idPrestupku;
                 cmd.ExecuteNonQuery();
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();
             }

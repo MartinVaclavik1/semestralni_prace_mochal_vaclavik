@@ -73,7 +73,7 @@
         <TabItem x:Name="Hlidky" Header="Hlídky"
                  Visibility="{Binding PolicistaVisible}">
 
-            <views:HlidkyView x:Name="HlidkyView"/>
+            <ContentControl Content="{Binding HlidkyView}" />
         </TabItem>
 
         <!-- Karta: Můj účet (OPRÁVNĚNÍ: Všichni přihlášení, Editace pro Policista+) -->
