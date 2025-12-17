@@ -82,12 +82,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         private Registrace novaRegistrace = new Registrace();
 
         /// <summary>
-        /// Tabulka s oprávněními z databáze.
-        /// </summary>
-        [ObservableProperty]
-        private DataTable opravneniZdroj;
-
-        /// <summary>
         /// Seznam dostupných typů oprávnění v systému.
         /// </summary>
         [ObservableProperty]
@@ -95,9 +89,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
         [ObservableProperty]
         private List<string> typy_hlidkySeznam = new List<string>();
+
         public PolicisteView PolicisteView { get; }
         public OkrskyView OkrskyView { get; }
         public EvidencePrestupkuView EvidencePrestupkuView { get; }
+        public AdminView AdminView { get; }
         // Přihlášení 
         //wallis45548 - policista
         //martin25922 - obcan => hesla jsou stejné číslo
@@ -114,12 +110,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// public PolicisteViewModel PolicisteVM { get; }
 
         public MainViewModel(PolicisteView policisteView, OkrskyView okrskyView,
-            EvidencePrestupkuView evidencePrestupkuView)
+            EvidencePrestupkuView evidencePrestupkuView, AdminView adminView)
         {
             PolicisteView = policisteView ?? throw new ArgumentNullException(nameof(policisteView));
             OkrskyView = okrskyView ?? throw new ArgumentNullException(nameof(okrskyView));
             EvidencePrestupkuView = evidencePrestupkuView ?? throw new ArgumentNullException(nameof(evidencePrestupkuView));
-            
+            AdminView = adminView ?? throw new ArgumentNullException(nameof(adminView));
+
             try
             {
                 conn = new OracleConnection(connectionString);
@@ -133,23 +130,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             NastavComboboxy();
             NastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
         }
-        //public MainViewModel()//MainWindow window)
-        //{
-            
-        //    //this.Window = window;
-        //    //try
-        //    //{
-        //    //    conn = new OracleConnection(connectionString);
-        //    //    conn.Open();
-        //    //}
-        //    //catch (Exception ex)
-        //    //{
-        //    //    MessageBox.Show(ex.Message);
-        //    //}
-        //    //Prihlas(("Oli", "12345"));
-        //    //NastavComboboxy();
-        //    //NastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
-        //}
 
         /// <summary>
         /// Určuje viditelnost ovládacích prvků pro policisty.

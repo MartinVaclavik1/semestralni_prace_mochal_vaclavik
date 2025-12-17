@@ -85,7 +85,7 @@
         <!-- Karta: Admin nastavení (OPRÁVNĚNÍ: Admin) -->
         <TabItem x:Name="Admin" Header="Admin nastavení"
                  Visibility="{Binding AdministratorVisible}">
-            <views:AdminView x:Name="AdminView"/>
+            <ContentControl Content="{Binding AdminView}" />
         </TabItem>
 
         <TabItem x:Name="LogovaciTabulka" Header="Logovací tabulka" Visibility="{Binding AdministratorVisible}">
