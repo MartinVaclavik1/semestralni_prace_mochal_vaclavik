@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:semestralni_prace_mochal_vaclavik.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="858">
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="2*"/>
@@ -60,7 +60,7 @@
                                       Command="{Binding DataContext.OdebratHlidkuCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                       CommandParameter="{Binding}" 
                                       Margin="1,1" 
-                                      Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>                             
+                                      Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -79,10 +79,12 @@
             </Grid.RowDefinitions>
             <Label Content="Název hlídky" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center"/>
             <Label Content="Typ" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="1"/>
-            <Button Grid.Column="2" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="109"/>
-            <TextBox x:Name="pridatHlidkuNazev" HorizontalAlignment="Center" Margin="0,5,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-            <ComboBox x:Name="pridatHlidkuTyp" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="118" Height="18"
-            ItemsSource="{Binding DataContext.Typy_hlidkySeznam, RelativeSource={RelativeSource AncestorType=TabItem}}"/>
+            <Button Grid.Column="2" Content="Přidat" Command="{Binding DataContext.PridatHlidkuCommand, RelativeSource={RelativeSource AncestorType={x:Type TabItem}}}"
+                            CommandParameter="{Binding}" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Top" Width="109" Margin="0,5,0,0" Height="20"/>
+
+            <TextBox x:Name="pridatHlidkuNazev" HorizontalAlignment="Center" Margin="0,5,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Height="20"/>
+            <ComboBox x:Name="pridatHlidkuTyp" Grid.Column="1" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Top" Width="118" Height="20"
+            ItemsSource="{Binding DataContext.Typy_hlidkySeznam, RelativeSource={RelativeSource AncestorType=TabItem}}" Margin="0,5,0,0"/>
         </Grid>
     </Grid>
 </UserControl>

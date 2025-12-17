@@ -9,8 +9,8 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         Title="Informační systém Policie České Rapubliky" 
-        Height="460" 
-        Width="800">
+        Height="500" 
+        Width="850">
 
     
 
@@ -39,7 +39,7 @@
                     <ColumnDefinition Width="20*"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="VítejteTxt" VerticalAlignment="Center" TextWrapping="Wrap" Height="346" Grid.Column="1"><Run FontWeight="Bold" Text="Vítejte na informačním portálu Policie České Republiky"/><LineBreak/><Run FontStyle="Italic" Text="Tento systém slouží k efektivní správě, monitoringu a koordinaci všech klíčových policejních operací a záznamů. Poskytuje rychlý a bezpečný přístup k relevantním informacím potřebným pro výkon služby."/><LineBreak/><Run/><LineBreak/><Run FontWeight="Bold" Text="Základní Funkce a Přehled:"/><LineBreak/><Run Language="cs-cz" Text=" - "/><Run Text="Kontakty: Rychlý přehled aktivních policistů, jejich hodností a aktuálního umístění na služebních stanicích."/><LineBreak/><Run Language="cs-cz" Text=" - "/><Run Text="Evidence Přestupků: Detailní záznamy o spáchaných přestupcích s možností vyhledávání a klasifikace."/><LineBreak/><Run Language="cs-cz" Text=" - "/><Run Text="Okrsky a Hlídky: Správa a přehled přidělených okrsků a monitorování aktivních hlídek v terénu."/><LineBreak/><Run/><LineBreak/><Run FontWeight="Bold" Text="Můj Účet:"/><LineBreak/><Run Language="cs-cz" Text=" - "/><Run Text="Přihlášeným uživatelům je k dispozici sekce pro správu osobních údajů."/><LineBreak/><Run/><LineBreak/><Run FontWeight="Bold" Text="Důležité Upozornění:"/><LineBreak/><Run FontStyle="Italic" Text="Tento portál pracuje s citlivými a osobními údaji. Přístup k datům podléhá přísným bezpečnostním standardům a je omezen pouze na autorizované pracovníky Policie ČR. Pro plný přístup se prosím přihlaste."/></TextBlock>
+                <TextBlock x:Name="VítejteTxt" VerticalAlignment="Center" TextWrapping="Wrap" Height="346" Grid.Column="1"><Run Text="Vítejte na informačním portálu Policie České Republiky"/><LineBreak/><Run FontStyle="Italic" Text="Tento systém slouží k efektivní správě,"/><Run FontStyle="Italic" Language="cs-cz" Text=";"/><Run FontStyle="Italic" Text=" záznamů. Poskytuje rychlý a bezpečný přístup k relevantním informacím potřebným pro výkon služby."/><LineBreak/><Run/><LineBreak/><Run Text="Základní Funkce a Přehled:"/><LineBreak/><Run Text=" - "/><Run Text="Kontakty: Rychlý přehled aktivních policistů, jejich hodností a aktuálního umístění na služebních stanicích."/><LineBreak/><Run Text=" - "/><Run Text="Evidence Přestupků: Detailní záznamy o spáchaných přestupcích s možností vyhledávání a klasifikace."/><LineBreak/><Run Text=" - "/><Run Text="Okrsky a Hlídky: Správa a přehled přidělených okrsků a monitorování aktivních hlídek v terénu."/><LineBreak/><Run/><LineBreak/><Run Text="Můj Účet:"/><LineBreak/><Run Text=" - "/><Run Text="Přihlášeným uživatelům je k dispozici sekce pro správu osobních údajů."/><LineBreak/><Run/><LineBreak/><Run Text="Důležité Upozornění:"/><LineBreak/><Run FontStyle="Italic" Text="Tento portál pracuje s citlivými a osobními údaji. Přístup k datům pod je omezen pouze na autorizované pracovníky Policie ČR. Pro plný přístup se prosím přihlaste."/></TextBlock>
             </Grid>
         </TabItem>
 

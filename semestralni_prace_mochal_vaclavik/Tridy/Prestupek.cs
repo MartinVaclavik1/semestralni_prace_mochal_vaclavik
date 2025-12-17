@@ -58,7 +58,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
         }
 
         private string _jmenoObcana { get; set; }
-        public string JmenoObcana
+        public string  JmenoObcana
         {
             get { return _jmenoObcana; }
             set
@@ -159,17 +159,19 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
 
         // TODO : opravit ve view nebo v DB aby to šlo vložit (nefunkční) 
         // není tam políčko na popis zasahu
-        public void Pridej(OracleConnection conn, string typPrestupku, string popisZasahu, string jmenoObcana, string adresa, string poznamka)
+        public void Pridej(OracleConnection conn,string ulice, int cisloPopisne, string obec, string psc, string typPrestupku, string popisZasahu, string jmenoObcana)
         {
-            string storedProcedureName = "upravy_prestupku.pridatPrestupek";
+            string storedProcedureName = "upravy_prestupku.pridejPrestupek";
             using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("p_adresaZasahu", OracleDbType.Varchar2).Value = adresa;
+                cmd.Parameters.Add("p_ulice", OracleDbType.Varchar2).Value = ulice;
+                cmd.Parameters.Add("p_cislopopisne", OracleDbType.Int32).Value = cisloPopisne;
+                cmd.Parameters.Add("p_obec", OracleDbType.Varchar2).Value = obec;
+                cmd.Parameters.Add("p_psc", OracleDbType.Char).Value = psc;
                 cmd.Parameters.Add("p_popisZasahu", OracleDbType.Varchar2).Value = popisZasahu;
                 cmd.Parameters.Add("p_typPrestupku", OracleDbType.Varchar2).Value = typPrestupku;
                 cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = jmenoObcana;
-                cmd.Parameters.Add("p_poznamka", OracleDbType.Varchar2).Value = poznamka;
                 cmd.ExecuteNonQuery();
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();
             }

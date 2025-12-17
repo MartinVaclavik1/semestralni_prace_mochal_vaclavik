@@ -82,7 +82,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
         }
         public void Pridej(OracleConnection conn, string nazev)
         {
-            string storedProcedureName = "upravy_okrsku.pridatOkrsek";
+            string storedProcedureName = "upravy_okrsku.pridejOkrsek";
 
             using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
             {
