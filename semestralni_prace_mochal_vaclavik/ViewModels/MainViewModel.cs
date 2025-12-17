@@ -94,6 +94,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public OkrskyView OkrskyView { get; }
         public EvidencePrestupkuView EvidencePrestupkuView { get; }
         public AdminView AdminView { get; }
+        public HlidkyView HlidkyView { get; }
         // Přihlášení 
         //wallis45548 - policista
         //martin25922 - obcan => hesla jsou stejné číslo
@@ -110,12 +111,14 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// public PolicisteViewModel PolicisteVM { get; }
 
         public MainViewModel(PolicisteView policisteView, OkrskyView okrskyView,
-            EvidencePrestupkuView evidencePrestupkuView, AdminView adminView)
+            EvidencePrestupkuView evidencePrestupkuView, AdminView adminView,
+            HlidkyView hlidkyView)
         {
             PolicisteView = policisteView ?? throw new ArgumentNullException(nameof(policisteView));
             OkrskyView = okrskyView ?? throw new ArgumentNullException(nameof(okrskyView));
             EvidencePrestupkuView = evidencePrestupkuView ?? throw new ArgumentNullException(nameof(evidencePrestupkuView));
             AdminView = adminView ?? throw new ArgumentNullException(nameof(adminView));
+            HlidkyView = hlidkyView ?? throw new ArgumentNullException(nameof(hlidkyView));
 
             try
             {
@@ -129,6 +132,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             Prihlas(("Oli", "12345"));
             NastavComboboxy();
             NastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
+            HlidkyView = hlidkyView;
         }
 
         /// <summary>
@@ -1225,9 +1229,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             try
             {
                 Hlidka novaHlidka = new Hlidka();
-                string nazev = HlidkyView.pridatHlidkuNazev.Text;
-                string typ = HlidkyView.pridatHlidkuTyp.Text;
-                novaHlidka.Pridej(conn, nazev, typ);
+                //string nazev = HlidkyView.pridatHlidkuNazev.Text;
+                //string typ = HlidkyView.pridatHlidkuTyp.Text;
+                //novaHlidka.Pridej(conn, nazev, typ);
                 //NacistHlidky();
                 MessageBox.Show("Nová hlídka byla úspěšně přidána.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
             }
