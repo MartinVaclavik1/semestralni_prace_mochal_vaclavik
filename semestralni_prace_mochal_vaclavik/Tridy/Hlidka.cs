@@ -93,7 +93,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
 
         public void Pridej(OracleConnection conn, string nazev, string typ)
         {
-            string storedProcedureName = "upravy_hlidek.pridatHlidku";
+            string storedProcedureName = "upravy_hlidek.pridejHlidku";
             using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;

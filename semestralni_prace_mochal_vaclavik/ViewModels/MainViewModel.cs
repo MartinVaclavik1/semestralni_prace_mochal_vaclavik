@@ -1033,7 +1033,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Chyba při zpracování úpravy kontaktu: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Chyba při zpracování úpravy policisty: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -1161,7 +1161,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 string nazev = Window.OkrskyView.pridatOkrsekNazev.Text;
                 novyOkrsek.Pridej(conn, nazev);
                 NacistOkrsky();
-                MessageBox.Show("Nový policista byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Nový okrsek byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -1228,18 +1228,29 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 }
             }
         }
-
-        public void pridatPrestupek()
+        [RelayCommand]
+        public void PridatPrestupek()
         {
             try
             {
                 Prestupek novyPrestupek = new Prestupek();
+         
                 string typPrestupku = Window.EvidencePrestupkuView.pridatPrestupekTyp.Text;
                 string popisPrestupku = Window.EvidencePrestupkuView.pridatPrestupekPopisZasahu.Text;
                 string jmenoObcana = Window.EvidencePrestupkuView.pridatPrestupekObcan.Text;
-                string adresa = Window.EvidencePrestupkuView.pridatPrestupekAdresa.Text;
-                string poznamka = Window.EvidencePrestupkuView.pridatPrestupekPoznamka.Text;
-                novyPrestupek.Pridej(conn, typPrestupku, popisPrestupku, jmenoObcana, adresa, poznamka);
+                //string adresa = Window.EvidencePrestupkuView.pridatPrestupekAdresa.Text;
+                string ulice = Window.EvidencePrestupkuView.pridatPrestupekUlice.Text;
+                string cisloPopisne = Window.EvidencePrestupkuView.pridatPrestupekCisloPopisne.Text;
+                int cp = int.Parse(cisloPopisne);
+
+                string psc = Window.EvidencePrestupkuView.pridatPrestupekPSC.Text;
+                if (psc.Length < 5)
+                {
+                    MessageBox.Show("PSČ musí mít 5 znaků.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                string obec = Window.EvidencePrestupkuView.pridatPrestupekObec.Text;
+                novyPrestupek.Pridej(conn,ulice, cp,obec, psc, typPrestupku, popisPrestupku, jmenoObcana);
                 NacistPrestupky();
                 MessageBox.Show("Nový přestupek byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -1277,7 +1288,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        // Nefunkční !!
         [RelayCommand]
         public void PridatHlidku()
         {
