@@ -46,13 +46,13 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             }
         }
         
-        private string _datum { get; set; }
-        public string Datum
+        private DateTime _datum { get; set; }
+        public DateTime Datum
         {
-            get { return _datum; }
+            get { return _datum.Date; }
             set
             {
-                _datum = value;
+                _datum = value.Date;
                 this.OnPropertyChanged(nameof(Datum));
             }
         }
@@ -105,7 +105,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             IdPrestupku = 0;
             IdObcana = 0;
             TypPrestupku = String.Empty;
-            Datum = String.Empty;
+            Datum = DateTime.MinValue;
             JmenoObcana = String.Empty;
             Poznamka = String.Empty;
             AdresaZasahu = String.Empty;
@@ -135,9 +135,10 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             using(OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("p_idPrestupku", OracleDbType.Varchar2).Value = _idPrestupku;
+                cmd.Parameters.Add("p_idPrestupku", OracleDbType.Int32).Value = _idPrestupku;
+                cmd.Parameters.Add("p_idObcana", OracleDbType.Int32).Value = _idObcana;
                 cmd.Parameters.Add("p_nazevPrestupku", OracleDbType.Varchar2).Value = _typPrestupku;
-                cmd.Parameters.Add("p_datumZasahu", OracleDbType.Varchar2).Value = _datum;
+                cmd.Parameters.Add("p_datumZasahu", OracleDbType.Date).Value = _datum.Date;
                 cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = _jmenoObcana;
                 cmd.Parameters.Add("p_poznamka", OracleDbType.Varchar2).Value = _poznamka;
                 cmd.ExecuteNonQuery();

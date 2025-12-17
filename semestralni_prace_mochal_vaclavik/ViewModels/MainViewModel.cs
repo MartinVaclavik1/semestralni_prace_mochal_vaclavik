@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
 using semestralni_prace_mochal_vaclavik.Tridy;
-using semestralni_prace_mochal_vaclavik.Views;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
@@ -811,15 +810,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     {
                         Prestupky.Add(new Prestupek
                         {  
+                            IdPrestupku = (int)item.Field<decimal>("idprestupku"),
                             IdObcana = (int)item.Field<decimal>("idobcana"),
                             TypPrestupku = item.Field<string>("prestupek"),
-                            Datum = (item.Field<DateTime>("datum")).ToString(),
+                            Datum = item.Field<DateTime>("datum").Date,
                             JmenoObcana = item.Field<string>("jmenoobcana"),
                             Poznamka = item.Field<string>("poznamka")
                         });
                     }
-
-                    Window.EvidencePrestupkuView.PrestupkyGrid.ItemsSource = dt.DefaultView;
+                    //Window.EvidencePrestupkuView.PrestupkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -885,7 +884,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                             Nazev=item.Field<string>("nazev"),
                         });
                     }
-                    Window.HlidkyView.HlidkyGrid.ItemsSource = dt.DefaultView;
+                    //Window.HlidkyView.HlidkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -1160,8 +1159,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 Okrsek novyOkrsek = new Okrsek();
                 string nazev = Window.OkrskyView.pridatOkrsekNazev.Text;
                 novyOkrsek.Pridej(conn, nazev);
-                NacistOkrsky();
+                
                 MessageBox.Show("Nový okrsek byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                NacistOkrsky();
             }
             catch (Exception ex)
             {
@@ -1174,7 +1174,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         /// <param name="radek">DataRowView s upravenými daty (Identifikace přes IDPRESTUPKU)</param>
         [RelayCommand]
-        public void UpravitPresupek(object radek)
+        public void UpravitPrestupek(object radek)
         {
             var row = radek as Prestupek;
 
@@ -1185,9 +1185,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     if (row.Zmenen)
                     {
                         row.Uloz(conn);
-                        NacistPrestupky();
-
                         MessageBox.Show("Úprava přestupku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        NacistPrestupky();
                     }
                 }
                 catch (Exception ex)
@@ -1202,7 +1201,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         /// <param name="radek">DataRowView s daty Přestupku k odstranění (Identifikace přes IDPRESTUPKU)</param>
         [RelayCommand]
-        public void OdebratPresupek(object radek)
+        public void OdebratPrestupek(object radek)
         {
             var row = radek as Prestupek;
 
@@ -1238,7 +1237,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 string typPrestupku = Window.EvidencePrestupkuView.pridatPrestupekTyp.Text;
                 string popisPrestupku = Window.EvidencePrestupkuView.pridatPrestupekPopisZasahu.Text;
                 string jmenoObcana = Window.EvidencePrestupkuView.pridatPrestupekObcan.Text;
-                //string adresa = Window.EvidencePrestupkuView.pridatPrestupekAdresa.Text;
                 string ulice = Window.EvidencePrestupkuView.pridatPrestupekUlice.Text;
                 string cisloPopisne = Window.EvidencePrestupkuView.pridatPrestupekCisloPopisne.Text;
                 int cp = int.Parse(cisloPopisne);
@@ -1251,8 +1249,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 }
                 string obec = Window.EvidencePrestupkuView.pridatPrestupekObec.Text;
                 novyPrestupek.Pridej(conn,ulice, cp,obec, psc, typPrestupku, popisPrestupku, jmenoObcana);
-                NacistPrestupky();
                 MessageBox.Show("Nový přestupek byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+                NacistPrestupky();
             }
             catch (Exception ex)
             {
