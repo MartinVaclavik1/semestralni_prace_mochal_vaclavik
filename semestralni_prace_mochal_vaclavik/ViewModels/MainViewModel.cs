@@ -350,8 +350,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                                 uzivatel.Prijmeni = reader["p_prijmeni"].ToString();
                             }
                             Window.Okna.SelectedIndex = 0;
-                            //Window.UsernameTextBox.Clear();
-                            //Window.PasswordBox.Clear();
+                            Window.PrihlaseniView.UsernameTextBox.Clear();
+                            Window.PrihlaseniView.PasswordBox.Clear();
 
                             Task.Run(() => { MessageBox.Show("Uživatel přihlášen"); });
 
@@ -465,7 +465,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             Window.Prihlaseni.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
             Window.Registrace.Visibility = IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
 
-            //Window.KontaktyAdminGrid.IsEnabled = IsAtLeastRole("administrator") ? true : false;
+            Window.PolicisteView.KontaktyAdminGrid.IsEnabled = IsAtLeastRole("administrator") ? true : false;
         }
 
         /// <summary>
@@ -819,7 +819,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                         });
                     }
 
-                    //Window.PrestupkyGrid.ItemsSource = dt.DefaultView;
+                    Window.EvidencePrestupkuView.PrestupkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -885,7 +885,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                             Nazev=item.Field<string>("nazev"),
                         });
                     }
-                    //Window.HlidkyGrid.ItemsSource = dt.DefaultView;
+                    Window.HlidkyView.HlidkyGrid.ItemsSource = dt.DefaultView;
                 }
             }
             catch (Exception ex)
