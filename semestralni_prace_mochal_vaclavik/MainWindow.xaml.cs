@@ -5,11 +5,10 @@ namespace semestralni_prace_mochal_vaclavik
 {
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(MainViewModel viewModel)
         {
-            
             InitializeComponent();
-            DataContext = new MainViewModel(this);
+            DataContext = viewModel;
         }
     }
 }
