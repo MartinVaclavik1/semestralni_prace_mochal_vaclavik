@@ -1,12 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Oracle.ManagedDataAccess.Client;
 using semestralni_prace_mochal_vaclavik.Services;
 using semestralni_prace_mochal_vaclavik.Tridy;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;

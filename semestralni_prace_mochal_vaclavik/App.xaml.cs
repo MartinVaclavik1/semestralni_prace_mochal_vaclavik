@@ -33,16 +33,21 @@ namespace semestralni_prace_mochal_vaclavik
 
             services.AddTransient<IPolicisteRepository, PolicisteRepository>();
             services.AddTransient<IOkrskyRepository, OkrskyRepository>();
+            services.AddTransient<IEvidencePrestupkuRepository, EvidencePrestupkuRepository>();
 
             services.AddTransient<IPolicisteService, PolicisteService>();
             services.AddTransient<IOkrskyService, OkrskyService>();
+            services.AddTransient<IEvidencePrestupkuService, EvidencePrestupkuService>();
+
 
             services.AddTransient<PolicisteViewModel>(); 
             services.AddTransient<OkrskyViewModel>();
+            services.AddTransient<EvidencePrestupkuViewModel>();
             services.AddTransient<MainViewModel>();
 
             services.AddSingleton<PolicisteView>();
             services.AddSingleton<OkrskyView>();
+            services.AddSingleton<EvidencePrestupkuView>();
             services.AddSingleton<MainWindow>();
 
             Services = services.BuildServiceProvider();

@@ -15,11 +15,9 @@ namespace semestralni_prace_mochal_vaclavik.Services
         public PolicisteService(IPolicisteRepository repo)
         {
             this.repo = repo;
-
         }
 
-        public Task<List<Policista>> GetPolicisteAsync()
-            => repo.GetPolicisteAsync();
+        public Task<List<Policista>> GetPolicisteAsync() => repo.GetPolicisteAsync();
 
         public List<string> GetHodnosti() => repo.GetHodnosti();
     }

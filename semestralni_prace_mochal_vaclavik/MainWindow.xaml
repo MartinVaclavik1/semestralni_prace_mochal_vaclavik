@@ -62,7 +62,7 @@
         <TabItem x:Name="Prestupky" Header="Evidence přestupků"
                  Visibility="{Binding PolicistaVisible}">
 
-            <views:EvidencePrestupkuView x:Name="EvidencePrestupkuView"/>
+            <ContentControl Content="{Binding EvidencePrestupkuView}" />
         </TabItem>
 
         <TabItem x:Name="MojePrestupky" Header="Moje Přestupky" Visibility="{Binding JenObcanVisible}">

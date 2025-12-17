@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
-using semestralni_prace_mochal_vaclavik.Repository;
 using semestralni_prace_mochal_vaclavik.Tridy;
+using semestralni_prace_mochal_vaclavik.Views;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
@@ -39,11 +39,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Aktivní Oracle připojení k databázi.
         /// </summary>
         private OracleConnection conn;
-
-        /// <summary>
-        /// Referenční na hlavní okno aplikace.
-        /// </summary>
-        //private MainWindow Window { get; set; }
 
         /// <summary>
         /// Zdroj dat pro DataGrid s kontakty.
@@ -98,16 +93,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [ObservableProperty]
         private List<string> opravneniSeznam = new List<string>();
 
-        //[ObservableProperty]
-        //private List<string> hodnostiSeznam = new List<string>();
-
-        [ObservableProperty]
-        private List<string> typy_prestupkuSeznam = new List<string>();
-
         [ObservableProperty]
         private List<string> typy_hlidkySeznam = new List<string>();
         public PolicisteView PolicisteView { get; }
         public OkrskyView OkrskyView { get; }
+        public EvidencePrestupkuView EvidencePrestupkuView { get; }
         // Přihlášení 
         //wallis45548 - policista
         //martin25922 - obcan => hesla jsou stejné číslo
@@ -123,10 +113,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </remarks>
         /// public PolicisteViewModel PolicisteVM { get; }
 
-        public MainViewModel(PolicisteView policisteView, OkrskyView okrskyView)
+        public MainViewModel(PolicisteView policisteView, OkrskyView okrskyView,
+            EvidencePrestupkuView evidencePrestupkuView)
         {
             PolicisteView = policisteView ?? throw new ArgumentNullException(nameof(policisteView));
             OkrskyView = okrskyView ?? throw new ArgumentNullException(nameof(okrskyView));
+            EvidencePrestupkuView = evidencePrestupkuView ?? throw new ArgumentNullException(nameof(evidencePrestupkuView));
+            
             try
             {
                 conn = new OracleConnection(connectionString);
@@ -790,47 +783,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         }
 
         /// <summary>
-        /// Načítá seznam všech přestupků z databáze.
-        /// </summary>
-        /// <remarks>
-        /// Zobrazuje přestupky na kartě Přestupky (dostupné pro policisty a administrátory).
-        /// </remarks>
-        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private void NacistPrestupky()
-        {
-            try
-            {
-                string sql = @"
-                        SELECT * FROM prestupkyview";
-
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
-                    Prestupky.Clear();
-                    foreach (DataRow item in dt.Rows)
-                    {
-                        Prestupky.Add(new Prestupek
-                        {  
-                            IdPrestupku = (int)item.Field<decimal>("idprestupku"),
-                            IdObcana = (int)item.Field<decimal>("idobcana"),
-                            TypPrestupku = item.Field<string>("prestupek"),
-                            Datum = item.Field<DateTime>("datum").Date,
-                            JmenoObcana = item.Field<string>("jmenoobcana"),
-                            Poznamka = item.Field<string>("poznamka")
-                        });
-                    }
-                    //Window.EvidencePrestupkuView.PrestupkyGrid.ItemsSource = dt.DefaultView;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při načítání přestupků: " + ex.Message);
-            }
-        }
-
-        /// <summary>
         /// Načítá přestupky přihlášeného občana.
         /// </summary>
         /// <remarks>
@@ -1162,9 +1114,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 Okrsek novyOkrsek = new Okrsek();
                 string nazev = "";//Window.OkrskyView.pridatOkrsekNazev.Text;
                 novyOkrsek.Pridej(conn, nazev);
-                //NacistOkrsky();
                 MessageBox.Show("Nový okrsek byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                NacistOkrsky();
+                //NacistOkrsky();
             }
             catch (Exception ex)
             {
@@ -1189,7 +1140,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     {
                         row.Uloz(conn);
                         MessageBox.Show("Úprava přestupku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        NacistPrestupky();
+                        //NacistPrestupky();
                     }
                 }
                 catch (Exception ex)
@@ -1221,7 +1172,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     if (result != MessageBoxResult.Yes) return;
 
                     row.Smaz(conn);
-                    NacistPrestupky();
+                    //NacistPrestupky();
 
                 }
                 catch (Exception ex)
@@ -1259,7 +1210,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 //}
                 //string obec = Window.EvidencePrestupkuView.pridatPrestupekObec.Text;
                 //novyPrestupek.Pridej(conn,ulice, cp,obec, psc, typPrestupku, popisPrestupku, jmenoObcana);
-                NacistPrestupky();
+                //NacistPrestupky();
             }
             catch (Exception ex)
             {
@@ -1347,7 +1298,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             NactiOpravneni();
             //NacistHodnosti();
-            NacistTypyPrestupku();
+            //NacistTypyPrestupku();
             NacistTypyHlidky();
         }
 
@@ -1400,30 +1351,30 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         //    }
         //}
 
-        private void NacistTypyPrestupku()
-        {
-            try
-            {
-                string sql = @"select * from typy_prestupkuView";
+        //private void NacistTypyPrestupku()
+        //{
+        //    try
+        //    {
+        //        string sql = @"select * from typy_prestupkuView";
 
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
+        //        using (OracleCommand cmd = new OracleCommand(sql, conn))
+        //        {
+        //            OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+        //            DataTable dt = new DataTable();
+        //            adapter.Fill(dt);
 
-                    Typy_prestupkuSeznam.Clear();
-                    foreach (DataRow item in dt.Rows)
-                    {
-                        Typy_prestupkuSeznam.Add(item.Field<string>("prestupek"));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
-            }
-        }
+        //            Typy_prestupkuSeznam.Clear();
+        //            foreach (DataRow item in dt.Rows)
+        //            {
+        //                Typy_prestupkuSeznam.Add(item.Field<string>("prestupek"));
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
+        //    }
+        //}
 
         private void NacistTypyHlidky()
         {

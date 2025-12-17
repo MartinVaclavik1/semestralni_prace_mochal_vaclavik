@@ -68,7 +68,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             }
         }
 
-        private string _poznamka { get; set; }
+        private string? _poznamka { get; set; }
         public string Poznamka
         {
             get { return _poznamka; }

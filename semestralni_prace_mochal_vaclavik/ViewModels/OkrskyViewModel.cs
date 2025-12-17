@@ -29,8 +29,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public async Task LoadAsync()
         {
             Okrsky.Clear();
-            var policiste_nacteni = await service.GetOkrskyAsync();
-            foreach (var c in policiste_nacteni)
+            var okrsky_nactene = await service.GetOkrskyAsync();
+            foreach (var c in okrsky_nactene)
                 Okrsky.Add(c);
         }
     }
