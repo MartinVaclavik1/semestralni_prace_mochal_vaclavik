@@ -19,7 +19,7 @@
 
         <DataGrid x:Name="UzivateleGrid"
       d:ItemsSource="{d:SampleData ItemCount=5}"
-      ItemsSource="{Binding Users}"
+      ItemsSource="{Binding Uzivatele}"
       Margin="10,10,10,10"
       SelectionMode="Single"
       SelectionUnit="Cell"
@@ -94,7 +94,7 @@
             <Label Grid.Column="3" Content="Celé jméno občana" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <Label Grid.Column="4" Content="Oprávnění" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <ComboBox Grid.Column="3" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Width="104" Margin="166,0,0,0" Grid.ColumnSpan="2" Height="17"
-                 ItemsSource="{Binding DataContext.OpravneniSeznam, RelativeSource={RelativeSource AncestorType=TabItem}}"/>
+                 ItemsSource="{Binding DataContext.OpravneniSeznam, RelativeSource={RelativeSource AncestorType=Grid}}"/>
             <TextBox Grid.Column="2" Margin="166,0,10,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
             <TextBox Grid.Column="1" Grid.ColumnSpan="2" Margin="110,0,10,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center"/>
             <TextBox Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,10,0"/>

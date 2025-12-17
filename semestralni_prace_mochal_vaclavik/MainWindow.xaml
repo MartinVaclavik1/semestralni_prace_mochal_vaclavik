@@ -55,14 +55,14 @@
         <TabItem x:Name="Okrsky" Header="Okrsky"
                  Visibility="{Binding PolicistaVisible}" >
 
-            <views:OkrskyView x:Name="OkrskyView"/>
+            <ContentControl Content="{Binding OkrskyView}" />
         </TabItem>
 
         <!-- Karta: Evidence přestupků (OPRÁVNĚNÍ: Policista+) -->
         <TabItem x:Name="Prestupky" Header="Evidence přestupků"
                  Visibility="{Binding PolicistaVisible}">
 
-            <views:EvidencePrestupkuView x:Name="EvidencePrestupkuView"/>
+            <ContentControl Content="{Binding EvidencePrestupkuView}" />
         </TabItem>
 
         <TabItem x:Name="MojePrestupky" Header="Moje Přestupky" Visibility="{Binding JenObcanVisible}">
@@ -85,7 +85,7 @@
         <!-- Karta: Admin nastavení (OPRÁVNĚNÍ: Admin) -->
         <TabItem x:Name="Admin" Header="Admin nastavení"
                  Visibility="{Binding AdministratorVisible}">
-            <views:AdminView x:Name="AdminView"/>
+            <ContentControl Content="{Binding AdminView}" />
         </TabItem>
 
         <TabItem x:Name="LogovaciTabulka" Header="Logovací tabulka" Visibility="{Binding AdministratorVisible}">

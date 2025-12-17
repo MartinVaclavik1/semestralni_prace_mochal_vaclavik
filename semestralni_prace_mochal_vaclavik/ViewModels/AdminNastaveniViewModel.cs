@@ -11,17 +11,17 @@ using System.Threading.Tasks;
 
 namespace semestralni_prace_mochal_vaclavik.ViewModels
 {
-    public partial class PolicisteViewModel : ObservableObject
+    public partial class AdminNastaveniViewModel : ObservableObject
     {
-        private readonly IPolicisteService service;
+        private readonly IAdminNastaveniService service;
 
         [ObservableProperty]
-        public ObservableCollection<Policista> policiste = new();
+        public ObservableCollection<Uzivatel> uzivatele = new();
 
         [ObservableProperty]
-        private List<string> hodnostiSeznam = new List<string>();
+        private List<string> opravneniSeznam = new List<string>();
 
-        public PolicisteViewModel(IPolicisteService service)
+        public AdminNastaveniViewModel(IAdminNastaveniService service)
         {
             this.service = service;
             NactiHodnosti();
@@ -31,23 +31,24 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public async Task LoadAsync()
         {
-            Policiste.Clear();
-            var policiste_nacteni = await service.GetPolicisteAsync();
-            foreach (var c in policiste_nacteni)
-                Policiste.Add(c);
-        }   
+            Uzivatele.Clear();
+            var uzivatele_nacteni = await service.GetUzivateleAsync();
+            foreach (var c in uzivatele_nacteni)
+                Uzivatele.Add(c);
+        }
 
         private void NactiHodnosti()
         {
             try
             {
-                HodnostiSeznam.Clear();
-                foreach (var item in service.GetHodnosti())
+                OpravneniSeznam.Clear();
+                foreach (var item in service.GetOpravneni())
                 {
-                    HodnostiSeznam.Add(item);
+                    OpravneniSeznam.Add(item);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.Message);
             }
         }

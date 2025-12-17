@@ -8,17 +8,18 @@ using System.Threading.Tasks;
 
 namespace semestralni_prace_mochal_vaclavik.Services
 {
-    public class PolicisteService : IPolicisteService
+    public class OkrskyService : IOkrskyService
     {
-        private readonly IPolicisteRepository repo;
+        private readonly IOkrskyRepository repo;
 
-        public PolicisteService(IPolicisteRepository repo)
+        public OkrskyService(IOkrskyRepository repo)
         {
             this.repo = repo;
+
         }
-
-        public Task<List<Policista>> GetPolicisteAsync() => repo.GetPolicisteAsync();
-
-        public List<string> GetHodnosti() => repo.GetHodnosti();
+        public Task<List<Okrsek>> GetOkrskyAsync()
+        {
+            return repo.GetOkrskyAsync();
+        }
     }
 }

@@ -106,7 +106,7 @@
             <Button Grid.Column="6" Content="Přidat" Command="{Binding DataContext.PridatPrestupekCommand, RelativeSource={RelativeSource AncestorType={x:Type TabItem}}}"
                             CommandParameter="{Binding}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Width="54" Height="20" Margin="61,0,0,0" Grid.ColumnSpan="2"/>
             <ComboBox x:Name="pridatPrestupekTyp" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="104" Height="20"
-                   ItemsSource="{Binding DataContext.Typy_prestupkuSeznam, RelativeSource={RelativeSource AncestorType=TabItem}}"/>
+                   ItemsSource="{Binding DataContext.Typy_prestupkuSeznam, RelativeSource={RelativeSource AncestorType=Grid}}"/>
             <Label Grid.Column="2" Content="např: Jan Novák" HorizontalAlignment="Left" Margin="5,22,0,0" Grid.Row="1" VerticalAlignment="Top" FontSize="9" FontStyle="Italic" Grid.RowSpan="2" Height="22" Width="73"/>
             <TextBox x:Name="pridatPrestupekCisloPopisne" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="52" Grid.Column="3" Height="20" Grid.ColumnSpan="2" Margin="121,0,0,0"/>
             <TextBox x:Name="pridatPrestupekObec" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="111" Grid.Column="5" Height="20"/>
