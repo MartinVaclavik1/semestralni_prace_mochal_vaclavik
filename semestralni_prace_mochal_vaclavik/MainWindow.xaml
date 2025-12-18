@@ -89,8 +89,10 @@
             <ContentControl Content="{Binding AdminView}" />
         </TabItem>
 
-        <TabItem x:Name="LogovaciTabulka" Header="Logovací tabulka" Visibility="{Binding AdministratorVisible}">
-            <views:LogovaciTabulkaView x:Name="LogovaciTabulkaView"/>
+        <TabItem x:Name="LogovaciTabulka"
+                 Header="Logovací tabulka" 
+                 Visibility="{Binding AdministratorVisible}">
+            <ContentControl Content="{Binding LogovaciTabulkaView}" />
         </TabItem>
 
         <TabItem x:Name="SystemovyKatalog" Header="Systémový katalog" Visibility="{Binding AdministratorVisible}">
