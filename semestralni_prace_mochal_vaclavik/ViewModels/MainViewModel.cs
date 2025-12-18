@@ -857,34 +857,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         }
         
         /// <summary>
-        /// Aktualizuje název Okrsku v databázi.
-        /// </summary>
-        /// <param name="radek">DataRowView s upraveným názvem (Identifikace přes IDOKRSKU)</param>
-        [RelayCommand]
-        public void UpravitOkrsek(object radek)
-        {
-            var row = radek as Okrsek;
-
-            if (row != null)
-            {
-                try
-                {
-                    if (row.Zmenen)
-                    {
-                        row.Uloz(conn);
-                        //NacistOkrsky();
-
-                        MessageBox.Show("Úprava okrsku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Chyba při zpracování úpravy okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-
-        /// <summary>
         /// Aktualizuje záznam přestupku (typ a poznámku) v databázi.
         /// </summary>
         /// <param name="radek">DataRowView s upravenými daty (Identifikace přes IDPRESTUPKU)</param>
