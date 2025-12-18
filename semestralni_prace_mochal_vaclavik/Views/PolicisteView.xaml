@@ -58,7 +58,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Upravit" 
-                                Command="{Binding DataContext.UpravitKontaktyCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                Command="{Binding DataContext.UpravitPolicistuCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                 CommandParameter="{Binding}" 
                                 Margin="1,1" 
                                 />
@@ -70,7 +70,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Odebrat"
-                                Command="{Binding DataContext.OdebratKontaktyCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                Command="{Binding DataContext.OdebratPolicistuCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                 CommandParameter="{Binding}" 
                                 Margin="1,1" />
                         </DataTemplate>
@@ -102,17 +102,19 @@
             <Label Grid.Column="3" Content="Stanice" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
             <Label Grid.Column="4" Content="Plat" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
             <Label Grid.Column="6" Content="Datum narození" HorizontalAlignment="Left" Margin="0,3,0,0" VerticalAlignment="Top" Width="96"/>
-            <TextBox x:Name="pridatKontaktyJmeno" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91"/>
-            <TextBox x:Name="pridatKontaktyPrijmeni" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
-            <TextBox x:Name="pridatKontaktyNadrizeny" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="2" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
-            <TextBox x:Name="pridatKontaktyStanice" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="3" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
-            <TextBox x:Name="pridatKontaktyDatum" Grid.Column="5" Grid.ColumnSpan="2" Margin="96,0,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center"/>
-            <TextBox x:Name="pridatKontaktyPlat" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="4" Margin="96,0,0,0" Grid.ColumnSpan="2"></TextBox>
+            <TextBox x:Name="pridatKontaktyJmeno" Text="{Binding Jmeno, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91"/>
+            <TextBox x:Name="pridatKontaktyPrijmeni" Text="{Binding Prijmeni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="pridatKontaktyNadrizeny" Text="{Binding Nardizeny, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="2" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="pridatKontaktyStanice" Text="{Binding Stanice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="3" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="pridatKontaktyPlat" Text="{Binding Plat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="4" Margin="96,0,0,0" Grid.ColumnSpan="2"></TextBox>
+            <!--<TextBox x:Name="pridatKontaktyDatum" Text="{Binding DatumNarozeni}" Grid.Column="5" Grid.ColumnSpan="2" Margin="96,0,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center"/>-->
+            <DatePicker x:Name="pridatKontaktyDatum" SelectedDate="{Binding DatumNarozeni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="5" Grid.ColumnSpan="2" Margin="96,0,5,0" Grid.Row="1" VerticalAlignment="Center"/>
 
-            <Button Grid.Column="7" Content="Přidat" Command="{Binding DataContext.PridatKontaktyCommand, RelativeSource={RelativeSource AncestorType={x:Type TabItem}}}"
-                    CommandParameter="{Binding}" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="76"/>
+            <Button Grid.Column="7" Content="Přidat" Command="{Binding DataContext.PridatPolicistuCommand, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}"
+                     HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="76"/>
             <ComboBox x:Name="pridatKontaktHodnost" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Margin="96,0,0,0" Grid.Row="1" VerticalAlignment="Center" Width="91" Height="18"
-                  ItemsSource="{Binding DataContext.HodnostiSeznam, RelativeSource={RelativeSource AncestorType=Grid}}"/>
+                  ItemsSource="{Binding DataContext.HodnostiSeznam, RelativeSource={RelativeSource AncestorType=Grid}}"
+                      SelectedItem="{Binding Hodnost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 
         </Grid>

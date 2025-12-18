@@ -68,8 +68,6 @@ namespace semestralni_prace_mochal_vaclavik.Repository
                 await conn.OpenAsync();
 
             hlidka.Smaz((OracleConnection)conn);
-
-            await Task.CompletedTask;
         }
 
         public async Task UpravitHlidku(Hlidka hlidka)
@@ -79,8 +77,6 @@ namespace semestralni_prace_mochal_vaclavik.Repository
                 await conn.OpenAsync();
 
             hlidka.Uloz((OracleConnection)conn);
-
-            await Task.CompletedTask;
         }
 
         public async Task PridatHlidku(string nazev, string typ)

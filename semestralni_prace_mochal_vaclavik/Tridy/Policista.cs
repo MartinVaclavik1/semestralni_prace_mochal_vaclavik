@@ -102,7 +102,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             }
         }
 
-        public void Uloz(OracleConnection conn)
+        public async Task Uloz(OracleConnection conn)
         {
             string storedProcedureName = "upravy_policistu.upravitPolicistu";
 
@@ -126,13 +126,13 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
 
                 cmd.Parameters.Add("p_idPolicisty", OracleDbType.Int32).Value = id;
 
-                cmd.ExecuteNonQueryAsync();
+                await cmd.ExecuteNonQueryAsync();
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();
             }
 
             zmenen = false;
         }
-        public void Smaz(OracleConnection conn)
+        public async Task Smaz(OracleConnection conn)
         {
             string storedProcedureName = "upravy_policistu.smazPolicistu";
             using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
@@ -140,11 +140,11 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.BindByName = true;
                 cmd.Parameters.Add("p_idPolicisty", OracleDbType.Int32).Value = id;
-                cmd.ExecuteNonQuery();
+                await cmd.ExecuteNonQueryAsync();
                 new OracleCommand("COMMIT", conn).ExecuteNonQuery();
             }
         }
-        public void Pridej(OracleConnection conn, string jmeno, string prijmeni, string hodnost, string nadrizeny, string stanice, int plat, DateTime datumNarozeni )
+        public async Task Pridej(OracleConnection conn, string jmeno, string prijmeni, string hodnost, string nadrizeny, string stanice, int plat, DateTime datumNarozeni )
         {
             string storedProcedureName = "upravy_policistu.pridejPolicistu";
             using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
@@ -159,8 +159,8 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 cmd.Parameters.Add("p_plat", OracleDbType.Int32).Value = plat;
                 cmd.Parameters.Add("p_datumNarozeni", OracleDbType.Date).Value = datumNarozeni;
                 cmd.Parameters.Add("p_poznamka", OracleDbType.Varchar2).Value = DBNull.Value;
-                cmd.ExecuteNonQuery();
-                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+                await cmd.ExecuteNonQueryAsync();
+                await new OracleCommand("COMMIT", conn).ExecuteNonQueryAsync();
             }
         }
     }
