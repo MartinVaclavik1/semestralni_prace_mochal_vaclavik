@@ -21,11 +21,17 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [ObservableProperty]
         private List<string> typyHlidkySeznam = new List<string>();
 
+        [ObservableProperty]
+        private string novyNazevHlidky;
+
+        [ObservableProperty]
+        private string vybranyTypHlidky;
+
         public HlidkyViewModel(IHlidkyService service)
         {
             this.service = service;
             NactiTypyHlidky();
-            LoadAsync();
+            _ = LoadAsync();
         }
 
         [RelayCommand]
@@ -50,6 +56,74 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+        [RelayCommand]
+        public async Task PridatHlidkuAsync()
+        {
+
+            if (string.IsNullOrWhiteSpace(NovyNazevHlidky) || string.IsNullOrWhiteSpace(VybranyTypHlidky))
+            {
+                MessageBox.Show("Prosím vyplňte název i typ hlídky.");
+                return;
+            }
+
+            try
+            {
+
+                await service.PridatHlidku(NovyNazevHlidky, VybranyTypHlidky);
+
+                await LoadAsync();
+
+                NovyNazevHlidky = string.Empty;
+                VybranyTypHlidky = string.Empty;
+
+                MessageBox.Show("Hlídka byla úspěšně přidána.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Chyba při přidávání: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        public async Task OdebratHlidkuAsync(Hlidka hlidka)
+        {
+            if (hlidka == null)
+            {
+                MessageBox.Show("Prosím vyberte hlídku k odstranění.");
+                return;
+            }
+            try
+            {
+                await service.OdebratHlidku(hlidka);
+                await LoadAsync();
+                MessageBox.Show("Hlídka byla úspěšně odstraněna.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Chyba při odstraňování: {ex.Message}");
+            }
+
+        }
+
+        [RelayCommand]
+        public async Task UpravitHlidkuAsync(Hlidka hlidka)
+        {
+            if (hlidka == null)
+            {
+                MessageBox.Show("Prosím vyberte hlídku k úpravě.");
+                return;
+            }
+            try
+            {
+                await service.UpravitHlidku(hlidka);
+                await LoadAsync();
+                MessageBox.Show("Hlídka byla úspěšně upravena.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Chyba při úpravě: {ex.Message}");
             }
         }
     }

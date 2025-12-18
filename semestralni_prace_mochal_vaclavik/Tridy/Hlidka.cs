@@ -39,6 +39,8 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 this.OnPropertyChanged(nameof(Nazev));
             }
         }
+
+
         public void Resetuj()
         {
             IdHlidky = 0;

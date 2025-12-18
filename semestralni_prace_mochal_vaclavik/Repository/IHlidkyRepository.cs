@@ -11,5 +11,9 @@ namespace semestralni_prace_mochal_vaclavik.Repository
     {
         Task<List<Hlidka>> GetHlidkyAsync();
         List<string> GetTypyHlidky();
+
+        Task UpravitHlidku(Hlidka hlidka);
+        Task PridatHlidku(string nazev, string typ);
+        Task OdebratHlidku(Hlidka hlidka);
     }
 }

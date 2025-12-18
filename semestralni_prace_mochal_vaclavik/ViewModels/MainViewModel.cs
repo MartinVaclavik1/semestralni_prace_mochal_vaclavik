@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
+using semestralni_prace_mochal_vaclavik.Repository;
+using semestralni_prace_mochal_vaclavik.Services;
 using semestralni_prace_mochal_vaclavik.Tridy;
 using semestralni_prace_mochal_vaclavik.Views;
 using System.Collections.ObjectModel;
@@ -42,6 +44,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         private OracleConnection conn;
 
+        // hlídky
+        private HlidkyRepository hlidkyRepository;
+        private HlidkyService hlidkyService;
         /// <summary>
         /// Zdroj dat pro DataGrid s kontakty.
         /// </summary>
@@ -1209,78 +1214,76 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        /// <summary>
-        /// Aktualizuje záznam Hlídky (název a typ) v databázi.
-        /// </summary>
-        /// <param name="radek">DataRowView s upravenými daty (Identifikace přes IDHLIDKY)</param>
-        [RelayCommand]
-        public void UpravitHlidku(object radek)
-        {
-            var row = radek as Hlidka;
+        ///// <summary>
+        ///// Aktualizuje záznam Hlídky (název a typ) v databázi.
+        ///// </summary>
+        ///// <param name="radek">DataRowView s upravenými daty (Identifikace přes IDHLIDKY)</param>
+        //[RelayCommand]
+        //public void UpravitHlidku(object radek)
+        //{
+        //    var row = radek as Hlidka;
 
-            if (row != null)
-            {
-                try
-                {
-                    if (row.Zmenen)
-                    {
-                        row.Uloz(conn);
-                        NacistHlidky();
+        //    if (row != null)
+        //    {
+        //        try
+        //        {
+        //            if (row.Zmenen)
+        //            {
+        //                row.Uloz(conn);
+        //                NacistHlidky();
 
-                        MessageBox.Show("Úprava okrsku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Chyba při zpracování úpravy okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
+        //                MessageBox.Show("Úprava okrsku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show("Chyba při zpracování úpravy okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        }
+        //    }
+        //}
 
-        [RelayCommand]
-        public void PridatHlidku()
-        {
-            try
-            {
-                Hlidka novaHlidka = new Hlidka();
-                string nazev = HlidkyView.pridatHlidkuNazev.Text;
-                string typ = HlidkyView.pridatHlidkuTyp.Text;
-                novaHlidka.Pridej(conn, nazev, typ);
-                //NacistHlidky();
-                MessageBox.Show("Nová hlídka byla úspěšně přidána.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při přidávání nové hlídky: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+        //[RelayCommand]
+        //public async Task PridatHlidkuAsync()
+        //{
+        //    if (string.IsNullOrWhiteSpace(NovyNazevHlidky) || string.IsNullOrWhiteSpace(VybranyTypHlidky))
+        //    {
+        //        MessageBox.Show("Vyplňte prosím název i typ hlídky.");
+        //        return;
+        //    }
 
-        [RelayCommand]
-        public async Task OdebratHlidku(object radek)
-        {
-            var row = radek as Hlidka;
+        //    try
+        //    {
+        //        // TADY se vezmou hodnoty z vlastností a pošlou se do servisy
+        //        await hlidkyService.PridatHlidku(NovyNazevHlidky, VybranyTypHlidky);
 
-            if (row != null)
-            {
-                try
-                {
-                    var result = MessageBox.Show(
-                        $"Opravdu chcete záznam smazat??",
-                        "Potvrzení smazání",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
+        //        // Po úspěšném přidání vyčistíme pole v UI
+        //        NovyNazevHlidky = string.Empty;
 
-                    if (result != MessageBoxResult.Yes) return;
+        //        // REFRESH: Znovu načteme seznam, aby se nová hlídka objevila v tabulce
+        //        await LoadAsync();
 
-                    row.Smaz(conn);
-                    NacistHlidky();
+        //        MessageBox.Show("Hlídka byla úspěšně přidána.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Chyba: {ex.Message}");
+        //    }
+        //}
 
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Chyba při odebírání okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
+
+        //[RelayCommand]
+        //public async Task OdebratHlidkuAsync(Hlidka hlidka)
+        //{
+        //    if (hlidka == null) return;
+
+        //    var result = MessageBox.Show("Opravdu smazat?", "Potvrzení", MessageBoxButton.YesNo);
+        //    if (result == MessageBoxResult.Yes)
+
+        //        await hlidkyRepository.OdebratHlidku(hlidka);
+
+        //        await hlidkyService.GetHlidkyAsync();
+
+        //        MessageBox.Show("Smazáno a seznam aktualizován.");
+        //}
     }
 }

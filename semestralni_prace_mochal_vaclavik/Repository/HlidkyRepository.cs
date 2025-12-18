@@ -1,4 +1,5 @@
-﻿using semestralni_prace_mochal_vaclavik.OracleConn;
+﻿using Oracle.ManagedDataAccess.Client;
+using semestralni_prace_mochal_vaclavik.OracleConn;
 using semestralni_prace_mochal_vaclavik.Tridy;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using MessageBox = System.Windows.MessageBox;
 
 namespace semestralni_prace_mochal_vaclavik.Repository
 {
@@ -56,6 +59,37 @@ namespace semestralni_prace_mochal_vaclavik.Repository
                 result.Add(reader.GetString("nazev"));
             }
             return result;
+        }
+
+        public async Task OdebratHlidku(Hlidka hlidka)
+        {
+            using var conn = connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            hlidka.Smaz((OracleConnection)conn);
+
+            await Task.CompletedTask;
+        }
+
+        public async Task UpravitHlidku(Hlidka hlidka)
+        {
+            using var conn = connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            hlidka.Uloz((OracleConnection)conn);
+
+            await Task.CompletedTask;
+        }
+
+        public async Task PridatHlidku(string nazev, string typ)
+        {
+            using var conn = (OracleConnection)connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            new Hlidka().Pridej(conn, nazev, typ);
         }
     }
 }
