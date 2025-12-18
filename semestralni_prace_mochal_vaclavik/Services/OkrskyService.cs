@@ -21,5 +21,20 @@ namespace semestralni_prace_mochal_vaclavik.Services
         {
             return repo.GetOkrskyAsync();
         }
+
+        public async Task OdebratOkrsek(Okrsek okrsek)
+        {
+            await repo.OdebratOkrsek(okrsek);
+        }
+
+        public async Task PridatOkrsek(string nazev)
+        {
+            await repo.PridatOkrsek(nazev);
+        }
+
+        public async Task UpravitOkrsek(Okrsek okrsek)
+        {
+            await repo.UpravitOkrsek(okrsek);
+        }
     }
 }

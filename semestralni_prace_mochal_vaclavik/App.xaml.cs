@@ -36,13 +36,14 @@ namespace semestralni_prace_mochal_vaclavik
             services.AddTransient<IEvidencePrestupkuRepository, EvidencePrestupkuRepository>();
             services.AddTransient<IAdminNastaveniRepository, AdminNastaveniRepository>();
             services.AddTransient<IHlidkyRepository, HlidkyRepository>();
+            services.AddTransient<ILogovaciTabulkaRepository, LogovaciTabulkaRepository>();
 
             services.AddTransient<IPolicisteService, PolicisteService>();
             services.AddTransient<IOkrskyService, OkrskyService>();
             services.AddTransient<IEvidencePrestupkuService, EvidencePrestupkuService>();
             services.AddTransient<IAdminNastaveniService, AdminNastaveniService>();
             services.AddTransient<IHlidkyService, HlidkyService>();
-
+            services.AddTransient<ILogovaciTabulkaService, LogovaciTabulkaService>();
 
             services.AddTransient<PolicisteViewModel>(); 
             services.AddTransient<OkrskyViewModel>();
@@ -50,6 +51,7 @@ namespace semestralni_prace_mochal_vaclavik
             services.AddTransient<AdminNastaveniViewModel>();
             services.AddTransient<HlidkyViewModel>();
             services.AddTransient<MainViewModel>();
+            services.AddTransient<LogovaciTabulkaViewModel>();
 
             services.AddSingleton<PolicisteView>();
             services.AddSingleton<OkrskyView>();
@@ -59,6 +61,8 @@ namespace semestralni_prace_mochal_vaclavik
             services.AddSingleton<PrihlaseniView>();
             services.AddSingleton<UcetView>();
             services.AddSingleton<MainWindow>();
+            services.AddSingleton<LogovaciTabulkaView>();
+
 
             Services = services.BuildServiceProvider();
 

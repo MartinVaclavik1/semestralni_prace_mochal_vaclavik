@@ -1,4 +1,5 @@
-﻿using semestralni_prace_mochal_vaclavik.OracleConn;
+﻿using Oracle.ManagedDataAccess.Client;
+using semestralni_prace_mochal_vaclavik.OracleConn;
 using semestralni_prace_mochal_vaclavik.Tridy;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,33 @@ namespace semestralni_prace_mochal_vaclavik.Repository
             }
 
             return result;
+        }
+        public async Task OdebratOkrsek(Okrsek okrsek)
+        {
+            using var conn = connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            okrsek.Smaz((OracleConnection)conn);
+
+        }
+
+        public async Task UpravitOkrsek(Okrsek okrsek)
+        {
+            using var conn = connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            okrsek.Uloz((OracleConnection)conn);
+        }
+
+        public async Task PridatOkrsek(string nazev)
+        {
+            using var conn = (OracleConnection)connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            new Okrsek().Pridej(conn, nazev);
         }
     }
 }
