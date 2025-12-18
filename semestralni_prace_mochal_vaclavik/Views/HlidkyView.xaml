@@ -51,8 +51,9 @@
                             <Button Content="Upravit" 
                                  Command="{Binding DataContext.UpravitHlidkuCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                  CommandParameter="{Binding}" 
-                                 Margin="1,1" 
-                                 Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                 Margin="1,1" >
+                            </Button>
+                                  <!--Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>-->
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -60,10 +61,11 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Odebrat" 
-                                      Command="{Binding DataContext.OdebratHlidkuCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                      CommandParameter="{Binding}" 
-                                      Margin="1,1" 
-                                      Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                    Command="{Binding DataContext.OdebratHlidkuCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                    CommandParameter="{Binding}" 
+                                    Margin="1,1">
+                            </Button>
+                                      <!--Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>-->
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

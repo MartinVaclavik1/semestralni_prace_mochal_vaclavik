@@ -40,8 +40,9 @@
                             <Button Content="Upravit" 
                                  Command="{Binding DataContext.UpravitOkrsekCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                  CommandParameter="{Binding}" 
-                                 Margin="1,1" 
-                                 Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                 Margin="1,1" >
+                            </Button>
+                                 <!--Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>-->
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -51,8 +52,9 @@
                             <Button Content="Odebrat" 
                                  Command="{Binding DataContext.OdebratOkrsekCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                  CommandParameter="{Binding}" 
-                                 Margin="1,1" 
-                                 Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                 Margin="1,1">
+                            </Button>
+                                 <!--="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>-->
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -68,10 +70,16 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <Button Grid.Column="1" Content="Přidat" Command="{Binding DataContext.PridatOkrsekCommand, RelativeSource={RelativeSource AncestorType={x:Type TabItem}}}"
-                            CommandParameter="{Binding}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Width="76" Margin="10,0,0,0"/>
+            <Button Grid.Column="1"
+                    Grid.Row="1"
+                    Content="Přidat"
+                    Command="{Binding PridatOkrsekCommand}" 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Top" 
+                    Width="109" Height="20" 
+                    Margin="0,5,0,0"/>
             <Label Content="Název Okrsku" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Height="26" Width="120"/>
-            <TextBox x:Name="pridatOkrsekNazev" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="135" Height="18"/>
+            <TextBox Text="{Binding NovyNazevOkrsku, UpdateSourceTrigger=PropertyChanged}" x:Name="pridatOkrsekNazev" HorizontalAlignment="Center" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="135" Height="18"/>
         </Grid>
 
     </Grid>

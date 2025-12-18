@@ -44,17 +44,14 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         private OracleConnection conn;
 
-        // hlídky
-        private HlidkyRepository hlidkyRepository;
-        private HlidkyService hlidkyService;
         /// <summary>
         /// Zdroj dat pro DataGrid s kontakty.
         /// </summary>
         [ObservableProperty]
         public DataView kontaktyItemsSource;
 
-        [ObservableProperty]
-        public DataView okrskyItemsSource;
+        //[ObservableProperty]
+        //public DataView okrskyItemsSource;
 
         [ObservableProperty]
         public DataView prestupkyItemsSource;
@@ -808,41 +805,41 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        /// <summary>
-        /// Načítá seznam všech hlídek z databáze.
-        /// Zobrazuje hlídky na kartě Hlídky (dostupné pro policisty a administrátory).
-        /// </Summary>
-        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private void NacistHlidky()
-        {
-            try
-            {
+        ///// <summary>
+        ///// Načítá seznam všech hlídek z databáze.
+        ///// Zobrazuje hlídky na kartě Hlídky (dostupné pro policisty a administrátory).
+        ///// </Summary>
+        ///// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
+        //private void NacistHlidky()
+        //{
+        //    try
+        //    {
 
-                string sql = @"select * from hlidkyView";
+        //        string sql = @"select * from hlidkyView";
 
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
-                    Hlidky.Clear();
-                    foreach (DataRow item in dt.Rows)
-                    {
-                        Hlidky.Add(new Hlidka
-                        {
-                            IdHlidky = (int)item.Field<decimal>("idhlidky"),
-                            NazevHlidky = item.Field<string>("nazevhlidky"),
-                            Nazev = item.Field<string>("nazev"),
-                        });
-                    }
-                    //Window.HlidkyView.HlidkyGrid.ItemsSource = dt.DefaultView;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při načítání hlídek: " + ex.Message);
-            }
-        }
+        //        using (OracleCommand cmd = new OracleCommand(sql, conn))
+        //        {
+        //            OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+        //            DataTable dt = new DataTable();
+        //            adapter.Fill(dt);
+        //            Hlidky.Clear();
+        //            foreach (DataRow item in dt.Rows)
+        //            {
+        //                Hlidky.Add(new Hlidka
+        //                {
+        //                    IdHlidky = (int)item.Field<decimal>("idhlidky"),
+        //                    NazevHlidky = item.Field<string>("nazevhlidky"),
+        //                    Nazev = item.Field<string>("nazev"),
+        //                });
+        //            }
+        //            //Window.HlidkyView.HlidkyGrid.ItemsSource = dt.DefaultView;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Chyba při načítání hlídek: " + ex.Message);
+        //    }
+        //}
 
         /// <summary>
         /// Načítá seznam všech okrsků z databáze.
@@ -1043,81 +1040,81 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        /// <summary>
-        /// Aktualizuje název Okrsku v databázi.
-        /// </summary>
-        /// <param name="radek">DataRowView s upraveným názvem (Identifikace přes IDOKRSKU)</param>
-        [RelayCommand]
-        public void UpravitOkrsek(object radek)
-        {
-            var row = radek as Okrsek;
+        ///// <summary>
+        ///// Aktualizuje název Okrsku v databázi.
+        ///// </summary>
+        ///// <param name="radek">DataRowView s upraveným názvem (Identifikace přes IDOKRSKU)</param>
+        //[RelayCommand]
+        //public void UpravitOkrsek(object radek)
+        //{
+        //    var row = radek as Okrsek;
 
-            if (row != null)
-            {
-                try
-                {
-                    if (row.Zmenen)
-                    {
-                        row.Uloz(conn);
-                        //NacistOkrsky();
+        //    if (row != null)
+        //    {
+        //        try
+        //        {
+        //            if (row.Zmenen)
+        //            {
+        //                row.Uloz(conn);
+        //                //NacistOkrsky();
 
-                        MessageBox.Show("Úprava okrsku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Chyba při zpracování úpravy okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
+        //                MessageBox.Show("Úprava okrsku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show("Chyba při zpracování úpravy okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        }
+        //    }
+        //}
 
-        /// <summary>
-        /// Odstraní záznam Okrsku z databáze.
-        /// </summary>
-        /// <param name="radek">DataRowView s daty Okrsku k odstranění (Identifikace přes IDOKRSKU)</param>
-        [RelayCommand]
-        public void OdebratOkrsek(object radek)
-        {
-            var row = radek as Okrsek;
+        ///// <summary>
+        ///// Odstraní záznam Okrsku z databáze.
+        ///// </summary>
+        ///// <param name="radek">DataRowView s daty Okrsku k odstranění (Identifikace přes IDOKRSKU)</param>
+        //[RelayCommand]
+        //public void OdebratOkrsek(object radek)
+        //{
+        //    var row = radek as Okrsek;
 
-            if (row != null)
-            {
-                try
-                {
-                    var result = MessageBox.Show(
-                        $"Opravdu chcete záznam smazat??",
-                        "Potvrzení smazání",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
+        //    if (row != null)
+        //    {
+        //        try
+        //        {
+        //            var result = MessageBox.Show(
+        //                $"Opravdu chcete záznam smazat??",
+        //                "Potvrzení smazání",
+        //                MessageBoxButton.YesNo,
+        //                MessageBoxImage.Warning);
 
-                    if (result != MessageBoxResult.Yes) return;
+        //            if (result != MessageBoxResult.Yes) return;
 
-                    row.Smaz(conn);
-                    //NacistOkrsky();
+        //            row.Smaz(conn);
+        //            //NacistOkrsky();
 
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Chyba při odebírání okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-        [RelayCommand]
-        public void PridatOkrsek()
-        {
-            try
-            {
-                Okrsek novyOkrsek = new Okrsek();
-                string nazev = "";//Window.OkrskyView.pridatOkrsekNazev.Text;
-                novyOkrsek.Pridej(conn, nazev);
-                MessageBox.Show("Nový okrsek byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                //NacistOkrsky();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při přidávání nového policisty: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            MessageBox.Show("Chyba při odebírání okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+        //        }
+        //    }
+        //}
+        //[RelayCommand]
+        //public void PridatOkrsek()
+        //{
+        //    try
+        //    {
+        //        Okrsek novyOkrsek = new Okrsek();
+        //        string nazev = "";//Window.OkrskyView.pridatOkrsekNazev.Text;
+        //        novyOkrsek.Pridej(conn, nazev);
+        //        MessageBox.Show("Nový okrsek byl úspěšně přidán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
+        //        //NacistOkrsky();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Chyba při přidávání nového policisty: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+        //    }
+        //}
 
         /// <summary>
         /// Aktualizuje záznam přestupku (typ a poznámku) v databázi.
@@ -1213,77 +1210,5 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show("Chyba při přidávání nového přestupku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        ///// <summary>
-        ///// Aktualizuje záznam Hlídky (název a typ) v databázi.
-        ///// </summary>
-        ///// <param name="radek">DataRowView s upravenými daty (Identifikace přes IDHLIDKY)</param>
-        //[RelayCommand]
-        //public void UpravitHlidku(object radek)
-        //{
-        //    var row = radek as Hlidka;
-
-        //    if (row != null)
-        //    {
-        //        try
-        //        {
-        //            if (row.Zmenen)
-        //            {
-        //                row.Uloz(conn);
-        //                NacistHlidky();
-
-        //                MessageBox.Show("Úprava okrsku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            MessageBox.Show("Chyba při zpracování úpravy okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-        //        }
-        //    }
-        //}
-
-        //[RelayCommand]
-        //public async Task PridatHlidkuAsync()
-        //{
-        //    if (string.IsNullOrWhiteSpace(NovyNazevHlidky) || string.IsNullOrWhiteSpace(VybranyTypHlidky))
-        //    {
-        //        MessageBox.Show("Vyplňte prosím název i typ hlídky.");
-        //        return;
-        //    }
-
-        //    try
-        //    {
-        //        // TADY se vezmou hodnoty z vlastností a pošlou se do servisy
-        //        await hlidkyService.PridatHlidku(NovyNazevHlidky, VybranyTypHlidky);
-
-        //        // Po úspěšném přidání vyčistíme pole v UI
-        //        NovyNazevHlidky = string.Empty;
-
-        //        // REFRESH: Znovu načteme seznam, aby se nová hlídka objevila v tabulce
-        //        await LoadAsync();
-
-        //        MessageBox.Show("Hlídka byla úspěšně přidána.");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Chyba: {ex.Message}");
-        //    }
-        //}
-
-
-        //[RelayCommand]
-        //public async Task OdebratHlidkuAsync(Hlidka hlidka)
-        //{
-        //    if (hlidka == null) return;
-
-        //    var result = MessageBox.Show("Opravdu smazat?", "Potvrzení", MessageBoxButton.YesNo);
-        //    if (result == MessageBoxResult.Yes)
-
-        //        await hlidkyRepository.OdebratHlidku(hlidka);
-
-        //        await hlidkyService.GetHlidkyAsync();
-
-        //        MessageBox.Show("Smazáno a seznam aktualizován.");
-        //}
     }
 }

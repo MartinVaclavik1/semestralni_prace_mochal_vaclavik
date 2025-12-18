@@ -10,5 +10,9 @@ namespace semestralni_prace_mochal_vaclavik.Services
     public interface IOkrskyService
     {
         Task<List<Okrsek>> GetOkrskyAsync();
+
+        Task UpravitOkrsek(Okrsek okrsek);
+        Task PridatOkrsek(string nazev);
+        Task OdebratOkrsek(Okrsek okrsek);
     }
 }
