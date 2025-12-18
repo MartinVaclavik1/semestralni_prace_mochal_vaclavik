@@ -47,7 +47,7 @@ namespace semestralni_prace_mochal_vaclavik.Repository
             if (conn.State != ConnectionState.Open)
                 await conn.OpenAsync();
 
-            okrsek.Smaz((OracleConnection)conn);
+            okrsek.Smaz(conn);
 
         }
 
@@ -57,7 +57,7 @@ namespace semestralni_prace_mochal_vaclavik.Repository
             if (conn.State != ConnectionState.Open)
                 await conn.OpenAsync();
 
-            okrsek.Uloz((OracleConnection)conn);
+            okrsek.Uloz(conn);
         }
 
         public async Task PridatOkrsek(string nazev)
