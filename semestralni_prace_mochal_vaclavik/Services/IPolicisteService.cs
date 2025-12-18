@@ -11,5 +11,11 @@ namespace semestralni_prace_mochal_vaclavik.Services
     {
         Task<List<Policista>> GetPolicisteAsync();
         List<string> GetHodnosti();
+        Task UpravitPolicistu(Policista policista);
+
+        Task OdebratPolicistu(Policista policista);
+
+        Task PridejPolicistu(string jmeno, string prijmeni, string hodnost, string nadrizeny, string stanice, int plat, DateTime datumNarozeni);
+
     }
 }

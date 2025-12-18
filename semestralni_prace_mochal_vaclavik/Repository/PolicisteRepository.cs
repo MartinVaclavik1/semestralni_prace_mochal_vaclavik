@@ -7,6 +7,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace semestralni_prace_mochal_vaclavik.Repository
 {
@@ -38,7 +39,7 @@ namespace semestralni_prace_mochal_vaclavik.Repository
                     Jmeno = reader.GetString("jmeno"),
                     Prijmeni = reader.GetString("prijmeni"),
                     Hodnost = reader.GetString("hodnost"),
-                    Nadrizeny = reader.IsDBNull("nadrizeny")? "": reader.GetString("nadrizeny"),
+                    Nadrizeny = reader.IsDBNull("nadrizeny") ? "" : reader.GetString("nadrizeny"),
                     Stanice = reader.GetString("stanice")
                 });
             }
@@ -56,7 +57,7 @@ namespace semestralni_prace_mochal_vaclavik.Repository
 
             using var reader = cmd.ExecuteReader();
 
-            var result = new List<string>(); 
+            var result = new List<string>();
             while (reader.Read())
             {
                 result.Add(
@@ -65,6 +66,33 @@ namespace semestralni_prace_mochal_vaclavik.Repository
             }
 
             return result;
+        }
+
+        public async Task UpravitPolicistu(Policista policista)
+        {
+            using var conn = connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            await policista.Uloz(conn);
+        }
+
+        public async Task OdebratPolicistu(Policista policista)
+        {
+            using var conn = connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            await policista.Smaz(conn);
+        }
+
+        public async Task PridejPolicistu(string jmeno, string prijmeni, string hodnost, string nadrizeny, string stanice, int plat, DateTime datumNarozeni)
+        {
+            using var conn = connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            await new Policista().Pridej(conn, jmeno, prijmeni, hodnost, nadrizeny, stanice, plat, datumNarozeni);
         }
     }
 }
