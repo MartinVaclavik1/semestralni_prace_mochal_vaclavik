@@ -1229,9 +1229,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             try
             {
                 Hlidka novaHlidka = new Hlidka();
-                //string nazev = HlidkyView.pridatHlidkuNazev.Text;
-                //string typ = HlidkyView.pridatHlidkuTyp.Text;
-                //novaHlidka.Pridej(conn, nazev, typ);
+                string nazev = HlidkyView.pridatHlidkuNazev.Text;
+                string typ = HlidkyView.pridatHlidkuTyp.Text;
+                novaHlidka.Pridej(conn, nazev, typ);
                 //NacistHlidky();
                 MessageBox.Show("Nová hlídka byla úspěšně přidána.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
             }
