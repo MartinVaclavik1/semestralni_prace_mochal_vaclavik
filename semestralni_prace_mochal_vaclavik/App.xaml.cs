@@ -56,6 +56,8 @@ namespace semestralni_prace_mochal_vaclavik
             services.AddSingleton<EvidencePrestupkuView>();
             services.AddSingleton<AdminView>();
             services.AddSingleton<HlidkyView>();
+            services.AddSingleton<PrihlaseniView>();
+            services.AddSingleton<UcetView>();
             services.AddSingleton<MainWindow>();
 
             Services = services.BuildServiceProvider();

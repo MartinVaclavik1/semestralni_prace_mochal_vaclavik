@@ -1,4 +1,5 @@
-﻿using System;
+﻿using semestralni_prace_mochal_vaclavik.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,11 @@ namespace semestralni_prace_mochal_vaclavik.Views
         public PrihlaseniView()
         {
             InitializeComponent();
+        }
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            ((MainViewModel)DataContext).Heslo =
+                ((PasswordBox)sender).Password;
         }
     }
 }

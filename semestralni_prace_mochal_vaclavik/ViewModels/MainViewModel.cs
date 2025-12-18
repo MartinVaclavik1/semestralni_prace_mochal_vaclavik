@@ -5,8 +5,10 @@ using Oracle.ManagedDataAccess.Types;
 using semestralni_prace_mochal_vaclavik.Tridy;
 using semestralni_prace_mochal_vaclavik.Views;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.IO;
+using System.Security;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -95,6 +97,18 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public EvidencePrestupkuView EvidencePrestupkuView { get; }
         public AdminView AdminView { get; }
         public HlidkyView HlidkyView { get; }
+        public PrihlaseniView PrihlaseniView { get; }
+        public UcetView UcetView { get; }
+
+        [ObservableProperty]
+        private int vybranyIndex = 0;
+
+        [ObservableProperty]
+        private string prihlasovaciJmeno;
+
+        [ObservableProperty]
+        private string heslo;
+
         // Přihlášení 
         //wallis45548 - policista
         //martin25922 - obcan => hesla jsou stejné číslo
@@ -112,13 +126,16 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
         public MainViewModel(PolicisteView policisteView, OkrskyView okrskyView,
             EvidencePrestupkuView evidencePrestupkuView, AdminView adminView,
-            HlidkyView hlidkyView)
+            HlidkyView hlidkyView, PrihlaseniView prihlaseniView,
+            UcetView ucetView)
         {
             PolicisteView = policisteView ?? throw new ArgumentNullException(nameof(policisteView));
             OkrskyView = okrskyView ?? throw new ArgumentNullException(nameof(okrskyView));
             EvidencePrestupkuView = evidencePrestupkuView ?? throw new ArgumentNullException(nameof(evidencePrestupkuView));
             AdminView = adminView ?? throw new ArgumentNullException(nameof(adminView));
             HlidkyView = hlidkyView ?? throw new ArgumentNullException(nameof(hlidkyView));
+            PrihlaseniView = prihlaseniView ?? throw new ArgumentNullException(nameof(prihlaseniView));
+            UcetView = ucetView ?? throw new ArgumentNullException(nameof(ucetView));
 
             try
             {
@@ -129,10 +146,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
-            Prihlas(("Oli", "12345"));
-            NastavComboboxy();
+            Prihlas("Oli", "12345");
             NastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
-            HlidkyView = hlidkyView;
         }
 
         /// <summary>
@@ -297,6 +312,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
+        private void Prihlas(string jmeno, string heslo)
+        {
+            PrihlasovaciJmeno = jmeno;
+
+            Heslo = heslo;
+            Prihlas();
+        }
         /// <summary>
         /// Přihlašuje uživatele do systému na základě přihlašovacích údajů.
         /// </summary>
@@ -306,8 +328,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Automaticky nastavuje viditelnost UI prvků podle role uživatele.
         /// </remarks>
         /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniPrihlaseni))]
-        private void Prihlas((string PrihlasovaciJmeno, string Heslo) udaje)
+        [RelayCommand]
+        private void Prihlas()
         {
             try
             {
@@ -317,39 +339,42 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
-                    cmd.Parameters.Add(new OracleParameter("prihlJmeno", udaje.PrihlasovaciJmeno));
-                    cmd.Parameters.Add(new OracleParameter("heslo", udaje.Heslo.ToString()));
+                    cmd.Parameters.Add(new OracleParameter("prihlJmeno", PrihlasovaciJmeno));
+                    cmd.Parameters.Add(new OracleParameter("heslo", Heslo));
 
                     using (OracleDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            uzivatel.Id = int.Parse(reader["id"].ToString());
-                            uzivatel.Username = reader["prihlasovacijmeno"].ToString();
+                            Uzivatel.Id = int.Parse(reader["id"].ToString());
+                            Uzivatel.Username = reader["prihlasovacijmeno"].ToString();
                             var blob = reader.GetOracleBlob(2);
                             if (!blob.IsNull)
                             {
-                                uzivatel.ObrazekBytes = nactiByteZBLOB(blob);
-                                uzivatel.Obrazek = vytvorObrazek(uzivatel.ObrazekBytes);
+                                Uzivatel.ObrazekBytes = nactiByteZBLOB(blob);
+                                Uzivatel.Obrazek = vytvorObrazek(Uzivatel.ObrazekBytes);
                             }
 
 
-                            uzivatel.Opravneni = reader["nazevopravneni"].ToString();
+                            Uzivatel.Opravneni = reader["nazevopravneni"].ToString();
 
-                            if (uzivatel.Opravneni == "obcan")
+                            if (Uzivatel.Opravneni == "obcan")
                             {
                                 Uzivatel.Jmeno = reader["o_jmeno"].ToString();
-                                uzivatel.Prijmeni = reader["o_prijmeni"].ToString();
+                                Uzivatel.Prijmeni = reader["o_prijmeni"].ToString();
 
                             }
                             else
                             {
-                                uzivatel.Jmeno = reader["p_jmeno"].ToString();
-                                uzivatel.Prijmeni = reader["p_prijmeni"].ToString();
+                                Uzivatel.Jmeno = reader["p_jmeno"].ToString();
+                                Uzivatel.Prijmeni = reader["p_prijmeni"].ToString();
                             }
-                            //Window.Okna.SelectedIndex = 0;
-                            //Window.PrihlaseniView.UsernameTextBox.Clear();
-                            //Window.PrihlaseniView.PasswordBox.Clear();
+                            VybranyIndex = 0;
+
+                            PrihlasovaciJmeno = String.Empty;
+                            PrihlaseniView.PasswordBox.Clear();
+                            Heslo = String.Empty;
+
 
                             Task.Run(() => { MessageBox.Show("Uživatel přihlášen"); });
 
@@ -397,19 +422,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         private void Odhlas()
         {
             Uzivatel.Resetuj();
-            //Window.Okna.SelectedIndex = 0;
+            VybranyIndex = 0;
             NastavOknaPodleOpravneni();
 
-        }
-
-        /// <summary>
-        /// Ověřuje, zda jsou vyplněna všechna povinná pole přihlašovacího formuláře.
-        /// </summary>
-        /// <returns>true pokud jsou obě pole (uživatelské jméno i heslo) vyplněna, jinak false</returns>
-        public bool ZkontrolovatVyplneniPrihlaseni()
-        {
-            return true;
-            //return Window.UsernameTextBox.Text != string.Empty && Window.PasswordBox.Text != string.Empty;
         }
 
         /// <summary>
@@ -419,16 +434,16 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         private bool ZkontrolovatVyplneniRegistrace()
         {
             return true;
-                //Window.jmenoTxt.Text != string.Empty
-                //&& Window.prijmeniTxt.Text != string.Empty
-                //&& Window.opTxt.Text != string.Empty
-                //&& Window.pscTxt.Text != string.Empty
-                //&& Window.uliceTxt.Text != string.Empty
-                //&& Window.cpTxt.Text != string.Empty
-                //&& Window.obecTxt.Text != string.Empty
-                //&& Window.zemeTxt.Text != string.Empty
-                //&& Window.usernameTxt.Text != string.Empty
-                //&& Window.heslotxt.Text != string.Empty;
+            //Window.jmenoTxt.Text != string.Empty
+            //&& Window.prijmeniTxt.Text != string.Empty
+            //&& Window.opTxt.Text != string.Empty
+            //&& Window.pscTxt.Text != string.Empty
+            //&& Window.uliceTxt.Text != string.Empty
+            //&& Window.cpTxt.Text != string.Empty
+            //&& Window.obecTxt.Text != string.Empty
+            //&& Window.zemeTxt.Text != string.Empty
+            //&& Window.usernameTxt.Text != string.Empty
+            //&& Window.heslotxt.Text != string.Empty;
         }
 
         /// <summary>
@@ -503,7 +518,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 conn.Commit();
 
                 MessageBox.Show($"Uživatel {NovaRegistrace.Username} Heslo {novaRegistrace.Heslo}.", "Registrace", MessageBoxButton.OK, MessageBoxImage.Information);
-                Prihlas((NovaRegistrace.Username, NovaRegistrace.Heslo));
+                Prihlas(NovaRegistrace.Username, NovaRegistrace.Heslo);
                 NovaRegistrace.Clear();
 
             }
@@ -562,9 +577,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                     cmdJmenoPrijmeni.ExecuteNonQuery();
                 }
                 conn.Commit();
-
-                MessageBox.Show($"Uživatel {Uzivatel.Jmeno} Heslo {Uzivatel.Prijmeni}.", "Aktualizace", MessageBoxButton.OK, MessageBoxImage.Information);
-                NovaRegistrace.Clear();
+                UcetView.HesloTxt.Clear();
+                MessageBox.Show($"Účet aktualizován.", "Aktualizace", MessageBoxButton.OK, MessageBoxImage.Information);
 
             }
             catch (Exception ex)
@@ -1170,7 +1184,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 //string adresa = Window.EvidencePrestupkuView.pridatPrestupekAdresa.Text;
                 //string poznamka = Window.EvidencePrestupkuView.pridatPrestupekPoznamka.Text;
                 //novyPrestupek.Pridej(conn, typPrestupku, popisPrestupku, jmenoObcana, adresa, poznamka);
-         
+
                 //string typPrestupku = Window.EvidencePrestupkuView.pridatPrestupekTyp.Text;
                 //string popisPrestupku = Window.EvidencePrestupkuView.pridatPrestupekPopisZasahu.Text;
                 //string jmenoObcana = Window.EvidencePrestupkuView.pridatPrestupekObcan.Text;
@@ -1266,128 +1280,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 {
                     MessageBox.Show("Chyba při odebírání okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-            }
-        }
-        private void NastavComboboxy()
-        {
-            NactiOpravneni();
-            //NacistHodnosti();
-            //NacistTypyPrestupku();
-            NacistTypyHlidky();
-        }
-
-        private void NactiOpravneni()
-        {
-            try
-            {
-                string sql = @"select * from opravneniView";
-
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
-
-                    OpravneniSeznam.Clear();
-                    foreach (DataRow item in dt.Rows)
-                    {
-                        OpravneniSeznam.Add(item.Field<string>("nazevopravneni"));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
-            }
-        }
-        //private void NacistHodnosti()
-        //{
-        //    try
-        //    {
-        //        string sql = @"select * from hodnostiView";
-
-        //        using (OracleCommand cmd = new OracleCommand(sql, conn))
-        //        {
-        //            OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-        //            DataTable dt = new DataTable();
-        //            adapter.Fill(dt);
-
-        //            HodnostiSeznam.Clear();
-        //            foreach (DataRow item in dt.Rows)
-        //            {
-        //                HodnostiSeznam.Add(item.Field<string>("nazev"));
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
-        //    }
-        //}
-
-        //private void NacistTypyPrestupku()
-        //{
-        //    try
-        //    {
-        //        string sql = @"select * from typy_prestupkuView";
-
-        //        using (OracleCommand cmd = new OracleCommand(sql, conn))
-        //        {
-        //            OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-        //            DataTable dt = new DataTable();
-        //            adapter.Fill(dt);
-
-        //            Typy_prestupkuSeznam.Clear();
-        //            foreach (DataRow item in dt.Rows)
-        //            {
-        //                Typy_prestupkuSeznam.Add(item.Field<string>("prestupek"));
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
-        //    }
-        //}
-
-        private void NacistTypyHlidky()
-        {
-            try
-            {
-                //string sql = @"select * from typy_hlidkyView";
-
-                //using (OracleCommand cmd = new OracleCommand(sql, conn))
-                //{
-                //    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                //    DataTable dt = new DataTable();
-                //    adapter.Fill(dt);
-
-                //    Typy_hlidkySeznam.Clear();
-                //    foreach (DataRow item in dt.Rows)
-                //    {
-                //        Typy_hlidkySeznam.Add(item.Field<string>("nazev"));
-                //    }
-                //}
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
-            }
-        }
-
-        //TODO potom smazat
-        private void VytvorVieNecoVDB(string sql)
-        {
-            try
-            {
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
             }
         }
     }
