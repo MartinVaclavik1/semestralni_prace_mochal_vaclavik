@@ -45,9 +45,8 @@
             <TextBox x:Name="JmenoTxt" Text="{Binding Uzivatel.Jmeno, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="131,10,0,0" Grid.ColumnSpan="2"/>
             <TextBox x:Name="PrijmeniTxt" Text="{Binding Uzivatel.Prijmeni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Margin="0,5,0,5"/>
             <TextBox x:Name="UsernameTxt" Text="{Binding Uzivatel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2" Grid.Column="1" Margin="0,5,0,5"/>
-            <TextBox x:Name="HesloTxt" Text="{Binding Uzivatel.Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" Margin="0,5,0,5"/>
-            <!--<TextBox x:Name="PSCTxt" Text="000 00" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="4" Grid.Column="1" Margin="0,5,0,5"/>
-        <TextBox x:Name="ZemeTxt" Text="Česká republika" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="5" Grid.Column="1" Margin="0,5,0,5"/>-->
+            <PasswordBox x:Name="HesloTxt" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1" Margin="0,5,0,5"
+                         PasswordChanged="HesloTxt_PasswordChanged"/>
         </Grid>
 
         <!-- Tlačítko Potvrdit (OPRÁVNĚNÍ: Policista+) -->
@@ -70,10 +69,10 @@
         Command="{Binding OdhlasCommand}"
         FontWeight="Bold" 
         Height="20" Margin="194,190,0,0"/>
-        <Image Margin="10,10,16,90" Grid.Row="1" Source="{Binding Uzivatel.Obrazek, Mode=TwoWay, UpdateSourceTrigger=propertyChanged}" Grid.Column="1"/>
+        <Image Margin="10,10,16,90" Grid.Row="1" Source="{Binding Uzivatel.Obrazek, Mode=OneWay, UpdateSourceTrigger=propertyChanged}" Grid.Column="1"/>
         <Label Content="Profilový obrázek" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        <Button Grid.Column="1" Content="Nahrát obrázek" Margin="68,247,177,0" Grid.Row="1" Command="{Binding NahratImgCommand}" Height="29" VerticalAlignment="Top"/>
-        <Button Grid.Column="1" Content="Odebrat" Margin="172,247,71,0" Grid.Row="1" Command="{Binding OdebratImgCommand}" Height="29" VerticalAlignment="Top"/>
+        <Button Grid.Column="1" Content="Nahrát obrázek" Margin="69,303,176,0" Grid.Row="1" Command="{Binding NahratImgCommand}" Height="29" VerticalAlignment="Top"/>
+        <Button Grid.Column="1" Content="Odebrat" Margin="177,303,63,0" Grid.Row="1" Command="{Binding OdebratImgCommand}" Height="29" VerticalAlignment="Top"/>
 
     </Grid>
 </UserControl>

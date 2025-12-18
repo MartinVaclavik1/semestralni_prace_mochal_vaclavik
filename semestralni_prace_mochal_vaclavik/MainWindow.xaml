@@ -16,7 +16,8 @@
 
     <TabControl Name="Okna" 
                 HorizontalAlignment="Stretch" 
-                VerticalAlignment="Stretch">
+                VerticalAlignment="Stretch"
+                SelectedIndex="{Binding VybranyIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
         
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="SelectionChanged">
@@ -79,7 +80,7 @@
         <!-- Karta: Můj účet (OPRÁVNĚNÍ: Všichni přihlášení, Editace pro Policista+) -->
         <TabItem x:Name="Ucet" Header="Můj účet"
                  Visibility="{Binding ObcanVisible}">
-            <views:UcetView x:Name="UcetView"/>
+            <ContentControl Content="{Binding UcetView}" />
         </TabItem>
 
         <!-- Karta: Admin nastavení (OPRÁVNĚNÍ: Admin) -->
@@ -97,7 +98,7 @@
         </TabItem>
 
         <TabItem x:Name="Prihlaseni" Header="Přihlášení" Visibility="{Binding NeprihlasenyVisible}">
-            <views:PrihlaseniView x:Name="PrihlaseniView"/>
+            <ContentControl Content="{Binding PrihlaseniView}" />
         </TabItem>
 
         <TabItem x:Name="Registrace" Header="Registrace" Visibility="{Binding NeprihlasenyVisible}">

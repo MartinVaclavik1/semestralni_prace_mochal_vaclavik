@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -8,13 +9,13 @@ using System.Windows.Media.Imaging;
 
 namespace semestralni_prace_mochal_vaclavik.Tridy
 {
-    public class Uzivatel : INotifyPropertyChanged
+    public class Uzivatel : ObservableObject, INotifyPropertyChanged
     {
         private int id { get; set; }
         public int Id
         {
             get
-            { return id;}
+            { return id; }
             set
             {
                 id = value;
@@ -22,7 +23,8 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             }
         }
         private string jmeno { get; set; }
-        public string Jmeno {
+        public string Jmeno
+        {
             get { return jmeno; }
             set
             {
@@ -71,7 +73,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                     MessageBox.Show("Nelze měnit oprávnění občanovi", "CHYBA");
 
                 }
-                else if((opravneni == "administrator" || opravneni == "policista") 
+                else if ((opravneni == "administrator" || opravneni == "policista")
                     && value == "obcan" && value != String.Empty)
                 {
                     MessageBox.Show("Nelze měnit oprávnění na občana", "CHYBA");
@@ -85,13 +87,32 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             }
         }
         private BitmapImage? obrazek { get; set; }
-        public  BitmapImage? Obrazek
+        public BitmapImage? Obrazek
         {
-            get { return obrazek; }
+            get { return obrazek != null ? obrazek : LoadBitmap("no-image-icon.png"); } //do db se neuloží protože se tam dává jen bytes, který se nastaví při uložení, nebo načtení
             set
             {
                 obrazek = value;
                 this.OnPropertyChanged("Obrazek");
+            }
+        }
+
+        BitmapImage LoadBitmap(string path)
+        {
+            try
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(path, UriKind.Relative);
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+                bitmap.Freeze();
+
+                return bitmap;
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
         public byte[]? ObrazekBytes { get; set; }
@@ -100,7 +121,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
 
         public void Resetuj()
         {
-            Id= 0;
+            Id = 0;
             Jmeno = String.Empty;
             Prijmeni = String.Empty;
             Username = String.Empty;
@@ -114,8 +135,8 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
         public bool Zmenen
         {
             get { return zmenen; }
-            set {  zmenen = value; }
-            
+            set { zmenen = value; }
+
         }
 
         private void OnPropertyChanged(string propertyName)
