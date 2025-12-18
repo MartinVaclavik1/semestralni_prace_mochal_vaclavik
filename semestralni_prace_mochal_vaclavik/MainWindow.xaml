@@ -67,7 +67,7 @@
         </TabItem>
 
         <TabItem x:Name="MojePrestupky" Header="Moje Přestupky" Visibility="{Binding JenObcanVisible}">
-            <views:MojePrestupkyView x:Name="MojePrestupkyView"/>
+            <ContentControl Content="{Binding MojePrestupkyView}" />
         </TabItem>
 
         <!-- Karta: Hlídky a Zásahy (OPRÁVNĚNÍ: Policista+) - PŘIDÁNY FILTRY -->

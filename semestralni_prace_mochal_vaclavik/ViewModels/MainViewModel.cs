@@ -102,6 +102,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public PrihlaseniView PrihlaseniView { get; }
         public UcetView UcetView { get; }
         public LogovaciTabulkaView LogovaciTabulkaView { get; }
+        public MojePrestupkyView MojePrestupkyView { get; }
 
         [ObservableProperty]
         private int vybranyIndex = 0;
@@ -130,7 +131,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public MainViewModel(PolicisteView policisteView, OkrskyView okrskyView,
             EvidencePrestupkuView evidencePrestupkuView, AdminView adminView,
             HlidkyView hlidkyView, PrihlaseniView prihlaseniView,
-            UcetView ucetView, LogovaciTabulkaView logovaciTabulkaView)
+            UcetView ucetView, LogovaciTabulkaView logovaciTabulkaView,
+            MojePrestupkyView mojePrestupkyView)
         {
             PolicisteView = policisteView ?? throw new ArgumentNullException(nameof(policisteView));
             OkrskyView = okrskyView ?? throw new ArgumentNullException(nameof(okrskyView));
@@ -140,6 +142,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             PrihlaseniView = prihlaseniView ?? throw new ArgumentNullException(nameof(prihlaseniView));
             UcetView = ucetView ?? throw new ArgumentNullException(nameof(ucetView));
             LogovaciTabulkaView = logovaciTabulkaView ?? throw new ArgumentNullException(nameof(logovaciTabulkaView));
+            MojePrestupkyView = mojePrestupkyView ?? throw new ArgumentNullException(nameof(mojePrestupkyView));
 
             try
             {
