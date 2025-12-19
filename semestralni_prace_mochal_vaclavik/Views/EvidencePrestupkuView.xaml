@@ -58,8 +58,8 @@
                             <Button Content="Upravit" 
                                  Command="{Binding DataContext.UpravitPrestupekCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                  CommandParameter="{Binding}" 
-                                 Margin="1,1" 
-                                 Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                 Margin="1,1">
+                            </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -69,8 +69,9 @@
                             <Button Content="Odebrat" 
                                  Command="{Binding DataContext.OdebratPrestupekCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                  CommandParameter="{Binding}" 
-                                 Margin="1,1" 
-                                 Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                                 Margin="1,1">
+                            </Button>
+                                 <!-- Visibility="{Binding DataContext.AdminControlsVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>-->
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -99,19 +100,33 @@
             <Label Content="ČP" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="3" Margin="121,0,0,0" Height="26" Width="24" Grid.ColumnSpan="2"/>
             <Label Content="Obec" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="5" Height="26" Width="43"/>
             <Label Content="PSČ" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="5" Height="26" Width="31" Margin="121,0,0,0" Grid.ColumnSpan="2"/>
-            <TextBox x:Name="pridatPrestupekPopisZasahu" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="111" Grid.Column="1" Height="20"/>
-            <TextBox x:Name="pridatPrestupekObcan" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="112" Grid.Column="1" Margin="121,0,0,0" Height="20" Grid.ColumnSpan="2"/>
-            <TextBox x:Name="pridatPrestupekUlice" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="111" Grid.Column="3" Height="20"/>
-
-            <Button Grid.Column="6" Content="Přidat" Command="{Binding DataContext.PridatPrestupekCommand, RelativeSource={RelativeSource AncestorType={x:Type TabItem}}}"
-                            CommandParameter="{Binding}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Width="54" Height="20" Margin="61,0,0,0" Grid.ColumnSpan="2"/>
-            <ComboBox x:Name="pridatPrestupekTyp" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="104" Height="20"
-                   ItemsSource="{Binding DataContext.Typy_prestupkuSeznam, RelativeSource={RelativeSource AncestorType=Grid}}"/>
+            
+            <TextBox Text="{Binding NovyPrestupekPopisZasahu, UpdateSourceTrigger=PropertyChanged}" x:Name="pridatPrestupekPopisZasahu" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="111" Grid.Column="1" Height="20"/>
+            <TextBox Text="{Binding NovyPrestupekJmenoObcana, UpdateSourceTrigger=PropertyChanged}" x:Name="pridatPrestupekObcan" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="112" Grid.Column="1" Margin="121,0,0,0" Height="20" Grid.ColumnSpan="2"/>
+            <TextBox Text="{Binding NovyPrestupekUlice, UpdateSourceTrigger=PropertyChanged}" x:Name="pridatPrestupekUlice" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="111" Grid.Column="3" Height="20"/>
             <Label Grid.Column="2" Content="např: Jan Novák" HorizontalAlignment="Left" Margin="5,22,0,0" Grid.Row="1" VerticalAlignment="Top" FontSize="9" FontStyle="Italic" Grid.RowSpan="2" Height="22" Width="73"/>
-            <TextBox x:Name="pridatPrestupekCisloPopisne" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="52" Grid.Column="3" Height="20" Grid.ColumnSpan="2" Margin="121,0,0,0"/>
-            <TextBox x:Name="pridatPrestupekObec" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="111" Grid.Column="5" Height="20"/>
-            <TextBox x:Name="pridatPrestupekPSC" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="51" Grid.Column="5" Height="20" Grid.ColumnSpan="2" Margin="121,0,0,0"/>
+            <TextBox Text="{Binding NovyPrestupekCP, UpdateSourceTrigger=PropertyChanged}" x:Name="pridatPrestupekCisloPopisne" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="52" Grid.Column="3" Height="20" Grid.ColumnSpan="2" Margin="121,0,0,0"/>
+            <TextBox Text="{Binding NovyPrestupekObec, UpdateSourceTrigger=PropertyChanged}" x:Name="pridatPrestupekObec" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="111" Grid.Column="5" Height="20"/>
+            <TextBox Text="{Binding NovyPrestupekPSC, UpdateSourceTrigger=PropertyChanged}" x:Name="pridatPrestupekPSC" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="51" Grid.Column="5" Height="20" Grid.ColumnSpan="2" Margin="121,0,0,0"/>
 
+            <Button Grid.Column="6"
+                    Content="Přidat"
+                    Command="{Binding DataContext.PridatPrestupekCommand}"
+                    HorizontalAlignment="Left"
+                    Grid.Row="1"
+                    VerticalAlignment="Center"
+                    Width="54"
+                    Height="20"
+                    Margin="61,0,0,0"
+                    Grid.ColumnSpan="2"/>
+            <ComboBox x:Name="pridatPrestupekTyp"
+                      HorizontalAlignment="Center"
+                      Grid.Row="1"
+                      VerticalAlignment="Center"
+                      Width="104"
+                      Height="20"
+                      ItemsSource="{Binding DataContext.Typy_prestupkuSeznam, RelativeSource={RelativeSource AncestorType=Grid}}"
+                      SelectedItem="{Binding VybranyTypPrestupku, UpdateSourceTrigger=PropertyChanged}"/>
         </Grid>
     </Grid>
 </UserControl>

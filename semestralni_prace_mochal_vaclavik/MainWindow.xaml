@@ -95,8 +95,9 @@
             <ContentControl Content="{Binding LogovaciTabulkaView}" />
         </TabItem>
 
-        <TabItem x:Name="SystemovyKatalog" Header="Systémový katalog" Visibility="{Binding AdministratorVisible}">
-            <views:SystemovyKatalogView x:Name="SystemovyKatalogView"/>
+        <TabItem x:Name="SystemovyKatalog" Header="Systémový katalog" 
+                 Visibility="{Binding AdministratorVisible}">
+            <ContentControl Content="{Binding SystemovyKatalogView}" />
         </TabItem>
 
         <TabItem x:Name="Prihlaseni" Header="Přihlášení" Visibility="{Binding NeprihlasenyVisible}">

@@ -11,5 +11,8 @@ namespace semestralni_prace_mochal_vaclavik.Services
     {
         Task<List<Prestupek>> GetPrestupkyAsync();
         List<string> GetTypyPrestupky();
+        Task OdebratPrestupekAsync(Prestupek prestupek);
+        Task UpravitPrestupekAsync(Prestupek prestupek);
+        Task PridatPrestupekAsync(string ulice, int cisloPopisne, string obec, string psc, string typPrestupku, string popisZasahu, string jmenoObcana);
     }
 }

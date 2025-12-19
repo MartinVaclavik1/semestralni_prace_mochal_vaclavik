@@ -65,5 +65,32 @@ namespace semestralni_prace_mochal_vaclavik.Repository
 
             return result;
         }
+
+        public async Task OdebratPrestupekAsync(Prestupek prestupek)
+        {
+            using var conn = connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            prestupek.Smaz((OracleConnection)conn);
+        }
+
+        public async Task PridatPrestupekAsync(string ulice, int cisloPopisne, string obec, string psc, string typPrestupku, string popisZasahu, string jmenoObcana)
+        {
+            using var conn = (OracleConnection)connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            new Prestupek().Pridej(conn,ulice,cisloPopisne,obec,psc,typPrestupku,popisZasahu,jmenoObcana);
+        }
+
+        public async Task UpravitPrestupekAsync(Prestupek prestupek)
+        {
+            using var conn = connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+
+            prestupek.Uloz((OracleConnection)conn);
+        }
     }
 }

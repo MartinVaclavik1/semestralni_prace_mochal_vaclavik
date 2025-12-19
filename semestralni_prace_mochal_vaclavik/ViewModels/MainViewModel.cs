@@ -103,6 +103,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public UcetView UcetView { get; }
         public LogovaciTabulkaView LogovaciTabulkaView { get; }
         public MojePrestupkyView MojePrestupkyView { get; }
+        public SystemovyKatalogView SystemovyKatalogView { get; }
 
         [ObservableProperty]
         private int vybranyIndex = 0;
@@ -132,7 +133,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             EvidencePrestupkuView evidencePrestupkuView, AdminView adminView,
             HlidkyView hlidkyView, PrihlaseniView prihlaseniView,
             UcetView ucetView, LogovaciTabulkaView logovaciTabulkaView,
-            MojePrestupkyView mojePrestupkyView)
+            MojePrestupkyView mojePrestupkyView, SystemovyKatalogView systemovyKatalogView)
         {
             PolicisteView = policisteView ?? throw new ArgumentNullException(nameof(policisteView));
             OkrskyView = okrskyView ?? throw new ArgumentNullException(nameof(okrskyView));
@@ -143,6 +144,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             UcetView = ucetView ?? throw new ArgumentNullException(nameof(ucetView));
             LogovaciTabulkaView = logovaciTabulkaView ?? throw new ArgumentNullException(nameof(logovaciTabulkaView));
             MojePrestupkyView = mojePrestupkyView ?? throw new ArgumentNullException(nameof(mojePrestupkyView));
+            SystemovyKatalogView = systemovyKatalogView ?? throw new ArgumentNullException(nameof(systemovyKatalogView));
 
             try
             {
