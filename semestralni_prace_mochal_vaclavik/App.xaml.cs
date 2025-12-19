@@ -49,6 +49,7 @@ namespace semestralni_prace_mochal_vaclavik
             services.AddTransient<IHlidkyService, HlidkyService>();
             services.AddTransient<ILogovaciTabulkaService, LogovaciTabulkaService>();
             services.AddSingleton<PrihlasenyUzivatelService>();
+            services.AddSingleton<SpravceOkenService>();
             services.AddTransient<IMojePrestupkyService, MojePrestupkyService>();
             services.AddTransient<ISystemovyKatalogService, SystemovyKatalogService>();
 

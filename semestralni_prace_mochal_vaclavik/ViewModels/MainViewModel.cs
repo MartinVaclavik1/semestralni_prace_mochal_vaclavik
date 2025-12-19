@@ -37,7 +37,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Data pro nový účet během registrace.
         /// </summary>
         [ObservableProperty]
-        private Registrace novaRegistrace = new Registrace();
+        private Registrace novaRegistrace;
 
         public PolicisteView PolicisteView { get; }
         public OkrskyView OkrskyView { get; }
@@ -51,10 +51,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public SystemovyKatalogView SystemovyKatalogView { get; }
 
         [ObservableProperty]
-        public PrihlasenyUzivatelService prihlasenyUzivatelService;
+        public SpravceOkenService spravceOkenService;
 
         [ObservableProperty]
-        private int vybranyIndex = 0;
+        public PrihlasenyUzivatelService prihlasenyUzivatelService;
 
         [ObservableProperty]
         private string prihlasovaciJmeno;
@@ -82,7 +82,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             HlidkyView hlidkyView, PrihlaseniView prihlaseniView,
             UcetView ucetView, LogovaciTabulkaView logovaciTabulkaView,
             PrihlasenyUzivatelService prihlasenyUzivatelService,
-            MojePrestupkyView mojePrestupkyView, SystemovyKatalogView systemovyKatalogView)
+            MojePrestupkyView mojePrestupkyView, SystemovyKatalogView systemovyKatalogView,
+            SpravceOkenService spravceOkenService)
         {
             PolicisteView = policisteView ?? throw new ArgumentNullException(nameof(policisteView));
             OkrskyView = okrskyView ?? throw new ArgumentNullException(nameof(okrskyView));
@@ -97,6 +98,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
             MojePrestupkyView = mojePrestupkyView ?? throw new ArgumentNullException(nameof(mojePrestupkyView));
             SystemovyKatalogView = systemovyKatalogView ?? throw new ArgumentNullException(nameof(systemovyKatalogView));
+            novaRegistrace = new Registrace(PrihlasenyUzivatelService);
+            SpravceOkenService = spravceOkenService;
         }
 
         private void Prihlas(string jmeno, string heslo)
@@ -120,8 +123,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             try
             {
                 PrihlasenyUzivatelService.Prihlas(PrihlasovaciJmeno, Heslo);
-
-                VybranyIndex = 0;
 
                 PrihlasovaciJmeno = String.Empty;
                 PrihlaseniView.PasswordBox.Clear();
@@ -147,38 +148,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         private void Odhlas()
         {
             PrihlasenyUzivatelService.Odhlas();
-            VybranyIndex = 0;
         }
 
-        /// <summary>
-        /// Registruje nového občana v systému.
-        /// </summary>
-        /// <remarks>
-        /// Volá uloženou proceduru vytvor_uzivatele_obcana s údaji ze formuláře.
-        /// Po úspěšné registraci automaticky přihlašuje nového uživatele.
-        /// </remarks>
-        /// <exception cref="Exception">Vyvolána při chybě databáze</exception>
-        [RelayCommand(CanExecute = nameof(ZkontrolujRegistraci))]
-        private void Registrovat()
-        {
-            try
-            {
-                PrihlasenyUzivatelService.Registrovat(NovaRegistrace);
-
-                MessageBox.Show($"Uživatel {NovaRegistrace.Username} vytvořen.", "Registrace", MessageBoxButton.OK, MessageBoxImage.Information);
-                Prihlas(NovaRegistrace.Username, NovaRegistrace.Heslo);
-                NovaRegistrace.Clear();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Chyba při registraci: {ex.Message}", "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private bool ZkontrolujRegistraci()
-        {
-            return !NovaRegistrace.HasErrors;
-        }
 
         /// <summary>
         /// Aktualizuje údaje přihlášeného uživatele v databázi (sekce "Můj účet").

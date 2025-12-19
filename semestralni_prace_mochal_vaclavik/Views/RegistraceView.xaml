@@ -66,7 +66,7 @@
                 <TextBox x:Name="heslotxt" Text="{Binding NovaRegistrace.Heslo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="250" Height="20"/>
             </StackPanel>
 
-            <Button Content="Registrovat" Command="{Binding RegistrovatCommand}"
+            <Button Content="Registrovat" Command="{Binding NovaRegistrace.RegistrovatCommand}"
                     Width="150" Height="24"/>
         </StackPanel>
     </Grid>

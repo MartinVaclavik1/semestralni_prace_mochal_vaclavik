@@ -17,7 +17,7 @@
     <TabControl Name="Okna" 
                 HorizontalAlignment="Stretch" 
                 VerticalAlignment="Stretch"
-                SelectedIndex="{Binding VybranyIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
+                SelectedIndex="{Binding SpravceOkenService.Index, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
 
         <TabControl.Background>
             <!-- Sjednocený horní gradient pro celou aplikaci -->

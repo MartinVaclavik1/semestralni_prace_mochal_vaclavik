@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using semestralni_prace_mochal_vaclavik.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,113 +10,84 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using MessageBox = System.Windows.MessageBox;
 
 namespace semestralni_prace_mochal_vaclavik.Tridy
 {
-    public class Registrace : ObservableValidator, INotifyPropertyChanged
+    public partial class Registrace : ObservableValidator
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+        public PrihlasenyUzivatelService PrihlasenyUzivatelService { get; set; }
 
-        public Registrace()
+        public Registrace(PrihlasenyUzivatelService prihlasenyUzivatelService)
         {
             ValidateAllProperties();
+            PrihlasenyUzivatelService = prihlasenyUzivatelService;
         }
 
-        private string _jmeno;
-        
+
+
         [Required, RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Lze vložit jen písmena")]
-        public string Jmeno
-        {
-            get => _jmeno;
-            set { 
-                SetProperty(ref _jmeno, value,true);
-                OnPropertyChanged(); }
-        }
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
+        public string jmeno;
 
-        private string _prijmeni;
         [Required, RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Lze vložit jen písmena")]
-        public string Prijmeni
-        {
-            get => _prijmeni;
-            set { SetProperty(ref _prijmeni,value,true);
-                OnPropertyChanged(); }
-        }
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
+        public string prijmeni;
 
-        private int? _cisloOP;
+
         [Required, RegularExpression(@"^[0-9]+$", ErrorMessage = "Lze vložit jen čísla")]
-        public int? CisloOP
-        {
-            get => _cisloOP;
-            set { SetProperty(ref _cisloOP, value, true);
-                OnPropertyChanged(); }
-        }
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
+        public int? cisloOP;
 
-        private string _psc;
-        [Required, RegularExpression(@"^[0-9]+$", ErrorMessage ="Lze vložit jen čísla"), Length(5,5)]
-        public string PSC
-        {
-            get => _psc;
-            set {
-                SetProperty(ref _psc, value, true);    
-                OnPropertyChanged(); }
-        }
+        [Required, RegularExpression(@"^[0-9]+$", ErrorMessage = "Lze vložit jen čísla"), Length(5, 5)]
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
+        public string pSC;
 
-        private string _ulice;
+
         [Required]
-        public string Ulice
-        {
-            get => _ulice;
-            set { SetProperty(ref _ulice, value, true);
-                OnPropertyChanged(); }
-        }
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
+        public string ulice;
 
-        private int? _cisloPopisne;
         [Required, RegularExpression(@"^[0-9]+$", ErrorMessage = "Lze vložit jen čísla")]
-        public int? CisloPopisne
-        {
-            get => _cisloPopisne;
-            set { SetProperty(ref _cisloPopisne, value, true);
-                OnPropertyChanged(); }
-        }
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
+        public int? cisloPopisne;
 
-        private string _obec;
         [Required, RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Lze vložit jen písmena")]
-        public string Obec
-        {
-            get => _obec;
-            set { SetProperty(ref _obec, value, true);
-                OnPropertyChanged(); }
-        }
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
+        public string obec;
 
-        private string _zeme;
         [Required, RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Lze vložit jen písmena")]
-        public string Zeme
-        {
-            get => _zeme;
-            set { SetProperty(ref _zeme, value, true);
-                OnPropertyChanged(); }
-        }
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
+        public string zeme;
 
-        private string _username;
         [Required]
-        public string Username
-        {
-            get => _username;
-            set { SetProperty(ref _username, value, true);
-                OnPropertyChanged(); }
-        }
-        private string _heslo;
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
+        public string username;
+
         [Required]
-        public string Heslo
-        {
-            get => _heslo;
-            set { SetProperty(ref _heslo, value, true); 
-                OnPropertyChanged(); }
-        }
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
+        public string heslo;
         public void Clear()
         {
             Jmeno = string.Empty;
@@ -129,6 +101,40 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             Username = string.Empty;
             Heslo = string.Empty;
 
+        }
+
+        [RelayCommand(CanExecute = nameof(ZkontrolujRegistraci))]
+        public void Registrovat()
+        {
+            try
+            {
+                var reg = new Registrace(PrihlasenyUzivatelService)
+                {
+                    Jmeno = Jmeno,
+                    CisloOP = CisloOP,
+                    CisloPopisne = CisloPopisne,
+                    Obec = Obec,
+                    Ulice = Ulice,
+                    Heslo = Heslo,
+                    Prijmeni = Prijmeni,
+                    PSC = PSC,
+                    Username = Username,
+                    Zeme = Zeme
+                };
+                PrihlasenyUzivatelService.Registrovat(reg);
+
+                PrihlasenyUzivatelService.Prihlas(Username, Heslo);
+                Clear();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Chyba při registraci: {ex.Message}", "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private bool ZkontrolujRegistraci()
+        {
+            return !HasErrors;
         }
     }
 }

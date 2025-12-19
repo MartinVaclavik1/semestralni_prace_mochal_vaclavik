@@ -19,12 +19,15 @@ namespace semestralni_prace_mochal_vaclavik.Services
     {
         private readonly PrihlasenyUzivatelRepository repo;
 
+        private SpravceOkenService spravceOkenService;
+
         [ObservableProperty]
         private Uzivatel uzivatel = new Uzivatel();
 
-        public PrihlasenyUzivatelService(PrihlasenyUzivatelRepository repo)
+        public PrihlasenyUzivatelService(PrihlasenyUzivatelRepository repo, SpravceOkenService spravceOkenService)
         {
             this.repo = repo;
+            this.spravceOkenService = spravceOkenService;
         }
 
 
@@ -125,6 +128,7 @@ namespace semestralni_prace_mochal_vaclavik.Services
         /// </remarks>
         private void NastavOknaPodleOpravneni()
         {
+            spravceOkenService.Index = 0;
             OnPropertyChanged(nameof(PolicistaVisible));
             OnPropertyChanged(nameof(AdministratorVisible));
             OnPropertyChanged(nameof(ObcanVisible));
