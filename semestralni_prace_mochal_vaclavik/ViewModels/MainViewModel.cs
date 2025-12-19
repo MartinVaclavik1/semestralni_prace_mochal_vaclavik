@@ -158,7 +158,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Po úspěšné registraci automaticky přihlašuje nového uživatele.
         /// </remarks>
         /// <exception cref="Exception">Vyvolána při chybě databáze</exception>
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(ZkontrolujRegistraci))]
         private void Registrovat()
         {
             try
@@ -173,6 +173,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show($"Chyba při registraci: {ex.Message}", "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private bool ZkontrolujRegistraci()
+        {
+            return !NovaRegistrace.HasErrors;
         }
 
         /// <summary>

@@ -1,14 +1,18 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace semestralni_prace_mochal_vaclavik.Tridy
 {
-    public class Registrace : INotifyPropertyChanged
+    public class Registrace : ObservableValidator, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string name = null)
@@ -16,73 +20,101 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        public Registrace()
+        {
+            ValidateAllProperties();
+        }
+
         private string _jmeno;
+        
+        [Required, RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Lze vložit jen písmena")]
         public string Jmeno
         {
             get => _jmeno;
-            set { _jmeno = value; OnPropertyChanged(); }
+            set { 
+                SetProperty(ref _jmeno, value,true);
+                OnPropertyChanged(); }
         }
 
         private string _prijmeni;
+        [Required, RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Lze vložit jen písmena")]
         public string Prijmeni
         {
             get => _prijmeni;
-            set { _prijmeni = value; OnPropertyChanged(); }
+            set { SetProperty(ref _prijmeni,value,true);
+                OnPropertyChanged(); }
         }
 
         private int? _cisloOP;
+        [Required, RegularExpression(@"^[0-9]+$", ErrorMessage = "Lze vložit jen čísla")]
         public int? CisloOP
         {
             get => _cisloOP;
-            set { _cisloOP = value; OnPropertyChanged(); }
+            set { SetProperty(ref _cisloOP, value, true);
+                OnPropertyChanged(); }
         }
 
         private string _psc;
+        [Required, RegularExpression(@"^[0-9]+$", ErrorMessage ="Lze vložit jen čísla"), Length(5,5)]
         public string PSC
         {
             get => _psc;
-            set { _psc = value; OnPropertyChanged(); }
+            set {
+                SetProperty(ref _psc, value, true);    
+                OnPropertyChanged(); }
         }
 
         private string _ulice;
+        [Required]
         public string Ulice
         {
             get => _ulice;
-            set { _ulice = value; OnPropertyChanged(); }
+            set { SetProperty(ref _ulice, value, true);
+                OnPropertyChanged(); }
         }
 
         private int? _cisloPopisne;
+        [Required, RegularExpression(@"^[0-9]+$", ErrorMessage = "Lze vložit jen čísla")]
         public int? CisloPopisne
         {
             get => _cisloPopisne;
-            set { _cisloPopisne = value; OnPropertyChanged(); }
+            set { SetProperty(ref _cisloPopisne, value, true);
+                OnPropertyChanged(); }
         }
 
         private string _obec;
+        [Required, RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Lze vložit jen písmena")]
         public string Obec
         {
             get => _obec;
-            set { _obec = value; OnPropertyChanged(); }
+            set { SetProperty(ref _obec, value, true);
+                OnPropertyChanged(); }
         }
 
         private string _zeme;
+        [Required, RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Lze vložit jen písmena")]
         public string Zeme
         {
             get => _zeme;
-            set { _zeme = value; OnPropertyChanged(); }
+            set { SetProperty(ref _zeme, value, true);
+                OnPropertyChanged(); }
         }
 
         private string _username;
+        [Required]
         public string Username
         {
             get => _username;
-            set { _username = value; OnPropertyChanged(); }
+            set { SetProperty(ref _username, value, true);
+                OnPropertyChanged(); }
         }
         private string _heslo;
+        [Required]
         public string Heslo
         {
             get => _heslo;
-            set { _heslo = value; OnPropertyChanged(); }
+            set { SetProperty(ref _heslo, value, true); 
+                OnPropertyChanged(); }
         }
         public void Clear()
         {
