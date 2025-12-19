@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,9 +19,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public SystemovyKatalogViewModel(Services.ISystemovyKatalogService service)
         {
             this.service = service;
-            LoadAsync();
         }
-
+        [RelayCommand]
         private async Task LoadAsync()
         {
             try

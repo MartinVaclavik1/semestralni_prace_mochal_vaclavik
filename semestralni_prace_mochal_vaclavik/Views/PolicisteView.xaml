@@ -10,7 +10,7 @@
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding ZobrazenoCommand}" PassEventArgsToCommand="True"/>
+            <i:InvokeCommandAction Command="{Binding LoadCommand}" PassEventArgsToCommand="True"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
 

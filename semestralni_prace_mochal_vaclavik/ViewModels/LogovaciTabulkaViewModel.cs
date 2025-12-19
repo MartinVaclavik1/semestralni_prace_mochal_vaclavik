@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using semestralni_prace_mochal_vaclavik.Services;
+using System.ComponentModel;
 using System.Data;
 
 namespace semestralni_prace_mochal_vaclavik.ViewModels
@@ -14,9 +16,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public LogovaciTabulkaViewModel(ILogovaciTabulkaService service)
         {
             this.service = service;
-            LoadAsync();
         }
-
+        [RelayCommand]
         public async Task LoadAsync()
         {
             try

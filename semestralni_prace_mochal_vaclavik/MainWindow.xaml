@@ -19,12 +19,6 @@
                 VerticalAlignment="Stretch"
                 SelectedIndex="{Binding VybranyIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
 
-        <i:Interaction.Triggers>
-            <i:EventTrigger EventName="SelectionChanged">
-                <i:InvokeCommandAction Command="{Binding ZmenaOknaCommand}" PassEventArgsToCommand="True"/>
-            </i:EventTrigger>
-        </i:Interaction.Triggers>
-
         <TabControl.Background>
             <!-- Sjednocený horní gradient pro celou aplikaci -->
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

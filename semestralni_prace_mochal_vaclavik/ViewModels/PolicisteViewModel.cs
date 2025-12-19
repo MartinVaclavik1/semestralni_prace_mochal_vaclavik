@@ -52,12 +52,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         }
 
         [RelayCommand]
-        public async Task Zobrazeno()
-        {
-            await LoadAsync();
-        }
-
-        [RelayCommand]
         public async Task LoadAsync()
         {
             Policiste.Clear();

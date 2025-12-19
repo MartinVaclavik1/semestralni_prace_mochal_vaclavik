@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using semestralni_prace_mochal_vaclavik.Services;
 using semestralni_prace_mochal_vaclavik.Tridy;
 using System;
@@ -23,9 +24,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             
             this.service = mojePrestupkyService;
             this.prihlasenyUzivatelService = prihlasenyUzivatelService;
-            LoadAsync();
         }
 
+        [RelayCommand]
         private async Task LoadAsync()
         {
             try

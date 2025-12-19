@@ -7,7 +7,15 @@
                 xmlns:local="clr-namespace:semestralni_prace_mochal_vaclavik.Views"
              xmlns:vm="clr-namespace:semestralni_prace_mochal_vaclavik.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="858">
+             d:DesignHeight="450" d:DesignWidth="858"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadCommand}" PassEventArgsToCommand="True"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
     <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="2*"/>

@@ -40,12 +40,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         private PrihlasenyUzivatelService prihlasenyUzivatelService;
 
         public AdminNastaveniViewModel(IAdminNastaveniService service, PrihlasenyUzivatelService prihlasenyUzivatelService)
-
         {
             this.service = service;
             this.prihlasenyUzivatelService = prihlasenyUzivatelService;
             NactiHodnosti();
-            LoadAsync();
         }
 
         [RelayCommand]
