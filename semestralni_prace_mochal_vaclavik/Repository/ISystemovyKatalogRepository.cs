@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace semestralni_prace_mochal_vaclavik.Repository
 {
-    public interface ILogovaciTabulkaRepository
+    internal interface ISystemovyKatalogRepository
     {
-        Task<DataTable> GetLogovaciTabulkaAsync();
+        Task<DataTable> GetSystemovyKatalogAsync();
     }
 }

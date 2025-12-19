@@ -54,6 +54,8 @@ namespace semestralni_prace_mochal_vaclavik
             services.AddTransient<HlidkyViewModel>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<LogovaciTabulkaViewModel>();
+            services.AddTransient<MojePrestupkyViewModel>();
+            services.AddTransient<SystemovyKatalogViewModel>();
 
             services.AddSingleton<PolicisteView>();
             services.AddSingleton<OkrskyView>();
@@ -64,6 +66,8 @@ namespace semestralni_prace_mochal_vaclavik
             services.AddSingleton<UcetView>();
             services.AddSingleton<MainWindow>();
             services.AddSingleton<LogovaciTabulkaView>();
+            services.AddSingleton<MojePrestupkyView>();
+            services.AddSingleton<SystemovyKatalogView>();
 
 
             Services = services.BuildServiceProvider();

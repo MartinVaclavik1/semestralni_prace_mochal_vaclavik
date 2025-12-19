@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace semestralni_prace_mochal_vaclavik.Repository
+namespace semestralni_prace_mochal_vaclavik.Services
 {
-    public interface ILogovaciTabulkaRepository
+    public interface ISystemovyKatalogService
     {
-        Task<DataTable> GetLogovaciTabulkaAsync();
+        Task<DataTable> GetSystemovyKatalogAsync();
     }
 }

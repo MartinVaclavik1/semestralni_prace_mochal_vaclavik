@@ -14,7 +14,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public LogovaciTabulkaViewModel(ILogovaciTabulkaService service)
         {
             this.service = service;
-            _ = LoadAsync();
+            LoadAsync();
         }
 
         public async Task LoadAsync()

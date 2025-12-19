@@ -103,6 +103,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public PrihlaseniView PrihlaseniView { get; }
         public UcetView UcetView { get; }
         public LogovaciTabulkaView LogovaciTabulkaView { get; }
+        public MojePrestupkyView MojePrestupkyView { get; }
+        public SystemovyKatalogView SystemovyKatalogView { get; }
 
         [ObservableProperty]
         public PrihlasenyUzivatelService prihlasenyUzivatelService;

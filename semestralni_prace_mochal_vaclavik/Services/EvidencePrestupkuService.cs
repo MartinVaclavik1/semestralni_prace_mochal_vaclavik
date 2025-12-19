@@ -20,5 +20,20 @@ namespace semestralni_prace_mochal_vaclavik.Services
         public Task<List<Prestupek>> GetPrestupkyAsync() => repo.GetPrestupkyAsync();
 
         public List<string> GetTypyPrestupky() => repo.GetTypyPrestupky();
+
+        public async Task OdebratPrestupekAsync(Prestupek prestupek)
+        {
+            await repo.OdebratPrestupekAsync(prestupek);
+        }
+
+        public async Task PridatPrestupekAsync(string ulice, int cisloPopisne, string obec, string psc, string typPrestupku, string popisZasahu, string jmenoObcana)
+        {
+            await repo.PridatPrestupekAsync(ulice, cisloPopisne, obec, psc, typPrestupku, popisZasahu, jmenoObcana);
+        }
+
+        public async Task UpravitPrestupekAsync(Prestupek prestupek)
+        {
+            await repo.UpravitPrestupekAsync(prestupek);
+        }
     }
 }

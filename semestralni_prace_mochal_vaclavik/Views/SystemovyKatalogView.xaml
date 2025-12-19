@@ -7,7 +7,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Margin="20">
-        <DataGrid CanUserAddRows="false" x:Name="systemovyKatalogGrid" d:ItemsSource="{d:SampleData ItemCount=5}" AutoGenerateColumns="True"/>
+        <DataGrid IsReadOnly="True"
+                  ItemsSource="{Binding SystemovyKatalog}"
+                  x:Name="systemovyKatalogGrid"
+                  d:ItemsSource="{d:SampleData ItemCount=5}"
+                  AutoGenerateColumns="True"/>
 
     </Grid>
 </UserControl>
