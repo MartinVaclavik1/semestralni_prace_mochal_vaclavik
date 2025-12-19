@@ -25,6 +25,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [ObservableProperty]
         private List<string> opravneniSeznam = new List<string>();
 
+
         [ObservableProperty]
         private string novyUzivatelPrihlasovaciJmeno;
         [ObservableProperty]
@@ -36,9 +37,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [ObservableProperty]
         private string novyUzivatelOpravneni;
 
+        private PrihlasenyUzivatelService prihlasenyUzivatelService;
 
+        public AdminNastaveniViewModel(IAdminNastaveniService service, PrihlasenyUzivatelService prihlasenyUzivatelService)
 
-        public AdminNastaveniViewModel(IAdminNastaveniService service)
         {
             this.service = service;
             this.prihlasenyUzivatelService = prihlasenyUzivatelService;
@@ -68,6 +70,76 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        [RelayCommand]
+        public async Task UpravitUzivateleAsync(Uzivatel uzivatel)
+        {
+            if (uzivatel != null)
+            {
+                await service.UpravitUzivateleAsync(uzivatel);
+                await LoadAsync();
+                MessageBox.Show("Uživatel upraven.");
+            }
+            else
+            {
+                MessageBox.Show("Chyba v úpravě.");
+            }
+        }
+        [RelayCommand]
+        public async Task OdebratUzivateleAsync(Uzivatel uzivatel)
+        {
+            if (uzivatel != null)
+            {
+                await service.OdebratUzivateleAsync(uzivatel);
+                await LoadAsync();
+                MessageBox.Show("Uživatel odebrán.");
+            }
+            else
+                MessageBox.Show("Chyba v odebrání.");
+        }
+        [RelayCommand]
+        public async Task PridatUzivateleAsync()
+        {
+            try
+            {
+                await service.PridatUzivateleAsync(NovyUzivatelPrihlasovaciJmeno, NovyUzivatelHeslo, NovyUzivatelJmenoPolicisty, NovyUzivatelJmenoObcana, NovyUzivatelOpravneni);
+                await LoadAsync();
+                MessageBox.Show("Uživatel přidán.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při přidávání uživatele: " + ex.Message);
+            }
+        }
+
+        [RelayCommand]
+        private void Emulovat(object radek)
+        {
+            var uzivatelRow = radek as Uzivatel;
+            if (uzivatelRow != null)
+            {
+                if (uzivatelRow.Id == prihlasenyUzivatelService.Uzivatel.Id)
+                {
+                    MessageBox.Show("Nelze emulovat sám sebe!");
+                    return;
+                }
+
+
+                string jmeno = uzivatelRow.Username;
+                string heslo = uzivatelRow.Password;
+
+                MessageBox.Show($"Emulace uživatele: {jmeno}");
+
+                var exe = Process.GetCurrentProcess().MainModule!.FileName;
+
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = exe,
+                    ArgumentList = { "--emulace", jmeno, heslo },
+                    UseShellExecute = true
+                });
             }
         }
     }

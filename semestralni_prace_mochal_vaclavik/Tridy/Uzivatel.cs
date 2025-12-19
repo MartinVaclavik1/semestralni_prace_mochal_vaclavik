@@ -173,11 +173,12 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             string storedProcedureName = "UPRAVY_UZIVATELU.smazUzivatele";
             using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.BindByName = true;
-                cmd.Parameters.Add("p_iduzivatele", OracleDbType.Int32).Value = Id;
-                cmd.ExecuteNonQuery();
-                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("p_iduzivatele", OracleDbType.Int32).Value = Id;
+                    cmd.ExecuteNonQuery();
+                    new OracleCommand("COMMIT", conn).ExecuteNonQuery();
             }
          }
 
