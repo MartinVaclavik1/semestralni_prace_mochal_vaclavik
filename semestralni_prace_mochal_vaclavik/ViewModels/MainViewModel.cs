@@ -34,41 +34,10 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
     {
 
         /// <summary>
-        /// Zdroj dat pro DataGrid s kontakty.
-        /// </summary>
-        [ObservableProperty]
-        public DataView kontaktyItemsSource;
-
-        //[ObservableProperty]
-        //public DataView okrskyItemsSource;
-
-        [ObservableProperty]
-        public DataView prestupkyItemsSource;
-
-        /// <summary>
-        /// Zdroj dat pro DataGrid se všemi uživateli.
-        /// </summary>
-        [ObservableProperty]
-        private DataView uzivatelItemsSource;
-
-        /// <summary>
-        /// Aktuálně přihlášený uživatel.
-        /// </summary>
-
-        /// <summary>
         /// Data pro nový účet během registrace.
         /// </summary>
         [ObservableProperty]
         private Registrace novaRegistrace = new Registrace();
-
-        /// <summary>
-        /// Seznam dostupných typů oprávnění v systému.
-        /// </summary>
-        [ObservableProperty]
-        private List<string> opravneniSeznam = new List<string>();
-
-        [ObservableProperty]
-        private List<string> typy_hlidkySeznam = new List<string>();
 
         public PolicisteView PolicisteView { get; }
         public OkrskyView OkrskyView { get; }
@@ -129,43 +98,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             MojePrestupkyView = mojePrestupkyView ?? throw new ArgumentNullException(nameof(mojePrestupkyView));
             SystemovyKatalogView = systemovyKatalogView ?? throw new ArgumentNullException(nameof(systemovyKatalogView));
         }
-
-        /// <summary>
-        /// Emuluje přihlášení jiného uživatele v novém okně bez commitování do databáze.
-        /// </summary>
-        /// <param name = "radek" > Řádek z DataGridu s daty uživatele k emulaci</param>
-        [RelayCommand]
-        public async void Emulovat(object radek)
-        {
-            var uzivatelRow = radek as Uzivatel;
-            if (uzivatelRow != null)
-            {
-                if (uzivatelRow.Id == PrihlasenyUzivatelService.Uzivatel.Id)
-                {
-                    MessageBox.Show("Nelze emulovat sám sebe!");
-                    return;
-                }
-
-                try
-                {
-                    string jmeno = uzivatelRow.Username;
-                    string heslo = uzivatelRow.Password;
-
-                    MessageBox.Show($"Emulace uživatele: {jmeno}");
-
-                    //var emulace = new MainWindow(new MainViewModel());
-                    //emulace.Title = emulace.Title + " - EMULACE";
-                    //((MainViewModel)emulace.DataContext).Prihlas((jmeno, heslo));
-                    //emulace.ShowDialog();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Chyba při získávání dat řádku: " + ex.Message);
-                }
-            }
-        }
-
-
 
         private void Prihlas(string jmeno, string heslo)
         {
