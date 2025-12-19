@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -91,7 +92,7 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
         private BitmapImage? obrazek { get; set; }
         public BitmapImage? Obrazek
         {
-            get { return obrazek != null ? obrazek : LoadBitmap("no-image-icon.png"); } //do db se neuloží protože se tam dává jen bytes, který se nastaví při uložení, nebo načtení
+            get { return obrazek != null ? obrazek : LoadBitmap(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName + "\\Fotky\\no-image-icon.png"); } //do db se neuloží protože se tam dává jen bytes, který se nastaví při uložení, nebo načtení
             set
             {
                 obrazek = value;
