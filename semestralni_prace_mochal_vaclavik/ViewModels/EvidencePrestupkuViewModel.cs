@@ -70,7 +70,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public async Task PridatPrestupekAsync()
         {
             if (string.IsNullOrWhiteSpace(NovyPrestupekUlice) ||
-                NovyPrestupekCP != 0 ||
+                //NovyPrestupekCP != 0 ||
                 string.IsNullOrWhiteSpace(NovyPrestupekObec) ||
                 string.IsNullOrWhiteSpace(NovyPrestupekPSC) ||
                 string.IsNullOrWhiteSpace(VybranyTypPrestupku) ||

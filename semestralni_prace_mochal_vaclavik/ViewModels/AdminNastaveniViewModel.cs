@@ -102,6 +102,24 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         public async Task PridatUzivateleAsync()
         {
+            if (string.IsNullOrWhiteSpace(NovyUzivatelPrihlasovaciJmeno))
+            {
+                MessageBox.Show("Přihlašovací jméno musí být vyplněno.");
+                return;
+            }
+
+            else if (string.IsNullOrWhiteSpace(NovyUzivatelHeslo))
+            {
+                MessageBox.Show("Heslo musí být vyplněno.");
+                return;
+            }
+
+            else if (string.IsNullOrWhiteSpace(NovyUzivatelOpravneni))
+            {
+                MessageBox.Show("Oprávnění musí být vybráno.");
+                return;
+            }
+
             try
             {
                 await service.PridatUzivateleAsync(NovyUzivatelPrihlasovaciJmeno, NovyUzivatelHeslo, NovyUzivatelJmenoPolicisty, NovyUzivatelJmenoObcana, NovyUzivatelOpravneni);

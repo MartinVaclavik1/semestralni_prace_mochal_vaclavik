@@ -192,8 +192,8 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
                 cmd.BindByName = true;
                 cmd.Parameters.Add("p_prihlasovaciJmeno", OracleDbType.Varchar2).Value = prihlasovaciJmeno;
                 cmd.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = heslo;
-                cmd.Parameters.Add("p_jmenoPolicisty", OracleDbType.Varchar2).Value = jmenoPolicisty;
-                cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = jmenoObcana;
+                cmd.Parameters.Add("p_jmenoPolicisty", OracleDbType.Varchar2).Value = jmenoPolicisty ?? (object)DBNull.Value;
+                cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = jmenoObcana ?? (object)DBNull.Value;
                 cmd.Parameters.Add("p_opravneni", OracleDbType.Varchar2).Value = opravneni;
 
                 cmd.ExecuteNonQuery();

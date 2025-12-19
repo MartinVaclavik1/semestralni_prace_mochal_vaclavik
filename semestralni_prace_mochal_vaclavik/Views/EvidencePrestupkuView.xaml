@@ -100,7 +100,7 @@
             <Label Content="ČP" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="3" Margin="121,0,0,0" Height="26" Width="24" Grid.ColumnSpan="2"/>
             <Label Content="Obec" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="5" Height="26" Width="43"/>
             <Label Content="PSČ" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="5" Height="26" Width="31" Margin="121,0,0,0" Grid.ColumnSpan="2"/>
-            
+
             <TextBox Text="{Binding NovyPrestupekPopisZasahu, UpdateSourceTrigger=PropertyChanged}" x:Name="pridatPrestupekPopisZasahu" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="111" Grid.Column="1" Height="20"/>
             <TextBox Text="{Binding NovyPrestupekJmenoObcana, UpdateSourceTrigger=PropertyChanged}" x:Name="pridatPrestupekObcan" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="112" Grid.Column="1" Margin="121,0,0,0" Height="20" Grid.ColumnSpan="2"/>
             <TextBox Text="{Binding NovyPrestupekUlice, UpdateSourceTrigger=PropertyChanged}" x:Name="pridatPrestupekUlice" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="111" Grid.Column="3" Height="20"/>

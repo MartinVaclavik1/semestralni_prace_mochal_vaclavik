@@ -96,8 +96,8 @@
             <Label Grid.Column="4" Content="Oprávnění" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <ComboBox SelectedItem="{Binding NovyUzivatelOpravneni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="3" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Center" Width="104" Margin="166,0,0,0" Grid.ColumnSpan="2" Height="17"
                  ItemsSource="{Binding DataContext.OpravneniSeznam, RelativeSource={RelativeSource AncestorType=Grid}}"/>
-            <TextBox Text="{Binding NovyUzivatelJmenoPolicisty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Margin="166,0,10,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
-            <TextBox Text="{Binding NovyUzivatelJmenoObcana, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.ColumnSpan="2" Margin="110,0,10,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center"/>
+            <TextBox Text="{Binding NovyUzivatelJmenoObcana, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="2" Margin="166,0,10,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
+            <TextBox Text="{Binding NovyUzivatelJmenoPolicisty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.ColumnSpan="2" Margin="110,0,10,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center"/>
             <TextBox Text="{Binding NovyUzivatelPrihlasovaciJmeno, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,10,0"/>
             <TextBox Text="{Binding NovyUzivatelHeslo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,10,0"/>
             <Button Command="{Binding PridatUzivateleCommand}" Grid.Column="5" Content="Přidat" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Center" Width="48"/>
