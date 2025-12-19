@@ -21,7 +21,7 @@ namespace semestralni_prace_mochal_vaclavik
         {
             base.OnStartup(e);
 
-
+            
             var services = new ServiceCollection();
 
 
@@ -37,7 +37,7 @@ namespace semestralni_prace_mochal_vaclavik
             services.AddTransient<IAdminNastaveniRepository, AdminNastaveniRepository>();
             services.AddTransient<IHlidkyRepository, HlidkyRepository>();
             services.AddTransient<ILogovaciTabulkaRepository, LogovaciTabulkaRepository>();
-            services.AddSingleton<PrihlasenyUzivatelRepository>();
+            services.AddTransient<PrihlasenyUzivatelRepository>();
             services.AddTransient<IMojePrestupkyRepository, MojePrestupkyRepository>();
             services.AddTransient<ISystemovyKatalogRepository, SystemovyKatalogRepository>();
 
@@ -48,7 +48,6 @@ namespace semestralni_prace_mochal_vaclavik
             services.AddTransient<IAdminNastaveniService, AdminNastaveniService>();
             services.AddTransient<IHlidkyService, HlidkyService>();
             services.AddTransient<ILogovaciTabulkaService, LogovaciTabulkaService>();
-
             services.AddSingleton<PrihlasenyUzivatelService>();
             services.AddTransient<IMojePrestupkyService, MojePrestupkyService>();
             services.AddTransient<ISystemovyKatalogService, SystemovyKatalogService>();
@@ -80,8 +79,14 @@ namespace semestralni_prace_mochal_vaclavik
             Services = services.BuildServiceProvider();
 
             var mainWindow = Services.GetRequiredService<MainWindow>();
-            mainWindow.Show();
 
+            if (e.Args.Contains("--emulace"))
+            {
+                Services.GetRequiredService<PrihlasenyUzivatelService>().Prihlas(e.Args[1], e.Args[2]);
+                Services.GetRequiredService<MainWindow>().Title += " - EMULACE";
+            }
+
+            mainWindow.Show();
         }
     }
 

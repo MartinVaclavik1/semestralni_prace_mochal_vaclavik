@@ -1,11 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.VisualBasic.ApplicationServices;
 using semestralni_prace_mochal_vaclavik.Services;
 using semestralni_prace_mochal_vaclavik.Tridy;
+using semestralni_prace_mochal_vaclavik.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,6 +41,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public AdminNastaveniViewModel(IAdminNastaveniService service)
         {
             this.service = service;
+            this.prihlasenyUzivatelService = prihlasenyUzivatelService;
             NactiHodnosti();
             LoadAsync();
         }
@@ -65,46 +70,5 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show(ex.Message);
             }
         }
-        [RelayCommand]
-        public async Task UpravitUzivateleAsync(Uzivatel uzivatel)
-        {
-            if (uzivatel != null)
-            {
-                await service.UpravitUzivateleAsync(uzivatel);
-                await LoadAsync();
-                MessageBox.Show("Uživatel upraven.");
-            }
-            else
-            {
-                MessageBox.Show("Chyba v úpravě.");
-            }
-        }
-        [RelayCommand]
-        public async Task OdebratUzivateleAsync(Uzivatel uzivatel)
-        {
-            if (uzivatel != null)
-            {
-                await service.OdebratUzivateleAsync(uzivatel);
-                await LoadAsync();
-                MessageBox.Show("Uživatel odebrán.");
-            }
-            else
-                MessageBox.Show("Chyba v odebrání.");
-        }
-        [RelayCommand]
-        public async Task PridatUzivateleAsync()
-        {
-            try
-            {
-                await service.PridatUzivateleAsync(NovyUzivatelPrihlasovaciJmeno, NovyUzivatelHeslo, NovyUzivatelJmenoPolicisty, NovyUzivatelJmenoObcana, NovyUzivatelOpravneni);
-                await LoadAsync();
-                MessageBox.Show("Uživatel přidán.");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při přidávání uživatele: " + ex.Message);
-            }
-        }
-
     }
 }
