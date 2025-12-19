@@ -27,13 +27,13 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
 
 
 
-        [Required, RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Lze vložit jen písmena")]
+        [Required, RegularExpression(@"^[\p{L}\s-]+$", ErrorMessage = "Lze vložit jen písmena")]
         [NotifyDataErrorInfo]
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
         public string jmeno;
 
-        [Required, RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Lze vložit jen písmena")]
+        [Required, RegularExpression(@"^[\p{L}\s-]+$", ErrorMessage = "Lze vložit jen písmena")]
         [NotifyDataErrorInfo]
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
@@ -65,13 +65,13 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
         [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
         public int? cisloPopisne;
 
-        [Required, RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Lze vložit jen písmena")]
+        [Required, RegularExpression(@"^[\p{L}\s-]+$", ErrorMessage = "Lze vložit jen písmena")]
         [NotifyDataErrorInfo]
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
         public string obec;
 
-        [Required, RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Lze vložit jen písmena")]
+        [Required, RegularExpression(@"^[\p{L}\s-]+$", ErrorMessage = "Lze vložit jen písmena")]
         [NotifyDataErrorInfo]
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RegistrovatCommand))]
