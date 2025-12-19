@@ -577,79 +577,79 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        /// <summary>
-        /// Načítá systémový katalog z databáze a zobrazuje ho v dataGridu.
-        /// </summary>
-        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private void NacistSystemovyKatalog()
-        {
-            try
-            {
-                string sql = @"
-                        SELECT * FROM systemovy_katalogview
-                        ";
+        ///// <summary>
+        ///// Načítá systémový katalog z databáze a zobrazuje ho v dataGridu.
+        ///// </summary>
+        ///// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
+        //private void NacistSystemovyKatalog()
+        //{
+        //    try
+        //    {
+        //        string sql = @"
+        //                SELECT * FROM systemovy_katalogview
+        //                ";
 
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
-                    //Window.SystemovyKatalogView.systemovyKatalogGrid.ItemsSource = dt.DefaultView;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
-            }
-        }
+        //        using (OracleCommand cmd = new OracleCommand(sql, conn))
+        //        {
+        //            OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+        //            DataTable dt = new DataTable();
+        //            adapter.Fill(dt);
+        //            //Window.SystemovyKatalogView.systemovyKatalogGrid.ItemsSource = dt.DefaultView;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
+        //    }
+        //}
 
-        /// <summary>
-        /// Načítá seznam policistů z databáze.
-        /// </summary>
-        /// <remarks>
-        /// Zobrazuje policisty na kartě Kontakty.
-        /// </remarks>
-        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private void NacistKontakty()
-        {
-            try
-            {
-                string sql = @"
-                        SELECT
-                            *
-                        FROM 
-                            kontaktyView
-                        ";
+        ///// <summary>
+        ///// Načítá seznam policistů z databáze.
+        ///// </summary>
+        ///// <remarks>
+        ///// Zobrazuje policisty na kartě Kontakty.
+        ///// </remarks>
+        ///// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
+        //private void NacistKontakty()
+        //{
+        //    try
+        //    {
+        //        string sql = @"
+        //                SELECT
+        //                    *
+        //                FROM 
+        //                    kontaktyView
+        //                ";
 
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
+        //        using (OracleCommand cmd = new OracleCommand(sql, conn))
+        //        {
+        //            OracleDataAdapter adapter = new OracleDataAdapter(cmd);
+        //            DataTable dt = new DataTable();
+        //            adapter.Fill(dt);
 
-                    UzivatelItemsSource = dt.DefaultView;
-                    Polic.Clear();
-                    foreach (DataRow item in dt.Rows)
-                    {
+        //            UzivatelItemsSource = dt.DefaultView;
+        //            Polic.Clear();
+        //            foreach (DataRow item in dt.Rows)
+        //            {
 
-                        Polic.Add(new Policista
-                        {
-                            Id = (int)item.Field<decimal>("idpolicisty"),
-                            Jmeno = item.Field<string>("jmeno"),
-                            Prijmeni = item.Field<string>("prijmeni"),
-                            Hodnost = item.Field<string>("hodnost"),
-                            Nadrizeny = item.Field<string>("nadrizeny"),
-                            Stanice = item.Field<string>("stanice")
-                        });
+        //                Polic.Add(new Policista
+        //                {
+        //                    Id = (int)item.Field<decimal>("idpolicisty"),
+        //                    Jmeno = item.Field<string>("jmeno"),
+        //                    Prijmeni = item.Field<string>("prijmeni"),
+        //                    Hodnost = item.Field<string>("hodnost"),
+        //                    Nadrizeny = item.Field<string>("nadrizeny"),
+        //                    Stanice = item.Field<string>("stanice")
+        //                });
 
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
-            }
-        }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
+        //    }
+        //}
 
         /// <summary>
         /// Načítá přestupky přihlášeného občana.

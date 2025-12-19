@@ -132,5 +132,9 @@ namespace semestralni_prace_mochal_vaclavik.Services
             OnPropertyChanged(nameof(NeprihlasenyVisible));
             OnPropertyChanged(nameof(AdministratorEnabled));
         }
+        public int GetIdUzivatele()
+        {
+            return Uzivatel.Id;
+        }
     }
 }

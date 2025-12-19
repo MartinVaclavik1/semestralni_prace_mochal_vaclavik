@@ -11,5 +11,8 @@ namespace semestralni_prace_mochal_vaclavik.Services
     {
         Task<List<Uzivatel>> GetUzivateleAsync();
         List<string> GetOpravneni();
+        Task UpravitUzivateleAsync(Uzivatel uzivatel);
+        Task OdebratUzivateleAsync(Uzivatel uzivatel);
+        Task PridatUzivateleAsync(string prihlasovaciJmeno, string heslo, string jmenoPolicisty, string jmenoObcana, string opravneni);
     }
 }

@@ -21,6 +21,19 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [ObservableProperty]
         private List<string> opravneniSeznam = new List<string>();
 
+        [ObservableProperty]
+        private string novyUzivatelPrihlasovaciJmeno;
+        [ObservableProperty]
+        private string novyUzivatelHeslo;
+        [ObservableProperty]
+        private string novyUzivatelJmenoPolicisty;
+        [ObservableProperty]
+        private string novyUzivatelJmenoObcana;
+        [ObservableProperty]
+        private string novyUzivatelOpravneni;
+
+
+
         public AdminNastaveniViewModel(IAdminNastaveniService service)
         {
             this.service = service;
@@ -52,5 +65,46 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show(ex.Message);
             }
         }
+        [RelayCommand]
+        public async Task UpravitUzivateleAsync(Uzivatel uzivatel)
+        {
+            if (uzivatel != null)
+            {
+                await service.UpravitUzivateleAsync(uzivatel);
+                await LoadAsync();
+                MessageBox.Show("Uživatel upraven.");
+            }
+            else
+            {
+                MessageBox.Show("Chyba v úpravě.");
+            }
+        }
+        [RelayCommand]
+        public async Task OdebratUzivateleAsync(Uzivatel uzivatel)
+        {
+            if (uzivatel != null)
+            {
+                await service.OdebratUzivateleAsync(uzivatel);
+                await LoadAsync();
+                MessageBox.Show("Uživatel odebrán.");
+            }
+            else
+                MessageBox.Show("Chyba v odebrání.");
+        }
+        [RelayCommand]
+        public async Task PridatUzivateleAsync()
+        {
+            try
+            {
+                await service.PridatUzivateleAsync(NovyUzivatelPrihlasovaciJmeno, NovyUzivatelHeslo, NovyUzivatelJmenoPolicisty, NovyUzivatelJmenoObcana, NovyUzivatelOpravneni);
+                await LoadAsync();
+                MessageBox.Show("Uživatel přidán.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Chyba při přidávání uživatele: " + ex.Message);
+            }
+        }
+
     }
 }

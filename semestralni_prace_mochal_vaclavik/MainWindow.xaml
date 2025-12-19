@@ -41,52 +41,64 @@
                     <ColumnDefinition Width="20*"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <TextBlock x:Name="VítejteTxt" VerticalAlignment="Center" TextWrapping="Wrap" Height="346" Grid.Column="1"><Run Text="Vítejte na informačním portálu Policie České Republiky"/><LineBreak/><Run FontStyle="Italic" Text="Tento systém slouží k efektivní správě,"/><Run FontStyle="Italic" Language="cs-cz" Text=";"/><Run FontStyle="Italic" Text=" záznamů. Poskytuje rychlý a bezpečný přístup k relevantním informacím potřebným pro výkon služby."/><LineBreak/><Run/><LineBreak/><Run Text="Základní Funkce a Přehled:"/><LineBreak/><Run Text=" - "/><Run Text="Kontakty: Rychlý přehled aktivních policistů, jejich hodností a aktuálního umístění na služebních stanicích."/><LineBreak/><Run Text=" - "/><Run Text="Evidence Přestupků: Detailní záznamy o spáchaných přestupcích s možností vyhledávání a klasifikace."/><LineBreak/><Run Text=" - "/><Run Text="Okrsky a Hlídky: Správa a přehled přidělených okrsků a monitorování aktivních hlídek v terénu."/><LineBreak/><Run/><LineBreak/><Run Text="Můj Účet:"/><LineBreak/><Run Text=" - "/><Run Text="Přihlášeným uživatelům je k dispozici sekce pro správu osobních údajů."/><LineBreak/><Run/><LineBreak/><Run Text="Důležité Upozornění:"/><LineBreak/><Run FontStyle="Italic" Text="Tento portál pracuje s citlivými a osobními údaji. Přístup k datům pod je omezen pouze na autorizované pracovníky Policie ČR. Pro plný přístup se prosím přihlaste."/></TextBlock>
+                <TextBlock x:Name="VítejteTxt"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"
+                           Height="346"
+                           Grid.Column="1"><Run FontWeight="Bold" Text="Vítejte na informačním portálu Policie České Republiky"/><LineBreak/><Run FontStyle="Italic" Text="Tento systém slouží k efektivní správě"/><Run FontStyle="Italic" Text=" "/><Run FontStyle="Italic" Text="záznamů. Poskytuje rychlý a bezpečný přístup k relevantním informacím potřebným pro výkon služby."/><LineBreak/><Run/><LineBreak/><Run FontWeight="Bold" Text="Základní Funkce a Přehled:"/><LineBreak/><Run Text=" - "/><Run Text="Kontakty: Rychlý přehled aktivních policistů, jejich hodností a aktuálního umístění na služebních stanicích."/><LineBreak/><Run Text=" - "/><Run Text="Evidence Přestupků: Detailní záznamy o spáchaných přestupcích s možností vyhledávání a klasifikace."/><LineBreak/><Run Text=" - "/><Run Text="Okrsky a Hlídky: Správa a přehled přidělených okrsků a monitorování aktivních hlídek v terénu."/><LineBreak/><Run/><LineBreak/><Run FontWeight="Bold" Text="Můj Účet:"/><LineBreak/><Run Text=" - "/><Run Text="Přihlášeným uživatelům je k dispozici sekce pro správu osobních údajů."/><LineBreak/><Run/><LineBreak/><Run FontWeight="Bold" Text="Důležité Upozornění:"/><LineBreak/><Run FontStyle="Italic" Text="Tento portál pracuje s citlivými a osobními údaji. Přístup k datům pod je omezen pouze na autorizované pracovníky Policie ČR. Pro plný přístup se prosím přihlaste."/></TextBlock>
             </Grid>
         </TabItem>
 
         <!-- Karta: Kontakty (OPRÁVNĚNÍ: Občan+) -->
-        <TabItem x:Name="Kontakty" Header="Policiste"
-                 Visibility="{Binding PrihlasenyUzivatelService.ObcanVisible}" Height="22" Margin="-2,0,-2,0" VerticalAlignment="Bottom">
+        <TabItem x:Name="Kontakty"
+                 Header="Policiste"
+                 Visibility="{Binding PrihlasenyUzivatelService.ObcanVisible}">
 
             <!--<views:PolicisteView />-->
             <ContentControl Content="{Binding PolicisteView}" />
 
         </TabItem>
 
-        <TabItem x:Name="Okrsky" Header="Okrsky"
+        <TabItem x:Name="Okrsky"
+                 Header="Okrsky"
                  Visibility="{Binding PrihlasenyUzivatelService.PolicistaVisible}" >
 
             <ContentControl Content="{Binding OkrskyView}" />
         </TabItem>
 
         <!-- Karta: Evidence přestupků (OPRÁVNĚNÍ: Policista+) -->
-        <TabItem x:Name="Prestupky" Header="Evidence přestupků"
+        <TabItem x:Name="Prestupky"
+                 Header="Evidence přestupků"
                  Visibility="{Binding PrihlasenyUzivatelService.PolicistaVisible}">
 
             <ContentControl Content="{Binding EvidencePrestupkuView}" />
         </TabItem>
 
 
-        <TabItem x:Name="MojePrestupky" Header="Moje Přestupky" Visibility="{Binding PrihlasenyUzivatelService.JenObcanVisible}">
+        <TabItem x:Name="MojePrestupky"
+                 Header="Moje Přestupky"
+                 Visibility="{Binding PrihlasenyUzivatelService.JenObcanVisible}">
             <ContentControl Content="{Binding MojePrestupkyView}" />
         </TabItem>
 
         <!-- Karta: Hlídky a Zásahy (OPRÁVNĚNÍ: Policista+) - PŘIDÁNY FILTRY -->
-        <TabItem x:Name="Hlidky" Header="Hlídky"
+        <TabItem x:Name="Hlidky"
+                 Header="Hlídky"
                  Visibility="{Binding PrihlasenyUzivatelService.PolicistaVisible}">
 
             <ContentControl Content="{Binding HlidkyView}" />
         </TabItem>
 
         <!-- Karta: Můj účet (OPRÁVNĚNÍ: Všichni přihlášení, Editace pro Policista+) -->
-        <TabItem x:Name="Ucet" Header="Můj účet"
+        <TabItem x:Name="Ucet"
+                 Header="Můj účet"
                  Visibility="{Binding PrihlasenyUzivatelService.ObcanVisible}">
             <ContentControl Content="{Binding UcetView}" />
         </TabItem>
 
         <!-- Karta: Admin nastavení (OPRÁVNĚNÍ: Admin) -->
-        <TabItem x:Name="Admin" Header="Admin nastavení"
+        <TabItem x:Name="Admin"
+                 Header="Admin nastavení"
                  Visibility="{Binding PrihlasenyUzivatelService.AdministratorVisible}">
             <ContentControl Content="{Binding AdminView}" />
         </TabItem>
@@ -98,7 +110,9 @@
         </TabItem>
 
 
-        <TabItem x:Name="SystemovyKatalog" Header="Systémový katalog" Visibility="{Binding PrihlasenyUzivatelService.AdministratorVisible}">
+        <TabItem x:Name="SystemovyKatalog"
+                 Header="Systémový katalog"
+                 Visibility="{Binding PrihlasenyUzivatelService.AdministratorVisible}">
             <ContentControl Content="{Binding SystemovyKatalogView}" />
 
         </TabItem>

@@ -64,5 +64,29 @@ namespace semestralni_prace_mochal_vaclavik.Repository
 
             return result;
         }
+
+        public async Task UpravitUzivateleAsync(Uzivatel uzivatel)
+        {
+            using var conn = connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+            uzivatel.Uloz(conn);
+        }
+
+        public async Task OdebratUzivateleAsync(Uzivatel uzivatel)
+        {
+            using var conn = connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+            uzivatel.Smaz(conn);
+        }
+
+        public async Task PridatUzivateleAsync(string prihlasovaciJmeno, string heslo, string jmenoPolicisty, string jmenoObcana, string opravneni)
+        {
+            using var conn = connectionFactory.CreateConnection();
+            if (conn.State != ConnectionState.Open)
+                await conn.OpenAsync();
+            new Uzivatel().Pridej(conn, prihlasovaciJmeno, heslo, jmenoPolicisty, jmenoObcana, opravneni);
+        }
     }
 }

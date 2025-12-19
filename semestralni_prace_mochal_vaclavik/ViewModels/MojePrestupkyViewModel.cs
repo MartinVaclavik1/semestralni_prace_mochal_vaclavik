@@ -13,14 +13,16 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
     public partial class MojePrestupkyViewModel : ObservableObject
     {
         private readonly IMojePrestupkyService service;
+        private readonly PrihlasenyUzivatelService prihlasenyUzivatelService;
 
         [ObservableProperty]
         private DataTable mojePrestupky;
-        
-        public MojePrestupkyViewModel(IMojePrestupkyService service)
+
+        public MojePrestupkyViewModel(IMojePrestupkyService mojePrestupkyService, PrihlasenyUzivatelService prihlasenyUzivatelService)
         {
             
-            this.service = service;
+            this.service = mojePrestupkyService;
+            this.prihlasenyUzivatelService = prihlasenyUzivatelService;
             LoadAsync();
         }
 
@@ -28,8 +30,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                // TODO dodělat
-                int idUzivatele = 0;
+                int idUzivatele = prihlasenyUzivatelService.GetIdUzivatele();
                 MojePrestupky = await service.GetMojePrestupkyAsync(idUzivatele);
 
             }

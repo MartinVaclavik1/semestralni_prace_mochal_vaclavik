@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -148,5 +150,53 @@ namespace semestralni_prace_mochal_vaclavik.Tridy
             }
         }
 
+        public void Uloz(OracleConnection conn)
+        {
+            string storedProcedureName = "UPRAVY_UZIVATELU.upravitUzivatele";
+            using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.BindByName = true;
+                cmd.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = Username;
+                cmd.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = Password;
+
+                cmd.Parameters.Add("p_typOpravneni", OracleDbType.Varchar2).Value = Opravneni;
+                cmd.Parameters.Add("p_iduzivatele", OracleDbType.Int32).Value = Id;
+                cmd.ExecuteNonQuery();
+                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+                zmenen = false;
+            }
+        }
+
+        public void Smaz(OracleConnection conn)
+        {
+            string storedProcedureName = "UPRAVY_UZIVATELU.smazUzivatele";
+            using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.BindByName = true;
+                cmd.Parameters.Add("p_iduzivatele", OracleDbType.Int32).Value = Id;
+                cmd.ExecuteNonQuery();
+                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+            }
+         }
+
+        public void Pridej(OracleConnection conn, string prihlasovaciJmeno, string heslo, string jmenoPolicisty, string jmenoObcana, string opravneni)
+        {
+            string storedProcedureName = "UPRAVY_UZIVATELU.pridejUzivatele";
+            using (OracleCommand cmd = new OracleCommand(storedProcedureName, conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.BindByName = true;
+                cmd.Parameters.Add("p_prihlasovaciJmeno", OracleDbType.Varchar2).Value = prihlasovaciJmeno;
+                cmd.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = heslo;
+                cmd.Parameters.Add("p_jmenoPolicisty", OracleDbType.Varchar2).Value = jmenoPolicisty;
+                cmd.Parameters.Add("p_jmenoObcana", OracleDbType.Varchar2).Value = jmenoObcana;
+                cmd.Parameters.Add("p_opravneni", OracleDbType.Varchar2).Value = opravneni;
+
+                cmd.ExecuteNonQuery();
+                new OracleCommand("COMMIT", conn).ExecuteNonQuery();
+            }
+        }
     }
 }

@@ -19,5 +19,20 @@ namespace semestralni_prace_mochal_vaclavik.Services
         public Task<List<Uzivatel>> GetUzivateleAsync() => repo.GetUzivateleAsync();
         
         public List<string> GetOpravneni() => repo.GetOpravneni();
+
+        public async Task UpravitUzivateleAsync(Uzivatel uzivatel)
+        {
+            await repo.UpravitUzivateleAsync(uzivatel);
+        }
+
+        public async Task OdebratUzivateleAsync(Uzivatel uzivatel)
+        {
+            await repo.OdebratUzivateleAsync(uzivatel);
+        }
+
+        public async Task PridatUzivateleAsync(string prihlasovaciJmeno, string heslo, string jmenoPolicisty, string jmenoObcana, string opravneni)
+        {
+            await repo.PridatUzivateleAsync(prihlasovaciJmeno, heslo, jmenoPolicisty, jmenoObcana, opravneni);
+        }
     }
 }
