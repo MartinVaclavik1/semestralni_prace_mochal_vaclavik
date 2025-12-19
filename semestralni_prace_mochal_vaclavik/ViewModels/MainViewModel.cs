@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.IO;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -76,8 +77,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// <summary>
         /// Aktuálně přihlášený uživatel.
         /// </summary>
-        [ObservableProperty]
-        private Uzivatel uzivatel = new Uzivatel();
+        //[ObservableProperty]
+        //private Uzivatel uzivatel;
 
         /// <summary>
         /// Data pro nový účet během registrace.
@@ -102,6 +103,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public PrihlaseniView PrihlaseniView { get; }
         public UcetView UcetView { get; }
         public LogovaciTabulkaView LogovaciTabulkaView { get; }
+
+        [ObservableProperty]
+        public PrihlasenyUzivatelService prihlasenyUzivatelService;
 
         [ObservableProperty]
         private int vybranyIndex = 0;
@@ -130,7 +134,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public MainViewModel(PolicisteView policisteView, OkrskyView okrskyView,
             EvidencePrestupkuView evidencePrestupkuView, AdminView adminView,
             HlidkyView hlidkyView, PrihlaseniView prihlaseniView,
-            UcetView ucetView, LogovaciTabulkaView logovaciTabulkaView)
+            UcetView ucetView, LogovaciTabulkaView logovaciTabulkaView,
+            PrihlasenyUzivatelService prihlasenyUzivatelService)
         {
             PolicisteView = policisteView ?? throw new ArgumentNullException(nameof(policisteView));
             OkrskyView = okrskyView ?? throw new ArgumentNullException(nameof(okrskyView));
@@ -140,6 +145,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             PrihlaseniView = prihlaseniView ?? throw new ArgumentNullException(nameof(prihlaseniView));
             UcetView = ucetView ?? throw new ArgumentNullException(nameof(ucetView));
             LogovaciTabulkaView = logovaciTabulkaView ?? throw new ArgumentNullException(nameof(logovaciTabulkaView));
+            PrihlasenyUzivatelService = prihlasenyUzivatelService;
 
             try
             {
@@ -151,21 +157,11 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show(ex.Message);
             }
             Prihlas("Oli", "12345");
-            NastavOknaPodleOpravneni(); //vše se schová kromě úvodního okna a přihlášení
         }
 
         /// <summary>
         /// Určuje viditelnost ovládacích prvků pro policisty.
         /// </summary>
-        public Visibility PolicistaVisible => IsAtLeastRole("policista") ? Visibility.Visible : Visibility.Collapsed;
-
-        public Visibility AdministratorVisible => IsAtLeastRole("administrator") ? Visibility.Visible : Visibility.Collapsed;
-
-        public Visibility ObcanVisible => IsAtLeastRole("obcan") ? Visibility.Visible : Visibility.Collapsed;
-
-        public Visibility JenObcanVisible => Uzivatel.Opravneni == "obcan" ? Visibility.Visible : Visibility.Collapsed;
-
-        public Visibility NeprihlasenyVisible => IsAtLeastRole("obcan") ? Visibility.Collapsed : Visibility.Visible;
 
 
         //public Visibility KontaktyVisible => Visibility.Collapsed;
@@ -180,7 +176,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             var uzivatelRow = radek as Uzivatel;
             if (uzivatelRow != null)
             {
-                if (uzivatelRow.Id == Uzivatel.Id)
+                if (uzivatelRow.Id == PrihlasenyUzivatelService.Uzivatel.Id)
                 {
                     MessageBox.Show("Nelze emulovat sám sebe!");
                     return;
@@ -217,7 +213,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
             if (uzivatelRow != null && uzivatelRow.Zmenen)
             {
-                if (uzivatelRow.Id == Uzivatel.Id)
+                if (uzivatelRow.Id == PrihlasenyUzivatelService.Uzivatel.Id)
                 {
                     MessageBox.Show("Nelze editovat sám sebe! \n Pro editaci použijte \"Můj účet\"");
                     return;
@@ -271,7 +267,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
             if (uzivatelRow != null)
             {
-                if (uzivatelRow.Id == Uzivatel.Id)
+                if (uzivatelRow.Id == PrihlasenyUzivatelService.Uzivatel.Id)
                 {
                     MessageBox.Show("Nelze odstranit sám sebe!");
                     return;
@@ -319,7 +315,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         private void Prihlas(string jmeno, string heslo)
         {
             PrihlasovaciJmeno = jmeno;
-
             Heslo = heslo;
             Prihlas();
         }
@@ -337,84 +332,76 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                string sql = @"
-                        select * from datauctuview where id = 
-                        (select prihlaseni(:prihlJmeni,:heslo) from Dual)";
+                PrihlasenyUzivatelService.Prihlas(PrihlasovaciJmeno, Heslo);
 
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    cmd.Parameters.Add(new OracleParameter("prihlJmeno", PrihlasovaciJmeno));
-                    cmd.Parameters.Add(new OracleParameter("heslo", Heslo));
+                VybranyIndex = 0;
 
-                    using (OracleDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            Uzivatel.Id = int.Parse(reader["id"].ToString());
-                            Uzivatel.Username = reader["prihlasovacijmeno"].ToString();
-                            var blob = reader.GetOracleBlob(2);
-                            if (!blob.IsNull)
-                            {
-                                Uzivatel.ObrazekBytes = nactiByteZBLOB(blob);
-                                Uzivatel.Obrazek = vytvorObrazek(Uzivatel.ObrazekBytes);
-                            }
+                PrihlasovaciJmeno = String.Empty;
+                PrihlaseniView.PasswordBox.Clear();
+                Heslo = String.Empty;
 
+                Task.Run(() => { MessageBox.Show("Uživatel přihlášen"); });
 
-                            Uzivatel.Opravneni = reader["nazevopravneni"].ToString();
+                //    string sql = @"
+                //            select * from datauctuview where id = 
+                //            (select prihlaseni(:prihlJmeni,:heslo) from Dual)";
 
-                            if (Uzivatel.Opravneni == "obcan")
-                            {
-                                Uzivatel.Jmeno = reader["o_jmeno"].ToString();
-                                Uzivatel.Prijmeni = reader["o_prijmeni"].ToString();
+                //    using (OracleCommand cmd = new OracleCommand(sql, conn))
+                //    {
+                //        cmd.Parameters.Add(new OracleParameter("prihlJmeno", PrihlasovaciJmeno));
+                //        cmd.Parameters.Add(new OracleParameter("heslo", Heslo));
 
-                            }
-                            else
-                            {
-                                Uzivatel.Jmeno = reader["p_jmeno"].ToString();
-                                Uzivatel.Prijmeni = reader["p_prijmeni"].ToString();
-                            }
-                            VybranyIndex = 0;
-
-                            PrihlasovaciJmeno = String.Empty;
-                            PrihlaseniView.PasswordBox.Clear();
-                            Heslo = String.Empty;
+                //        using (OracleDataReader reader = cmd.ExecuteReader())
+                //        {
+                //            if (reader.Read())
+                //            {
+                //                Uzivatel.Id = int.Parse(reader["id"].ToString());
+                //                Uzivatel.Username = reader["prihlasovacijmeno"].ToString();
+                //                var blob = reader.GetOracleBlob(2);
+                //                if (!blob.IsNull)
+                //                {
+                //                    Uzivatel.ObrazekBytes = nactiByteZBLOB(blob);
+                //                    Uzivatel.Obrazek = vytvorObrazek(Uzivatel.ObrazekBytes);
+                //                }
 
 
-                            Task.Run(() => { MessageBox.Show("Uživatel přihlášen"); });
+                //                Uzivatel.Opravneni = reader["nazevopravneni"].ToString();
+
+                //                if (Uzivatel.Opravneni == "obcan")
+                //                {
+                //                    Uzivatel.Jmeno = reader["o_jmeno"].ToString();
+                //                    Uzivatel.Prijmeni = reader["o_prijmeni"].ToString();
+
+                //                }
+                //                else
+                //                {
+                //                    Uzivatel.Jmeno = reader["p_jmeno"].ToString();
+                //                    Uzivatel.Prijmeni = reader["p_prijmeni"].ToString();
+                //                }
+                //                VybranyIndex = 0;
+
+                //                PrihlasovaciJmeno = String.Empty;
+                //                PrihlaseniView.PasswordBox.Clear();
+                //                Heslo = String.Empty;
 
 
-                        }
-                        else
-                        {
-                            MessageBox.Show("Špatné přihlašovací údaje");
-                        }
-                    }
-                }
+                //                Task.Run(() => { MessageBox.Show("Uživatel přihlášen"); });
+
+
+                //            }
+                //            else
+                //            {
+                //                MessageBox.Show("Špatné přihlašovací údaje");
+                //            }
+                //        }
+                //    }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Chyba při načítání uživatele: " + ex.Message);
             }
-            NastavOknaPodleOpravneni();
         }
 
-        /// <summary>
-        /// Načítá binární data z Oracle BLOB objektu do pole bajtů.
-        /// </summary>
-        /// <param name="imgBlob">Oracle BLOB objekt s daty obrázku</param>
-        /// <returns>
-        /// Pole bajtů obsahující obsah BLOBu, nebo null pokud je BLOB prázdný
-        /// </returns>
-        private byte[] nactiByteZBLOB(OracleBlob imgBlob)
-        {
-            if (imgBlob == null)
-                return null;
-
-            byte[] imgBytes = new byte[imgBlob.Length];
-            imgBlob.Read(imgBytes, 0, (int)imgBlob.Length);
-
-            return imgBytes;
-        }
 
         /// <summary>
         /// Odhlašuje aktuálně přihlášeného uživatele z systému.
@@ -425,10 +412,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         private void Odhlas()
         {
-            Uzivatel.Resetuj();
+            PrihlasenyUzivatelService.Odhlas();
             VybranyIndex = 0;
-            NastavOknaPodleOpravneni();
-
         }
 
         /// <summary>
@@ -450,40 +435,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             //&& Window.heslotxt.Text != string.Empty;
         }
 
-        /// <summary>
-        /// Nastavuje viditelnost všech oken a ovládacích prvků na základě role přihlášeného uživatele.
-        /// </summary>
-        /// <remarks>
-        /// Tato metoda řídí zobrazení všech sekcí UI podle hierarchie oprávnění:
-        /// - obcan: Vidí Kontakty, Můj účet, Moje přestupky
-        /// - policista: Vidí vše pro obcana + Okrsky, Přestupky, Hlídky
-        /// - administrator: Vidí vše + Admin panel, Logovací tabulka, Systémový katalog
-        /// </remarks>
-        private void NastavOknaPodleOpravneni()
-        {
-            OnPropertyChanged(nameof(PolicistaVisible));
-            OnPropertyChanged(nameof(AdministratorVisible));
-            OnPropertyChanged(nameof(ObcanVisible));
-            OnPropertyChanged(nameof(JenObcanVisible));
-            OnPropertyChanged(nameof(NeprihlasenyVisible));
-        }
 
-        /// <summary>
-        /// Ověřuje, zda má uživatel požadované oprávnění nebo vyšší.
-        /// </summary>
-        /// <param name="requiredRole">Požadovaná role: "administrator", "policista", nebo "obcan"</param>
-        /// <returns>true pokud uživatel má požadované oprávnění nebo vyšší, jinak false</returns>
-        /// <remarks>
-        /// Hierarchie rolí: administrator > policista > obcan
-        /// </remarks>
-        private bool IsAtLeastRole(string requiredRole)
-        {
-            // Kontrola role, pokud by se v budoucnu přidaly další úrovně
-            if (Uzivatel.Opravneni == "administrator") return true;
-            if (Uzivatel.Opravneni == "policista" && (requiredRole == "policista" || requiredRole == "obcan")) return true;
-            if (Uzivatel.Opravneni == "obcan" && requiredRole == "obcan") return true;
-            return false;
-        }
 
         /// <summary>
         /// Registruje nového občana v systému.
@@ -496,35 +448,13 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniRegistrace))]
         private void Registrovat()
         {
-
             try
             {
-                using (OracleCommand cmdAdresa = new OracleCommand("vytvor_uzivatele_obcana", conn))
-                {
-                    cmdAdresa.CommandType = CommandType.StoredProcedure;
-                    cmdAdresa.BindByName = true;
+                PrihlasenyUzivatelService.Registrovat(NovaRegistrace);
 
-                    cmdAdresa.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = novaRegistrace.Username;
-                    cmdAdresa.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = novaRegistrace.Heslo;
-                    cmdAdresa.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = novaRegistrace.Jmeno;
-                    cmdAdresa.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = novaRegistrace.Prijmeni;
-
-                    cmdAdresa.Parameters.Add("p_cisloop", OracleDbType.Decimal).Value = Convert.ToInt32(novaRegistrace.CisloOP);
-                    cmdAdresa.Parameters.Add("p_psc", OracleDbType.Char, 5).Value = novaRegistrace.PSC;
-                    cmdAdresa.Parameters.Add("p_ulice", OracleDbType.Varchar2).Value = novaRegistrace.Ulice;
-                    cmdAdresa.Parameters.Add("p_cislopopisne", OracleDbType.Decimal).Value = Convert.ToInt32(novaRegistrace.CisloPopisne);
-
-                    cmdAdresa.Parameters.Add("p_obec", OracleDbType.Varchar2).Value = novaRegistrace.Obec;
-                    cmdAdresa.Parameters.Add("p_zeme", OracleDbType.Varchar2).Value = novaRegistrace.Zeme;
-
-                    cmdAdresa.ExecuteNonQuery();
-                }
-                conn.Commit();
-
-                MessageBox.Show($"Uživatel {NovaRegistrace.Username} Heslo {novaRegistrace.Heslo}.", "Registrace", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Uživatel {NovaRegistrace.Username} vytvořen.", "Registrace", MessageBoxButton.OK, MessageBoxImage.Information);
                 Prihlas(NovaRegistrace.Username, NovaRegistrace.Heslo);
                 NovaRegistrace.Clear();
-
             }
             catch (Exception ex)
             {
@@ -545,42 +475,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             try
             {
-                using (OracleCommand cmdUcet = new OracleCommand("aktualizuj_ucet", conn))
-                {
-                    cmdUcet.CommandType = CommandType.StoredProcedure;
-                    cmdUcet.BindByName = true;
-                    cmdUcet.Parameters.Add("p_id", OracleDbType.Int32).Value = uzivatel.Id;
-                    cmdUcet.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatel.Username;
-                    cmdUcet.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatel.Password;
-                    cmdUcet.Parameters.Add("p_obrazek", OracleDbType.Blob).Value = uzivatel.ObrazekBytes;
-                    cmdUcet.ExecuteNonQuery();
-                }
-                conn.Commit();
-
-
-                string volanaMetoda;
-                if (Uzivatel.Opravneni == "obcan")
-                {
-                    volanaMetoda = "aktualizuj_jmeno_prijmeni_obcana";
-                }
-                else
-                {
-                    volanaMetoda = "aktualizuj_jmeno_prijmeni_policisty";
-                }
-
-                using (OracleCommand cmdJmenoPrijmeni = new OracleCommand(volanaMetoda, conn))
-                {
-                    cmdJmenoPrijmeni.CommandType = CommandType.StoredProcedure;
-                    cmdJmenoPrijmeni.BindByName = true;
-
-                    // p_idUzivatele number, p_jmeno varchar2, p_prijmeni varchar2
-                    cmdJmenoPrijmeni.Parameters.Add("p_idUzivatele", OracleDbType.Int32).Value = Uzivatel.Id;
-                    cmdJmenoPrijmeni.Parameters.Add("p_jmeno", OracleDbType.Varchar2).Value = Uzivatel.Jmeno;
-                    cmdJmenoPrijmeni.Parameters.Add("p_prijmeni", OracleDbType.Varchar2).Value = Uzivatel.Prijmeni;
-
-                    cmdJmenoPrijmeni.ExecuteNonQuery();
-                }
-                conn.Commit();
+                PrihlasenyUzivatelService.AktualizovatUcet();
                 UcetView.HesloTxt.Clear();
                 MessageBox.Show($"Účet aktualizován.", "Aktualizace", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -766,7 +661,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 using (OracleCommand cmd = new OracleCommand(sql, conn))
                 {
 
-                    cmd.Parameters.Add(new OracleParameter("id", Uzivatel.Id));
+                    cmd.Parameters.Add(new OracleParameter("id", PrihlasenyUzivatelService.Uzivatel.Id));
                     OracleDataAdapter adapter = new OracleDataAdapter(cmd);
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
@@ -796,8 +691,9 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 openFileDialog.ShowDialog();
                 byte[] imageBytes = File.ReadAllBytes(openFileDialog.FileName);
-                Uzivatel.Obrazek = vytvorObrazek(imageBytes);
-                Uzivatel.ObrazekBytes = imageBytes;
+                PrihlasenyUzivatelService.NastavObrazekZBytes(imageBytes);
+                //PrihlasenyUzivatelService.Uzivatel.Obrazek = vytvorObrazek(imageBytes);
+                //Uzivatel.ObrazekBytes = imageBytes;
 
                 MessageBox.Show("Profilový obrázek byl úspěšně nahrán a uložen.", "Úspěch");
             }
@@ -807,27 +703,27 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        /// <summary>
-        /// Konvertuje binární data obrázku na BitmapImage pro zobrazení v UI.
-        /// </summary>
-        /// <param name="imageBytes">Pole bajtů s daty obrázku</param>
-        /// <returns>BitmapImage objekt připravený k zobrazení</returns>
-        /// <remarks>
-        /// Obrázek je "zmrazen" (Freeze) pro optimalizaci výkonu v WPF.
-        /// </remarks>
-        private BitmapImage vytvorObrazek(byte[] imageBytes)
-        {
-            BitmapImage img = new BitmapImage();
-            using (MemoryStream stream = new MemoryStream(imageBytes))
-            {
-                img.BeginInit();
-                img.CacheOption = BitmapCacheOption.OnLoad;
-                img.StreamSource = stream;
-                img.EndInit();
-                img.Freeze();
-            }
-            return img;
-        }
+        ///// <summary>
+        ///// Konvertuje binární data obrázku na BitmapImage pro zobrazení v UI.
+        ///// </summary>
+        ///// <param name="imageBytes">Pole bajtů s daty obrázku</param>
+        ///// <returns>BitmapImage objekt připravený k zobrazení</returns>
+        ///// <remarks>
+        ///// Obrázek je "zmrazen" (Freeze) pro optimalizaci výkonu v WPF.
+        ///// </remarks>
+        //private BitmapImage vytvorObrazek(byte[] imageBytes)
+        //{
+        //    BitmapImage img = new BitmapImage();
+        //    using (MemoryStream stream = new MemoryStream(imageBytes))
+        //    {
+        //        img.BeginInit();
+        //        img.CacheOption = BitmapCacheOption.OnLoad;
+        //        img.StreamSource = stream;
+        //        img.EndInit();
+        //        img.Freeze();
+        //    }
+        //    return img;
+        //}
 
         /// <summary>
         /// Odstraňuje profilový obrázek přihlášeného uživatele.
@@ -839,13 +735,12 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [RelayCommand]
         private void OdebratImg()
         {
-            if (Uzivatel.Obrazek != null || true)
+            if (PrihlasenyUzivatelService.Uzivatel.Obrazek != null)
             {
                 try
                 {
 
-                    Uzivatel.Obrazek = null;
-                    Uzivatel.ObrazekBytes = null;
+                    PrihlasenyUzivatelService.OdeberObrazek();
 
                     MessageBox.Show("Profilový obrázek byl úspěšně odstraněn.", "Úspěch");
                 }

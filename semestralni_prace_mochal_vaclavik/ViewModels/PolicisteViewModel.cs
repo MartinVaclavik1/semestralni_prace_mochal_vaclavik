@@ -41,11 +41,20 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         [ObservableProperty]
         private int plat;
 
-        public PolicisteViewModel(IPolicisteService service)
+        [ObservableProperty]
+        private PrihlasenyUzivatelService prihlasenyUzivatelService;
+
+        public PolicisteViewModel(IPolicisteService service, PrihlasenyUzivatelService prihlasenyUzivatelService)
         {
             this.service = service;
+            PrihlasenyUzivatelService = prihlasenyUzivatelService;
             NactiHodnosti();
-            LoadAsync();
+        }
+
+        [RelayCommand]
+        public async Task Zobrazeno()
+        {
+            await LoadAsync();
         }
 
         [RelayCommand]

@@ -24,6 +24,7 @@
                 <i:InvokeCommandAction Command="{Binding ZmenaOknaCommand}" PassEventArgsToCommand="True"/>
             </i:EventTrigger>
         </i:Interaction.Triggers>
+        
         <TabControl.Background>
             <!-- Sjednocený horní gradient pro celou aplikaci -->
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -46,7 +47,7 @@
 
         <!-- Karta: Kontakty (OPRÁVNĚNÍ: Občan+) -->
         <TabItem x:Name="Kontakty" Header="Policiste"
-                 Visibility="{Binding ObcanVisible}" Height="22" Margin="-2,0,-2,0" VerticalAlignment="Bottom">
+                 Visibility="{Binding PrihlasenyUzivatelService.ObcanVisible}" Height="22" Margin="-2,0,-2,0" VerticalAlignment="Bottom">
 
             <!--<views:PolicisteView />-->
             <ContentControl Content="{Binding PolicisteView}" />
@@ -54,56 +55,56 @@
         </TabItem>
 
         <TabItem x:Name="Okrsky" Header="Okrsky"
-                 Visibility="{Binding PolicistaVisible}" >
+                 Visibility="{Binding PrihlasenyUzivatelService.PolicistaVisible}" >
 
             <ContentControl Content="{Binding OkrskyView}" />
         </TabItem>
 
         <!-- Karta: Evidence přestupků (OPRÁVNĚNÍ: Policista+) -->
         <TabItem x:Name="Prestupky" Header="Evidence přestupků"
-                 Visibility="{Binding PolicistaVisible}">
+                 Visibility="{Binding PrihlasenyUzivatelService.PolicistaVisible}">
 
             <ContentControl Content="{Binding EvidencePrestupkuView}" />
         </TabItem>
 
-        <TabItem x:Name="MojePrestupky" Header="Moje Přestupky" Visibility="{Binding JenObcanVisible}">
+        <TabItem x:Name="MojePrestupky" Header="Moje Přestupky" Visibility="{Binding PrihlasenyUzivatelService.JenObcanVisible}">
             <views:MojePrestupkyView x:Name="MojePrestupkyView"/>
         </TabItem>
 
         <!-- Karta: Hlídky a Zásahy (OPRÁVNĚNÍ: Policista+) - PŘIDÁNY FILTRY -->
         <TabItem x:Name="Hlidky" Header="Hlídky"
-                 Visibility="{Binding PolicistaVisible}">
+                 Visibility="{Binding PrihlasenyUzivatelService.PolicistaVisible}">
 
             <ContentControl Content="{Binding HlidkyView}" />
         </TabItem>
 
         <!-- Karta: Můj účet (OPRÁVNĚNÍ: Všichni přihlášení, Editace pro Policista+) -->
         <TabItem x:Name="Ucet" Header="Můj účet"
-                 Visibility="{Binding ObcanVisible}">
+                 Visibility="{Binding PrihlasenyUzivatelService.ObcanVisible}">
             <ContentControl Content="{Binding UcetView}" />
         </TabItem>
 
         <!-- Karta: Admin nastavení (OPRÁVNĚNÍ: Admin) -->
         <TabItem x:Name="Admin" Header="Admin nastavení"
-                 Visibility="{Binding AdministratorVisible}">
+                 Visibility="{Binding PrihlasenyUzivatelService.AdministratorVisible}">
             <ContentControl Content="{Binding AdminView}" />
         </TabItem>
 
         <TabItem x:Name="LogovaciTabulka"
                  Header="Logovací tabulka" 
-                 Visibility="{Binding AdministratorVisible}">
+                 Visibility="{Binding PrihlasenyUzivatelService.AdministratorVisible}">
             <ContentControl Content="{Binding LogovaciTabulkaView}" />
         </TabItem>
 
-        <TabItem x:Name="SystemovyKatalog" Header="Systémový katalog" Visibility="{Binding AdministratorVisible}">
+        <TabItem x:Name="SystemovyKatalog" Header="Systémový katalog" Visibility="{Binding PrihlasenyUzivatelService.AdministratorVisible}">
             <views:SystemovyKatalogView x:Name="SystemovyKatalogView"/>
         </TabItem>
 
-        <TabItem x:Name="Prihlaseni" Header="Přihlášení" Visibility="{Binding NeprihlasenyVisible}">
+        <TabItem x:Name="Prihlaseni" Header="Přihlášení" Visibility="{Binding PrihlasenyUzivatelService.NeprihlasenyVisible}">
             <ContentControl Content="{Binding PrihlaseniView}" />
         </TabItem>
 
-        <TabItem x:Name="Registrace" Header="Registrace" Visibility="{Binding NeprihlasenyVisible}">
+        <TabItem x:Name="Registrace" Header="Registrace" Visibility="{Binding PrihlasenyUzivatelService.NeprihlasenyVisible}">
             <views:RegistraceView x:Name="RegistraceView"/>
         </TabItem>
         

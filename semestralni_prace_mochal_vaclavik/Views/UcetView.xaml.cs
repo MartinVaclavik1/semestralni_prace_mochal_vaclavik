@@ -27,7 +27,7 @@ namespace semestralni_prace_mochal_vaclavik.Views
         }
         private void HesloTxt_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            ((MainViewModel)DataContext).Uzivatel.Password =
+            ((MainViewModel)DataContext).PrihlasenyUzivatelService.Uzivatel.Password =
                 ((PasswordBox)sender).Password;
         }
     }

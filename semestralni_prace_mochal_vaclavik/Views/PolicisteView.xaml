@@ -4,10 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:semestralni_prace_mochal_vaclavik.Views"
-    
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding ZobrazenoCommand}" PassEventArgsToCommand="True"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+
     <Grid Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="16*"/>
@@ -22,7 +29,7 @@
             <RowDefinition Height="10*"/>
             <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
-
+                
         <Label x:Name="KontaktyNazev" Content="Policisté" Margin="10,10,0,171" FontSize="20" FontWeight="Bold" Grid.ColumnSpan="6" Grid.RowSpan="2"/>
 
         <StackPanel Orientation="Horizontal" Margin="10,2,10,233" Grid.ColumnSpan="6" Grid.Row="1"/>
@@ -54,7 +61,7 @@
                 <DataGridTextColumn Header="Stanice" Binding="{Binding Stanice}" Width="2*"/>
 
                 <DataGridTemplateColumn Header="Upravit" Width="SizeToCells" 
-                                    Visibility="{Binding DataContext.AdministratorVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}">
+                                    Visibility="{Binding DataContext.PrihlasenyUzivatelService.AdministratorVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Upravit" 
@@ -66,7 +73,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Odebrat" Width="SizeToCells"
-                                    Visibility="{Binding DataContext.AdministratorVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}">
+                                    Visibility="{Binding DataContext.PrihlasenyUzivatelService.AdministratorVisible, RelativeSource={RelativeSource AncestorType={x:Type DataGridColumn}}}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Odebrat"
@@ -79,7 +86,8 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <Grid x:Name="KontaktyAdminGrid" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="5" Margin="0,10,10,10">
+        <Grid x:Name="KontaktyAdminGrid" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="5" Margin="0,10,10,10"
+              IsEnabled="{Binding PrihlasenyUzivatelService.AdministratorEnabled}">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -102,9 +110,10 @@
             <Label Grid.Column="3" Content="Stanice" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
             <Label Grid.Column="4" Content="Plat" HorizontalAlignment="Left" Margin="96,0,0,0" VerticalAlignment="Center" Grid.ColumnSpan="2"/>
             <Label Grid.Column="6" Content="Datum narození" HorizontalAlignment="Left" Margin="0,3,0,0" VerticalAlignment="Top" Width="96"/>
+            
             <TextBox x:Name="pridatKontaktyJmeno" Text="{Binding Jmeno, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91"/>
             <TextBox x:Name="pridatKontaktyPrijmeni" Text="{Binding Prijmeni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
-            <TextBox x:Name="pridatKontaktyNadrizeny" Text="{Binding Nardizeny, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="2" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
+            <TextBox x:Name="pridatKontaktyNadrizeny" Text="{Binding Nadrizeny, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="2" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
             <TextBox x:Name="pridatKontaktyStanice" Text="{Binding Stanice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="3" Margin="96,0,0,0" Grid.ColumnSpan="2"/>
             <TextBox x:Name="pridatKontaktyPlat" Text="{Binding Plat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center" Width="91" Grid.Column="4" Margin="96,0,0,0" Grid.ColumnSpan="2"></TextBox>
             <!--<TextBox x:Name="pridatKontaktyDatum" Text="{Binding DatumNarozeni}" Grid.Column="5" Grid.ColumnSpan="2" Margin="96,0,5,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center"/>-->
