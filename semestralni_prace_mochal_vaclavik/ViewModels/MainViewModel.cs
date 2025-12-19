@@ -32,18 +32,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
     /// </remarks>
     public partial class MainViewModel : ObservableObject
     {
-        /// <summary>
-        /// Připojovací řetězec k databázi Oracle. (heslo by bylo jinde pokud by šlo o produkci)
-        /// </summary>
-        private readonly string connectionString = "User Id=st72536;" +
-                                    "Password=killer12;" +
-                                    "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fei-sql3.upceucebny.cz)(PORT=1521))" +
-                                    "(CONNECT_DATA=(SID=BDAS)));";
-
-        /// <summary>
-        /// Aktivní Oracle připojení k databázi.
-        /// </summary>
-        //private OracleConnection conn;
 
         /// <summary>
         /// Zdroj dat pro DataGrid s kontakty.
@@ -62,17 +50,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// </summary>
         [ObservableProperty]
         private DataView uzivatelItemsSource;
-
-        /// <summary>
-        /// Kolekce všech načtených uživatelů pro nastavení admina.
-        /// </summary>
-        public ObservableCollection<Uzivatel> Users { get; set; } = new ObservableCollection<Uzivatel>();
-
-        public ObservableCollection<Policista> Polic { get; set; } = new ObservableCollection<Policista>();
-
-        public ObservableCollection<Okrsek> Okrsky { get; set; } = new ObservableCollection<Okrsek>();
-        public ObservableCollection<Prestupek> Prestupky { get; set; } = new ObservableCollection<Prestupek>();
-        public ObservableCollection<Hlidka> Hlidky { get; set; } = new ObservableCollection<Hlidka>();
 
         /// <summary>
         /// Aktuálně přihlášený uživatel.
@@ -151,17 +128,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
             MojePrestupkyView = mojePrestupkyView ?? throw new ArgumentNullException(nameof(mojePrestupkyView));
             SystemovyKatalogView = systemovyKatalogView ?? throw new ArgumentNullException(nameof(systemovyKatalogView));
-
-
-            //try
-            //{
-            //    conn = new OracleConnection(connectionString);
-            //    conn.Open();
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //}
         }
 
         /// <summary>
@@ -199,116 +165,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        /// <summary>
-        /// Aktualizuje údaje uživatele v databázi z Admin panelu.
-        /// </summary>
-        /// <param name="radek">Řádek s upravenými daty uživatele</param>
-        /// <remarks>Volá uloženou proceduru UPRAVY_UZIVATELU.upravitUzivatele.</remarks>
-        [RelayCommand]
-        public async Task UpravitUzivatele(object radek)
-        {
-            var uzivatelRow = radek as Uzivatel;
 
-            if (uzivatelRow != null && uzivatelRow.Zmenen)
-            {
-                if (uzivatelRow.Id == PrihlasenyUzivatelService.Uzivatel.Id)
-                {
-                    MessageBox.Show("Nelze editovat sám sebe! \n Pro editaci použijte \"Můj účet\"");
-                    return;
-                }
-
-                try
-                {
-
-                    using (OracleCommand cmd = new OracleCommand("UPRAVY_UZIVATELU.upravitUzivatele", conn))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.BindByName = true;
-
-                        cmd.Parameters.Add("p_prihlasovacijmeno", OracleDbType.Varchar2).Value = uzivatelRow.Username;
-                        cmd.Parameters.Add("p_heslo", OracleDbType.Varchar2).Value = uzivatelRow.Password;
-
-                        cmd.Parameters.Add("p_typOpravneni", OracleDbType.Varchar2).Value = uzivatelRow.Opravneni;
-                        cmd.Parameters.Add("p_iduzivatele", OracleDbType.Int32).Value = uzivatelRow.Id;
-
-                        await cmd.ExecuteNonQueryAsync();
-
-
-                        using (var commitCmd = new OracleCommand("COMMIT", conn))
-                        {
-                            await commitCmd.ExecuteNonQueryAsync();
-                        }
-                        uzivatelRow.Zmenen = false;
-                        MessageBox.Show("Uživatel byl úspěšně upraven.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Chyba při aktualizaci uživatele: " + ex.Message, "Chyba DB", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Odebere uživatele z databáze po potvrzení.
-        /// </summary>
-        /// <param name="radek">Řádek s daty uživatele k odstranění</param>
-        /// <remarks>
-        /// Vyžaduje potvrzení od uživatele. Volá uloženou proceduru UPRAVY_UZIVATELU.smazUzivatele.
-        /// Nelze odstranit sám sebe.
-        /// </remarks>
-        [RelayCommand]
-        public async Task OdebratUzivatele(object radek)
-        {
-            var uzivatelRow = radek as Uzivatel;
-
-            if (uzivatelRow != null)
-            {
-                if (uzivatelRow.Id == PrihlasenyUzivatelService.Uzivatel.Id)
-                {
-                    MessageBox.Show("Nelze odstranit sám sebe!");
-                    return;
-                }
-                var result = MessageBox.Show(
-                $"Opravdu chcete trvale smazat uživatele?",
-                "Potvrzení smazání",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
-
-                if (result != MessageBoxResult.Yes) return;
-
-                try
-                {
-                    using (OracleCommand cmd = new OracleCommand("UPRAVY_UZIVATELU.smazUzivatele", conn))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.BindByName = true;
-
-                        cmd.Parameters.Add("p_iduzivatele", OracleDbType.Int32).Value = uzivatelRow.Id;
-
-                        await cmd.ExecuteNonQueryAsync();
-
-
-                        using (var commitCmd = new OracleCommand("COMMIT", conn))
-                        {
-                            await commitCmd.ExecuteNonQueryAsync();
-                        }
-                        MessageBox.Show("Uživatel byl úspěšně odebrán.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        NacistUzivatele();
-                    }
-                }
-                catch (OracleException oraEx)
-                {
-
-                    MessageBox.Show("Chyba Oracle: " + oraEx.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Obecná chyba: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
 
         private void Prihlas(string jmeno, string heslo)
         {
@@ -431,147 +288,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             }
         }
 
-        /// <summary>
-        /// Načítá seznam všech uživatelů z databáze do kolekce.
-        /// </summary>
-        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private void NacistUzivatele()
-        {
-            try
-            {
-                string sql = @"SELECT * FROM vsichniUzivatele";
-
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
-
-                    UzivatelItemsSource = dt.DefaultView;
-                    Users.Clear();
-                    foreach (DataRow item in dt.Rows)
-                    {
-
-                        Users.Add(new Uzivatel
-                        {
-                            Id = (int)item.Field<decimal>("iduzivatele"),
-                            Username = item.Field<string>("prihlasovacijmeno"),
-                            Password = item.Field<string>("heslo"),
-                            Opravneni = item.Field<string>("nazevopravneni")
-                        });
-
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při načítání uživatelů: " + ex.Message);
-            }
-        }
-
-        ///// <summary>
-        ///// Načítá systémový katalog z databáze a zobrazuje ho v dataGridu.
-        ///// </summary>
-        ///// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        //private void NacistSystemovyKatalog()
-        //{
-        //    try
-        //    {
-        //        string sql = @"
-        //                SELECT * FROM systemovy_katalogview
-        //                ";
-
-        //        using (OracleCommand cmd = new OracleCommand(sql, conn))
-        //        {
-        //            OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-        //            DataTable dt = new DataTable();
-        //            adapter.Fill(dt);
-        //            //Window.SystemovyKatalogView.systemovyKatalogGrid.ItemsSource = dt.DefaultView;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Načítá seznam policistů z databáze.
-        ///// </summary>
-        ///// <remarks>
-        ///// Zobrazuje policisty na kartě Kontakty.
-        ///// </remarks>
-        ///// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        //private void NacistKontakty()
-        //{
-        //    try
-        //    {
-        //        string sql = @"
-        //                SELECT
-        //                    *
-        //                FROM 
-        //                    kontaktyView
-        //                ";
-
-        //        using (OracleCommand cmd = new OracleCommand(sql, conn))
-        //        {
-        //            OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-        //            DataTable dt = new DataTable();
-        //            adapter.Fill(dt);
-
-        //            UzivatelItemsSource = dt.DefaultView;
-        //            Polic.Clear();
-        //            foreach (DataRow item in dt.Rows)
-        //            {
-
-        //                Polic.Add(new Policista
-        //                {
-        //                    Id = (int)item.Field<decimal>("idpolicisty"),
-        //                    Jmeno = item.Field<string>("jmeno"),
-        //                    Prijmeni = item.Field<string>("prijmeni"),
-        //                    Hodnost = item.Field<string>("hodnost"),
-        //                    Nadrizeny = item.Field<string>("nadrizeny"),
-        //                    Stanice = item.Field<string>("stanice")
-        //                });
-
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Chyba při načítání kontaktů: " + ex.Message);
-        //    }
-        //}
-
-        /// <summary>
-        /// Načítá přestupky přihlášeného občana.
-        /// </summary>
-        /// <remarks>
-        /// Dostupné pouze pro role "obcan". Filtruje data podle ID aktuálně přihlášeného uživatele.
-        /// </remarks>
-        /// <exception cref="Exception">Vyvolána při chybě komunikace s databází</exception>
-        private void NacistMojePrestupky()
-        {
-            try
-            {
-                string sql = @"
-                        SELECT * FROM prestupkyview
-                        where idobcana = :id";
-
-                using (OracleCommand cmd = new OracleCommand(sql, conn))
-                {
-
-                    cmd.Parameters.Add(new OracleParameter("id", PrihlasenyUzivatelService.Uzivatel.Id));
-                    OracleDataAdapter adapter = new OracleDataAdapter(cmd);
-                    DataTable dt = new DataTable();
-                    adapter.Fill(dt);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při načítání přestupků: " + ex.Message);
-            }
-        }
+        
 
         /// <summary>
         /// Otevře dialog pro výběr a nahrání profilového obrázku.
@@ -592,8 +309,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 openFileDialog.ShowDialog();
                 byte[] imageBytes = File.ReadAllBytes(openFileDialog.FileName);
                 PrihlasenyUzivatelService.NastavObrazekZBytes(imageBytes);
-                //PrihlasenyUzivatelService.Uzivatel.Obrazek = vytvorObrazek(imageBytes);
-                //Uzivatel.ObrazekBytes = imageBytes;
 
                 MessageBox.Show("Profilový obrázek byl úspěšně nahrán a uložen.", "Úspěch");
             }
@@ -602,28 +317,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 MessageBox.Show($"Chyba při nahrávání obrázku: {ex.Message}", "Chyba");
             }
         }
-
-        ///// <summary>
-        ///// Konvertuje binární data obrázku na BitmapImage pro zobrazení v UI.
-        ///// </summary>
-        ///// <param name="imageBytes">Pole bajtů s daty obrázku</param>
-        ///// <returns>BitmapImage objekt připravený k zobrazení</returns>
-        ///// <remarks>
-        ///// Obrázek je "zmrazen" (Freeze) pro optimalizaci výkonu v WPF.
-        ///// </remarks>
-        //private BitmapImage vytvorObrazek(byte[] imageBytes)
-        //{
-        //    BitmapImage img = new BitmapImage();
-        //    using (MemoryStream stream = new MemoryStream(imageBytes))
-        //    {
-        //        img.BeginInit();
-        //        img.CacheOption = BitmapCacheOption.OnLoad;
-        //        img.StreamSource = stream;
-        //        img.EndInit();
-        //        img.Freeze();
-        //    }
-        //    return img;
-        //}
 
         /// <summary>
         /// Odstraňuje profilový obrázek přihlášeného uživatele.
@@ -650,100 +343,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
                 }
             }
         }
-        
-        /// <summary>
-        /// Aktualizuje záznam přestupku (typ a poznámku) v databázi.
-        /// </summary>
-        /// <param name="radek">DataRowView s upravenými daty (Identifikace přes IDPRESTUPKU)</param>
-        [RelayCommand]
-        public void UpravitPrestupek(object radek)
-        {
-            var row = radek as Prestupek;
 
-            if (row != null)
-            {
-                try
-                {
-                    if (row.Zmenen)
-                    {
-                        row.Uloz(conn);
-                        MessageBox.Show("Úprava přestupku byla úspěšně provedena.", "Hotovo", MessageBoxButton.OK, MessageBoxImage.Information);
-                        //NacistPrestupky();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Chyba při zpracování úpravy přestupku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Odstraní záznam Přestupku z databáze.
-        /// </summary>
-        /// <param name="radek">DataRowView s daty Přestupku k odstranění (Identifikace přes IDPRESTUPKU)</param>
-        [RelayCommand]
-        public void OdebratPrestupek(object radek)
-        {
-            var row = radek as Prestupek;
-
-            if (row != null)
-            {
-                try
-                {
-                    var result = MessageBox.Show(
-                        $"Opravdu chcete záznam smazat??",
-                        "Potvrzení smazání",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
-
-                    if (result != MessageBoxResult.Yes) return;
-
-                    row.Smaz(conn);
-                    //NacistPrestupky();
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Chyba při odebírání okrsku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-        }
-        [RelayCommand]
-        public void PridatPrestupek()
-        {
-            try
-            {
-                Prestupek novyPrestupek = new Prestupek();
-                //string typPrestupku = Window.EvidencePrestupkuView.pridatPrestupekTyp.Text;
-                //string popisPrestupku = Window.EvidencePrestupkuView.pridatPrestupekPopisZasahu.Text;
-                //string jmenoObcana = Window.EvidencePrestupkuView.pridatPrestupekObcan.Text;
-                //string adresa = Window.EvidencePrestupkuView.pridatPrestupekAdresa.Text;
-                //string poznamka = Window.EvidencePrestupkuView.pridatPrestupekPoznamka.Text;
-                //novyPrestupek.Pridej(conn, typPrestupku, popisPrestupku, jmenoObcana, adresa, poznamka);
-
-                //string typPrestupku = Window.EvidencePrestupkuView.pridatPrestupekTyp.Text;
-                //string popisPrestupku = Window.EvidencePrestupkuView.pridatPrestupekPopisZasahu.Text;
-                //string jmenoObcana = Window.EvidencePrestupkuView.pridatPrestupekObcan.Text;
-                ////string adresa = Window.EvidencePrestupkuView.pridatPrestupekAdresa.Text;
-                //string ulice = Window.EvidencePrestupkuView.pridatPrestupekUlice.Text;
-                //string cisloPopisne = Window.EvidencePrestupkuView.pridatPrestupekCisloPopisne.Text;
-                //int cp = int.Parse(cisloPopisne);
-
-                //string psc = Window.EvidencePrestupkuView.pridatPrestupekPSC.Text;
-                //if (psc.Length < 5)
-                //{
-                //    MessageBox.Show("PSČ musí mít 5 znaků.", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                //    return;
-                //}
-                //string obec = Window.EvidencePrestupkuView.pridatPrestupekObec.Text;
-                //novyPrestupek.Pridej(conn,ulice, cp,obec, psc, typPrestupku, popisPrestupku, jmenoObcana);
-                //NacistPrestupky();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Chyba při přidávání nového přestupku: " + ex.Message, "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
     }
 }

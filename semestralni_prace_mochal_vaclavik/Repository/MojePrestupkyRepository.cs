@@ -1,5 +1,7 @@
 ﻿using Oracle.ManagedDataAccess.Client;
 using semestralni_prace_mochal_vaclavik.OracleConn;
+using semestralni_prace_mochal_vaclavik.Services;
+using semestralni_prace_mochal_vaclavik.Tridy;
 using System;
 using System.Collections.Generic;
 using System.Data;
