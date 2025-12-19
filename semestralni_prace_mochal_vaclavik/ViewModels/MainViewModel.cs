@@ -151,27 +151,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         }
 
         /// <summary>
-        /// Ověřuje, zda jsou vyplněna všechna povinná pole registračního formuláře.
-        /// </summary>
-        /// <returns>Vždy vrací true (validace není plně implementována)</returns>
-        private bool ZkontrolovatVyplneniRegistrace()
-        {
-            return true;
-            //Window.jmenoTxt.Text != string.Empty
-            //&& Window.prijmeniTxt.Text != string.Empty
-            //&& Window.opTxt.Text != string.Empty
-            //&& Window.pscTxt.Text != string.Empty
-            //&& Window.uliceTxt.Text != string.Empty
-            //&& Window.cpTxt.Text != string.Empty
-            //&& Window.obecTxt.Text != string.Empty
-            //&& Window.zemeTxt.Text != string.Empty
-            //&& Window.usernameTxt.Text != string.Empty
-            //&& Window.heslotxt.Text != string.Empty;
-        }
-
-
-
-        /// <summary>
         /// Registruje nového občana v systému.
         /// </summary>
         /// <remarks>
@@ -179,7 +158,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// Po úspěšné registraci automaticky přihlašuje nového uživatele.
         /// </remarks>
         /// <exception cref="Exception">Vyvolána při chybě databáze</exception>
-        [RelayCommand(CanExecute = nameof(ZkontrolovatVyplneniRegistrace))]
+        [RelayCommand]
         private void Registrovat()
         {
             try
