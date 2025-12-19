@@ -21,7 +21,7 @@ namespace semestralni_prace_mochal_vaclavik
         {
             base.OnStartup(e);
 
-
+            
             var services = new ServiceCollection();
 
 
@@ -79,8 +79,14 @@ namespace semestralni_prace_mochal_vaclavik
             Services = services.BuildServiceProvider();
 
             var mainWindow = Services.GetRequiredService<MainWindow>();
-            mainWindow.Show();
 
+            if (e.Args.Contains("--emulace"))
+            {
+                Services.GetRequiredService<PrihlasenyUzivatelService>().Prihlas(e.Args[1], e.Args[2]);
+                Services.GetRequiredService<MainWindow>().Title += " - EMULACE";
+            }
+
+            mainWindow.Show();
         }
     }
 

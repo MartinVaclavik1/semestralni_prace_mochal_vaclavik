@@ -111,7 +111,7 @@
 
             <Button Grid.Column="6"
                     Content="Přidat"
-                    Command="{Binding DataContext.PridatPrestupekCommand}"
+                    Command="{Binding PridatPrestupekCommand}"
                     HorizontalAlignment="Left"
                     Grid.Row="1"
                     VerticalAlignment="Center"

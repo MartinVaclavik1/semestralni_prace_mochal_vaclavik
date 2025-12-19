@@ -164,15 +164,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             {
                 MessageBox.Show(ex.Message);
             }
-            Prihlas("Oli", "12345");
         }
-
-        /// <summary>
-        /// Určuje viditelnost ovládacích prvků pro policisty.
-        /// </summary>
-
-
-        //public Visibility KontaktyVisible => Visibility.Collapsed;
 
         /// <summary>
         /// Emuluje přihlášení jiného uživatele v novém okně bez commitování do databáze.
