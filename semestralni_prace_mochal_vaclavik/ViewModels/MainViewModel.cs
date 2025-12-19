@@ -137,7 +137,8 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             EvidencePrestupkuView evidencePrestupkuView, AdminView adminView,
             HlidkyView hlidkyView, PrihlaseniView prihlaseniView,
             UcetView ucetView, LogovaciTabulkaView logovaciTabulkaView,
-            PrihlasenyUzivatelService prihlasenyUzivatelService)
+            PrihlasenyUzivatelService prihlasenyUzivatelService,
+            MojePrestupkyView mojePrestupkyView, SystemovyKatalogView systemovyKatalogView)
         {
             PolicisteView = policisteView ?? throw new ArgumentNullException(nameof(policisteView));
             OkrskyView = okrskyView ?? throw new ArgumentNullException(nameof(okrskyView));
@@ -147,7 +148,12 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             PrihlaseniView = prihlaseniView ?? throw new ArgumentNullException(nameof(prihlaseniView));
             UcetView = ucetView ?? throw new ArgumentNullException(nameof(ucetView));
             LogovaciTabulkaView = logovaciTabulkaView ?? throw new ArgumentNullException(nameof(logovaciTabulkaView));
+
             PrihlasenyUzivatelService = prihlasenyUzivatelService;
+
+            MojePrestupkyView = mojePrestupkyView ?? throw new ArgumentNullException(nameof(mojePrestupkyView));
+            SystemovyKatalogView = systemovyKatalogView ?? throw new ArgumentNullException(nameof(systemovyKatalogView));
+
 
             try
             {

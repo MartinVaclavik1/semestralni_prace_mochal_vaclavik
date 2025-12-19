@@ -12,19 +12,19 @@
         Height="500" 
         Width="850">
 
-    
+
 
     <TabControl Name="Okna" 
                 HorizontalAlignment="Stretch" 
                 VerticalAlignment="Stretch"
                 SelectedIndex="{Binding VybranyIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" >
-        
+
         <i:Interaction.Triggers>
             <i:EventTrigger EventName="SelectionChanged">
                 <i:InvokeCommandAction Command="{Binding ZmenaOknaCommand}" PassEventArgsToCommand="True"/>
             </i:EventTrigger>
         </i:Interaction.Triggers>
-        
+
         <TabControl.Background>
             <!-- Sjednocený horní gradient pro celou aplikaci -->
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -67,8 +67,9 @@
             <ContentControl Content="{Binding EvidencePrestupkuView}" />
         </TabItem>
 
+
         <TabItem x:Name="MojePrestupky" Header="Moje Přestupky" Visibility="{Binding PrihlasenyUzivatelService.JenObcanVisible}">
-            <views:MojePrestupkyView x:Name="MojePrestupkyView"/>
+            <ContentControl Content="{Binding MojePrestupkyView}" />
         </TabItem>
 
         <!-- Karta: Hlídky a Zásahy (OPRÁVNĚNÍ: Policista+) - PŘIDÁNY FILTRY -->
@@ -96,8 +97,10 @@
             <ContentControl Content="{Binding LogovaciTabulkaView}" />
         </TabItem>
 
+
         <TabItem x:Name="SystemovyKatalog" Header="Systémový katalog" Visibility="{Binding PrihlasenyUzivatelService.AdministratorVisible}">
-            <views:SystemovyKatalogView x:Name="SystemovyKatalogView"/>
+            <ContentControl Content="{Binding SystemovyKatalogView}" />
+
         </TabItem>
 
         <TabItem x:Name="Prihlaseni" Header="Přihlášení" Visibility="{Binding PrihlasenyUzivatelService.NeprihlasenyVisible}">
@@ -107,6 +110,6 @@
         <TabItem x:Name="Registrace" Header="Registrace" Visibility="{Binding PrihlasenyUzivatelService.NeprihlasenyVisible}">
             <views:RegistraceView x:Name="RegistraceView"/>
         </TabItem>
-        
+
     </TabControl>
 </Window>

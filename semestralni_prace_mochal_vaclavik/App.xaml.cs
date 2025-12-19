@@ -20,8 +20,8 @@ namespace semestralni_prace_mochal_vaclavik
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            
-            
+
+
             var services = new ServiceCollection();
 
 
@@ -38,6 +38,9 @@ namespace semestralni_prace_mochal_vaclavik
             services.AddTransient<IHlidkyRepository, HlidkyRepository>();
             services.AddTransient<ILogovaciTabulkaRepository, LogovaciTabulkaRepository>();
             services.AddSingleton<PrihlasenyUzivatelRepository>();
+            services.AddTransient<IMojePrestupkyRepository, MojePrestupkyRepository>();
+            services.AddTransient<ISystemovyKatalogRepository, SystemovyKatalogRepository>();
+
 
             services.AddTransient<IPolicisteService, PolicisteService>();
             services.AddTransient<IOkrskyService, OkrskyService>();
@@ -45,9 +48,13 @@ namespace semestralni_prace_mochal_vaclavik
             services.AddTransient<IAdminNastaveniService, AdminNastaveniService>();
             services.AddTransient<IHlidkyService, HlidkyService>();
             services.AddTransient<ILogovaciTabulkaService, LogovaciTabulkaService>();
-            services.AddSingleton<PrihlasenyUzivatelService>();
 
-            services.AddTransient<PolicisteViewModel>(); 
+            services.AddSingleton<PrihlasenyUzivatelService>();
+            services.AddTransient<IMojePrestupkyService, MojePrestupkyService>();
+            services.AddTransient<ISystemovyKatalogService, SystemovyKatalogService>();
+
+
+            services.AddTransient<PolicisteViewModel>();
             services.AddTransient<OkrskyViewModel>();
             services.AddTransient<EvidencePrestupkuViewModel>();
             services.AddTransient<AdminNastaveniViewModel>();
