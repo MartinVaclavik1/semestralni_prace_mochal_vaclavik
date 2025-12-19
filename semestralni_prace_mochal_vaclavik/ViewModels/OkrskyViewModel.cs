@@ -24,7 +24,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         public OkrskyViewModel(IOkrskyService service)
         {
             this.service = service;
-            LoadAsync();
         }
 
         [RelayCommand]

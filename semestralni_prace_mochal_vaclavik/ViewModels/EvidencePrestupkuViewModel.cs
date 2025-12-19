@@ -40,7 +40,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         {
             this.service = service;
             NactiTypyPrestupku();
-            LoadAsync();
         }
 
         [RelayCommand]

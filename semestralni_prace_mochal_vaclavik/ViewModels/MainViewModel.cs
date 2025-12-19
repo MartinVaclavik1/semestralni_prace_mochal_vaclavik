@@ -43,7 +43,7 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// <summary>
         /// Aktivní Oracle připojení k databázi.
         /// </summary>
-        private OracleConnection conn;
+        //private OracleConnection conn;
 
         /// <summary>
         /// Zdroj dat pro DataGrid s kontakty.
@@ -77,8 +77,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
         /// <summary>
         /// Aktuálně přihlášený uživatel.
         /// </summary>
-        //[ObservableProperty]
-        //private Uzivatel uzivatel;
 
         /// <summary>
         /// Data pro nový účet během registrace.
@@ -155,15 +153,15 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             SystemovyKatalogView = systemovyKatalogView ?? throw new ArgumentNullException(nameof(systemovyKatalogView));
 
 
-            try
-            {
-                conn = new OracleConnection(connectionString);
-                conn.Open();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            //try
+            //{
+            //    conn = new OracleConnection(connectionString);
+            //    conn.Open();
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
         }
 
         /// <summary>
@@ -342,59 +340,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
 
                 Task.Run(() => { MessageBox.Show("Uživatel přihlášen"); });
 
-                //    string sql = @"
-                //            select * from datauctuview where id = 
-                //            (select prihlaseni(:prihlJmeni,:heslo) from Dual)";
-
-                //    using (OracleCommand cmd = new OracleCommand(sql, conn))
-                //    {
-                //        cmd.Parameters.Add(new OracleParameter("prihlJmeno", PrihlasovaciJmeno));
-                //        cmd.Parameters.Add(new OracleParameter("heslo", Heslo));
-
-                //        using (OracleDataReader reader = cmd.ExecuteReader())
-                //        {
-                //            if (reader.Read())
-                //            {
-                //                Uzivatel.Id = int.Parse(reader["id"].ToString());
-                //                Uzivatel.Username = reader["prihlasovacijmeno"].ToString();
-                //                var blob = reader.GetOracleBlob(2);
-                //                if (!blob.IsNull)
-                //                {
-                //                    Uzivatel.ObrazekBytes = nactiByteZBLOB(blob);
-                //                    Uzivatel.Obrazek = vytvorObrazek(Uzivatel.ObrazekBytes);
-                //                }
-
-
-                //                Uzivatel.Opravneni = reader["nazevopravneni"].ToString();
-
-                //                if (Uzivatel.Opravneni == "obcan")
-                //                {
-                //                    Uzivatel.Jmeno = reader["o_jmeno"].ToString();
-                //                    Uzivatel.Prijmeni = reader["o_prijmeni"].ToString();
-
-                //                }
-                //                else
-                //                {
-                //                    Uzivatel.Jmeno = reader["p_jmeno"].ToString();
-                //                    Uzivatel.Prijmeni = reader["p_prijmeni"].ToString();
-                //                }
-                //                VybranyIndex = 0;
-
-                //                PrihlasovaciJmeno = String.Empty;
-                //                PrihlaseniView.PasswordBox.Clear();
-                //                Heslo = String.Empty;
-
-
-                //                Task.Run(() => { MessageBox.Show("Uživatel přihlášen"); });
-
-
-                //            }
-                //            else
-                //            {
-                //                MessageBox.Show("Špatné přihlašovací údaje");
-                //            }
-                //        }
-                //    }
             }
             catch (Exception ex)
             {
@@ -483,51 +428,6 @@ namespace semestralni_prace_mochal_vaclavik.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show($"Chyba při registraci: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        /// <summary>
-        /// Načítá data z databáze při změně aktivní záložky.
-        /// </summary>
-        [RelayCommand]
-        private async Task ZmenaOkna(SelectionChangedEventArgs e)
-        {
-            if (e.OriginalSource is System.Windows.Controls.TabControl)
-            {
-                //if (Window.Admin.IsSelected)
-                //{
-                //    NacistUzivatele();
-                //}
-                //else if (Window.Kontakty.IsSelected)
-                //{
-                //    NacistKontakty();
-                //}
-                //else if (Window.Prestupky.IsSelected)
-                //{
-                //    NacistPrestupky();
-                //}
-                //else if (Window.MojePrestupky.IsSelected)
-                //{
-                //    NacistMojePrestupky();
-                //}
-                //else if (Window.Hlidky.IsSelected)
-                //{
-                //    NacistHlidky();
-
-                //}
-                //else if (Window.Okrsky.IsSelected)
-                //{
-                //    NacistOkrsky();
-                //}
-                //else if (Window.LogovaciTabulka.IsSelected)
-                //{
-                //    NacistLogovaciTabulku();
-
-                //}
-                //else if (Window.SystemovyKatalog.IsSelected)
-                //{
-                //    NacistSystemovyKatalog();
-                //}
             }
         }
 
