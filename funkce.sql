@@ -897,20 +897,31 @@ create or replace view logovaci_tabulkaview as
 select nazevtabulky, akce, old, new, to_char(datum, 'DD.MM.YYYY HH24:MI:SS') datum from logovaci_tabulka;
 
 create or replace view prestupkyview as
-select o.idobcana, t.prestupek, po.datum, o.jmeno || ' ' || o.prijmeni jmenoobcana, p.poznamka  from prestupky p
+select 
+    p.idprestupku,
+    o.idobcana, 
+    t.prestupek, 
+    po.datum, 
+    o.jmeno || ' ' || o.prijmeni jmenoobcana, 
+    p.poznamka  
+from prestupky p
     join prestupky_obcanu po on(po.idprestupku = p.idprestupku)
     join typy_prestupku t on(t.idtypuprestupku = p.idtypuprestupku)
     join obcane o on(o.idobcana = po.idobcana);
     
-create or replace view hlidkyview as
-select h.nazevhlidky, t.nazev from hlidky h
-    join typy_hlidky t using(idtypu);
+create or replace view hlidkyView as
+select 
+    h.idhlidky,
+    h.nazevhlidky, 
+    t.nazev 
+from hlidky h
+join typy_hlidky t using(idtypu);
     
---nemáme práva na dbms_crypto => nefunguje
+--nemï¿½me prï¿½va na dbms_crypto => nefunguje
 --create or replace function get_hash (p_username  IN  VARCHAR2,
 --                     p_password  IN  VARCHAR2)
 --RETURN VARCHAR2 AS
---    l_salt VARCHAR2(30) := 'ASFfhuewjsa24èš'; 
+--    l_salt VARCHAR2(30) := 'ASFfhuewjsa24ï¿½'; 
 --BEGIN
 --    RETURN DBMS_CRYPTO.HASH(UTL_RAW.CAST_TO_RAW(UPPER(p_username) || l_salt || UPPER(p_password)),DBMS_CRYPTO.HASH_SH1);
 --END;
@@ -965,7 +976,7 @@ begin
     if i_heslo = p_heslo then
         update uzivatele set prihlasovacijmeno = p_prihlasovacijmeno, obrazek = p_obrazek where iduzivatele = p_id;
     else
-        RAISE_APPLICATION_ERROR(-20000, 'Špatné heslo');
+        RAISE_APPLICATION_ERROR(-20000, 'ï¿½patnï¿½ heslo');
     end if;
 end;
 /
@@ -991,6 +1002,7 @@ end;
 
 create or replace view kontaktyView as
 SELECT
+    p.idpolicisty AS IDPOLICISTY,
     p.jmeno AS Jmeno,
     p.prijmeni AS Prijmeni,
     h.nazev AS Hodnost,
@@ -1026,7 +1038,7 @@ begin
         return 0;
 end;
 /
---vypocitejVyplatyZaMesicRok
+
 create or replace function vypocitejVyplatuPolicistoviZaMesicRok(p_idpolicisty number, mesic varchar2, rok varchar2)
 return number
 as
@@ -1063,13 +1075,13 @@ FROM uzivatele u
 LEFT JOIN opravneni o on(o.idopravneni = u.idopravneni);
 
 create or replace view prestupkyview as
-select o.idobcana, t.prestupek, po.datum, o.jmeno || ' ' ||  o.prijmeni jmenoobcana, p.poznamka  from prestupky p
+select p.idprestupku, o.idobcana, t.prestupek, po.datum, o.jmeno || ' ' ||  o.prijmeni jmenoobcana, p.poznamka  from prestupky p
     join prestupky_obcanu po on(po.idprestupku = p.idprestupku)
     join typy_prestupku t on(t.idtypuprestupku = p.idtypuprestupku)
     join obcane o on(o.idobcana = po.idobcana);
     
 create or replace view hlidkyView as
-select h.nazevhlidky, t.nazev from hlidky h
+select h.idhlidky, h.nazevhlidky, t.nazev from hlidky h
 join typy_hlidky t using(idtypu);
                                
 create or replace view okrskyView as
@@ -1082,6 +1094,9 @@ create or replace package upravy_uzivatelu as
     procedure upravitUzivatele(p_prihlasovaciJmeno varchar2, p_heslo varchar2, p_typOpravneni varchar2, p_iduzivatele number);
     
     procedure smazUzivatele(p_iduzivatele number);
+    
+    procedure pridejUzivatele(p_prihlasovaciJmeno varchar2, p_heslo varchar2, p_jmenoPolicisty varchar2, p_JmenoObcana varchar2, p_opravneni varchar2);
+    
 end;
 /
 
@@ -1099,13 +1114,13 @@ create or replace package body upravy_uzivatelu as
         select nazevopravneni into i_nazevOpravneni from opravneni join uzivatele using(idopravneni) where iduzivatele = p_iduzivatele;
         
         if p_typOpravneni != i_nazevOpravneni and (i_nazevOpravneni = 'obcan' or p_typOpravneni = 'obcan') then
-            RAISE_APPLICATION_ERROR(-20000, 'Nelze mìnit oprávnìní z/na obèana');
+            RAISE_APPLICATION_ERROR(-20000, 'Nelze mìnit oprávnìní z admin na obèana');
         end if;
         
         SELECT COUNT(*) INTO i_existuje FROM uzivatele WHERE iduzivatele = p_iduzivatele;
          
         if i_existuje = 0 then
-            RAISE_APPLICATION_ERROR(-20000, 'Uživatel nenalezen!!');
+            RAISE_APPLICATION_ERROR(-20000, 'Uï¿½ivatel nenalezen!!');
         end if;
         
         UPDATE UZIVATELE SET PRIHLASOVACIJMENO = p_prihlasovaciJmeno, HESLO = p_heslo, IDOPRAVNENI = i_idOpravneni
@@ -1123,16 +1138,507 @@ create or replace package body upravy_uzivatelu as
         select o.nazevopravneni into i_opravneni from opravneni o join uzivatele u on(u.idopravneni = o.idopravneni) where u.iduzivatele = p_iduzivatele;
         
         if i_opravneni = 'administrator' then
-            RAISE_APPLICATION_ERROR(-20000, 'Nelze smazat administrátora!');
+            RAISE_APPLICATION_ERROR(-20000, 'Nelze smazat administrï¿½tora!');
         end if;
         
         --jinak smaze 
         DELETE FROM UZIVATELE WHERE IDUZIVATELE = p_iduzivatele;
         
         exception when no_data_found then
-            RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi zjišování oprávnìní uživatele!');
+            RAISE_APPLICATION_ERROR(-20000, 'Chybapøi odstranìní uživatele!');
     end;
+    
+procedure pridejUzivatele(
+    p_prihlasovaciJmeno varchar2, 
+    p_heslo varchar2, 
+    p_jmenoPolicisty varchar2, 
+    p_jmenoObcana varchar2, 
+    p_opravneni varchar2
+) is
+    i_idPolicisty number;
+    i_idObcana number;
+    i_idOpravneni number;
+BEGIN
+    BEGIN
+        SELECT idpolicisty INTO i_idPolicisty 
+        FROM policiste 
+        WHERE jmeno || ' ' || prijmeni = p_jmenoPolicisty;
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20000, 'Policista ' || p_jmenoPolicisty || ' nenalezen!');
+    END;
 
+    BEGIN
+        SELECT idobcana INTO i_idObcana 
+        FROM obcane 
+        WHERE jmeno || ' ' || prijmeni = p_jmenoObcana;
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20000, 'Obèan ' || p_jmenoObcana || ' nenalezen!');
+    END;
+
+    BEGIN
+        SELECT idopravneni INTO i_idOpravneni 
+        FROM opravneni 
+        WHERE nazevopravneni = p_opravneni;
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20000, 'Oprávnìní ' || p_opravneni || ' nenalezeno!');
+    END;
+    
+    INSERT INTO UZIVATELE (
+        IDUZIVATELE, 
+        PRIHLASOVACIJMENO, 
+        HESLO, 
+        IDPOLICISTY, 
+        IDOBCANA, 
+        IDOPRAVNENI, 
+        OBRAZEK
+    ) VALUES (
+        NULL,
+        p_prihlasovaciJmeno, 
+        p_heslo, 
+        i_idPolicisty, 
+        i_idObcana, 
+        i_idOpravneni, 
+        NULL
+    );
+    
+END pridejUzivatele;
+    
 end;
 /
 
+create or replace package upravy_policistu as
+
+    procedure upravitPolicistu(p_jmeno varchar2, p_prijmeni varchar2, p_hodnost varchar2, p_nadrizeny varchar2, p_stanice varchar2, p_idPolicisty number);
+    
+    procedure smazPolicistu(p_idPolicisty number);
+    
+    procedure pridejPolicistu(p_jmeno varchar2, p_prijmeni varchar2, p_datumNarozeni date, p_plat number, p_stanice varchar2, p_hodnost varchar2, p_nadrizeny varchar2, p_poznamka varchar2);
+    
+end;
+/
+
+create or replace package body upravy_policistu as
+
+    procedure upravitPolicistu(p_jmeno varchar2, p_prijmeni varchar2, p_hodnost varchar2, p_nadrizeny varchar2, p_stanice varchar2, p_idPolicisty number)
+    is
+        i_idHodnosti number;
+        i_idNadrizeneho number := NULL;
+        i_idStanice number;
+    begin
+
+        declare
+            i_existuje number;
+        begin
+            SELECT COUNT(*) INTO i_existuje FROM policiste WHERE idpolicisty = p_idPolicisty;
+            if i_existuje = 0 then
+                RAISE_APPLICATION_ERROR(-20000, 'Policista s ID ' || p_idPolicisty || ' nenalezen!');
+            end if;
+        end;
+
+        BEGIN
+            SELECT idhodnosti INTO i_idHodnosti FROM hodnosti WHERE nazev = p_hodnost;
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20000, 'Hodnost ''' || p_hodnost || ''' nenalezena!');
+        END;
+
+        if p_nadrizeny is not null then
+            BEGIN
+                SELECT idpolicisty INTO i_idNadrizeneho FROM policiste WHERE jmeno || ' ' || prijmeni = p_nadrizeny;
+            EXCEPTION WHEN NO_DATA_FOUND THEN
+                RAISE_APPLICATION_ERROR(-20000, 'Nadøízený ''' || p_nadrizeny || ''' nenalezen!');
+            END;
+        end if;
+
+        BEGIN
+            SELECT idstanice INTO i_idStanice FROM policejni_stanice WHERE nazev = p_stanice;
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20000, 'Stanice ''' || p_stanice || ''' nenalezena!');
+        END;
+
+        UPDATE POLICISTE SET
+            JMENO = p_jmeno,
+            PRIJMENI = p_prijmeni,
+            IDHODNOSTI = i_idHodnosti,
+            IDNADRIZENEHO = i_idNadrizeneho,
+            IDSTANICE = i_idStanice
+        WHERE IDPOLICISTY = p_idPolicisty;
+    
+    exception when others then
+        RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi úpravì: ' || SQLERRM);
+    end upravitPolicistu;
+
+    procedure smazPolicistu(p_idPolicisty number)    
+    is
+        i_existuje number;
+    begin    
+        SELECT COUNT(*) INTO i_existuje FROM policiste WHERE idpolicisty = p_idPolicisty;
+        if i_existuje = 0 then
+            RAISE_APPLICATION_ERROR(-20000, 'Policista s ID ' || p_idPolicisty || ' nebyl nalezen pro smazání!');
+        end if;
+
+        DELETE FROM POLICISTE WHERE IDPOLICISTY = p_idPolicisty;
+        
+    exception    
+        when others then    
+            RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi mazání policisty: ' || SQLERRM);
+    end smazPolicistu;
+    
+    procedure pridejPolicistu(p_jmeno varchar2, p_prijmeni varchar2, p_datumNarozeni date, p_plat number, p_stanice varchar2, p_hodnost varchar2, p_nadrizeny varchar2, p_poznamka varchar2)    
+    is
+        i_existuje number;
+        i_idHodnosti number;
+        i_idNadrizeneho number := NULL;
+        i_idStanice number;
+
+    BEGIN
+            SELECT COUNT(*) INTO i_existuje FROM policiste WHERE jmeno || ' ' || prijmeni = p_jmeno || ' ' || p_prijmeni;
+        IF i_existuje > 0 THEN
+            RAISE_APPLICATION_ERROR(-20000, 'Policista ''' || p_hodnost || ''' existuje!');
+        END IF;
+        BEGIN
+            SELECT idhodnosti INTO i_idHodnosti FROM hodnosti WHERE nazev = p_hodnost;
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20000, 'Hodnost ''' || p_hodnost || ''' nenalezena!');
+        END;
+        
+        if p_nadrizeny is not null then
+            BEGIN
+                SELECT idpolicisty INTO i_idNadrizeneho FROM policiste WHERE jmeno || ' ' || prijmeni = p_nadrizeny;
+            EXCEPTION WHEN NO_DATA_FOUND THEN
+                RAISE_APPLICATION_ERROR(-20000, 'Nadøízený ''' || p_nadrizeny || ''' nenalezen!');
+            END;
+        end if;
+        
+        BEGIN
+            SELECT idstanice INTO i_idStanice FROM policejni_stanice WHERE nazev = p_stanice;
+        EXCEPTION WHEN NO_DATA_FOUND THEN
+            RAISE_APPLICATION_ERROR(-20000, 'Stanice ''' || p_stanice || ''' nenalezena!');
+        END;
+        
+        insert into policiste (idpolicisty, jmeno, prijmeni, datumnarozeni, plat, idstanice, idhodnosti, idnadrizeneho, poznamka)
+        values (
+            NULL,
+            p_jmeno,
+            p_prijmeni,
+            p_datumNarozeni,
+            p_plat,
+            i_idStanice,
+            i_idHodnosti,
+            i_idNadrizeneho,
+            p_poznamka
+        );
+        
+    exception    
+        when others then    
+            RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi vkládání nového policisty');
+    end pridejPolicistu;
+
+end upravy_policistu;
+/
+
+create or replace package upravy_prestupku as
+
+    procedure upravitPrestupek(p_idPrestupku number, p_idObcana number, p_nazevPrestupku varchar2, p_datumZasahu date, p_jmenoObcana varchar2, p_poznamka varchar2);
+    
+    procedure smazPrestupek(p_idPrestupku number);
+    
+    procedure pridejPrestupek(p_ulice varchar2, p_cislopopisne number, p_obec varchar2, p_psc char, p_popisZasahu varchar2, p_typPrestupku varchar2,p_jmenoObcana varchar2);
+end;
+/
+
+create or replace package body upravy_prestupku as
+    
+procedure upravitPrestupek(
+    p_idPrestupku   number, 
+    p_idObcana number,
+    p_nazevPrestupku varchar2, 
+    p_datumZasahu   date, 
+    p_jmenoObcana varchar2,
+    p_poznamka      varchar2
+) is
+    i_idObcana number;
+    i_idTypuPrestupku number;
+begin
+    BEGIN
+        SELECT IDTYPUPRESTUPKU INTO i_idTypuPrestupku 
+        FROM typy_prestupku 
+        WHERE prestupek = p_nazevPrestupku;
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20000, 'Typ pøestupku nenalezen!');
+    END;
+    BEGIN
+        SELECT IDOBCANA INTO i_idObcana 
+        FROM obcane 
+        WHERE jmeno ||' ' || prijmeni = p_jmenoObcana;
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20000, 'Obèan nenalezen!');
+    END;
+
+    UPDATE PRESTUPKY SET
+        IDTYPUPRESTUPKU = i_idTypuPrestupku,
+        POZNAMKA = p_poznamka
+    WHERE IDPRESTUPKU = p_idPrestupku;
+
+    UPDATE PRESTUPKY_OBCANU SET
+        IDOBCANA = i_idObcana,
+        DATUM = TRUNC(p_datumZasahu)
+    WHERE IDPRESTUPKU = p_idPrestupku 
+      AND IDOBCANA = i_idObcana;
+
+    if SQL%ROWCOUNT = 0 then
+        INSERT INTO PRESTUPKY_OBCANU (IDPRESTUPKU, IDOBCANA, DATUM)
+        VALUES (p_idPrestupku, i_idObcana, TRUNC(p_datumZasahu));
+    end if;
+
+exception when others then
+    RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi úpravì: ' || SQLERRM);
+end upravitPrestupek;
+
+procedure smazPrestupek(p_idPrestupku number)
+    is
+        i_existuje number;
+    begin    
+        SELECT COUNT(*) INTO i_existuje FROM prestupky WHERE idPrestupku = p_idPrestupku;
+        if i_existuje = 0 then
+            RAISE_APPLICATION_ERROR(-20000, 'Pøestupek s ID ' || p_idPrestupku || ' nenalezen!');
+        end if;
+        
+        DELETE FROM PRESTUPKY_OBCANU WHERE IDPRESTUPKU = p_idPrestupku;
+        DELETE FROM PRESTUPKY WHERE IDPRESTUPKU = p_idPrestupku;
+        
+    exception 
+        when others then 
+            RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi mazání');
+    end smazPrestupek;
+    
+  procedure pridejPrestupek(p_ulice varchar2, p_cislopopisne number, p_obec varchar2, p_psc char, p_popisZasahu varchar2, p_typPrestupku varchar2,p_jmenoObcana varchar2)
+  is
+    i_idTypPrestupku number;
+    i_idObcana number;
+    i_idAdresy number;
+    i_idZasahu number;
+begin
+
+    BEGIN
+        SELECT idtypuprestupku INTO i_idTypPrestupku
+        FROM typy_prestupku
+        WHERE prestupek = p_typPrestupku;
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20000, 'Typ pøestupku ''' || p_typPrestupku || ''' nenalezen!');
+    END;
+
+    BEGIN
+        SELECT idobcana INTO i_idObcana
+        FROM obcane
+        WHERE jmeno || ' ' || prijmeni = p_jmenoObcana;
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20000, 'Obèan ''' || p_jmenoObcana || ''' nenalezen!');
+    END;
+
+    BEGIN
+        SELECT idadresy INTO i_idAdresy
+        FROM adresy
+        WHERE ulice = p_ulice 
+          AND cislopopisne = p_cislopopisne 
+          AND obec = p_obec 
+          AND postovnismerovacicislo = p_psc;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            INSERT INTO ADRESY (IDADRESY, POSTOVNISMEROVACICISLO, ULICE, CISLOPOPISNE, OBEC, ZEME)
+            VALUES (NULL, p_psc, p_ulice, p_cislopopisne, p_obec, 'Èeská republika')
+            RETURNING IDADRESY INTO i_idAdresy;
+    END;
+
+    INSERT INTO ZASAHY (IDZASAHU, DATUM, CAS, POPIS, IDADRESY) 
+    VALUES (NULL, SYSDATE, SYSDATE, p_popisZasahu, i_idAdresy) 
+    RETURNING IDZASAHU INTO i_idZasahu;
+    
+    INSERT INTO PRESTUPKY (IDPRESTUPKU, IDZASAHU, IDTYPUPRESTUPKU, POZNAMKA) 
+    VALUES (NULL, i_idZasahu, i_idTypPrestupku, NULL);
+
+exception
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi vkládání pøestupku: ' || SQLERRM);
+end pridejPrestupek;
+end;
+/
+
+create or replace package upravy_okrsku as
+
+    procedure upravitOkrsek(p_nazev varchar2, p_idOkrsku number);
+    
+    procedure smazOkrsek(p_idOkrsku number);
+    
+    procedure pridejOkrsek(p_nazev varchar2);
+end;
+/
+
+create or replace package body upravy_okrsku as
+    
+    procedure upravitOkrsek(p_nazev varchar2, p_idOkrsku number)
+    is
+        i_existuje number;
+    begin
+
+        SELECT COUNT(*) INTO i_existuje FROM okrsky WHERE idOkrsku = p_idOkrsku;
+        if i_existuje = 0 then
+            RAISE_APPLICATION_ERROR(-20000, 'Okrsek s ID ' || p_idOkrsku || ' nenalezen!');
+        end if;
+        
+        UPDATE OKRSKY SET
+            NAZEV = p_nazev
+        WHERE IDOKRSKU = p_idOkrsku;
+    
+    exception 
+        when others then
+            RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi úpravì okrsku: ' || SQLERRM);
+    end upravitOkrsek;
+
+procedure smazOkrsek(p_idOkrsku number)
+    is
+        i_existuje number;
+    begin    
+        SELECT COUNT(*) INTO i_existuje FROM okrsky WHERE idOkrsku = p_idOkrsku;
+        if i_existuje = 0 then
+            RAISE_APPLICATION_ERROR(-20000, 'Okrsek s ID ' || p_idOkrsku || ' nenalezen!');
+        end if;
+
+        DELETE FROM OKRSKY WHERE IDOKRSKU = p_idOkrsku;
+        
+    exception    
+        when others then    
+            RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi mazání okrsku. Mùže být používán v jiné tabulce.');
+    end smazOkrsek;
+
+   procedure pridejOkrsek(p_nazev varchar2)
+    is
+        i_existuje number;
+    begin    
+        if p_nazev is null then
+            RAISE_APPLICATION_ERROR(-20000, 'Název okrsku nesmí být prázdný!');
+        end if;
+        
+        SELECT COUNT(*) INTO i_existuje FROM okrsky WHERE NAZEV = p_nazev;
+        if i_existuje > 0 then
+            RAISE_APPLICATION_ERROR(-20000, 'Okrsek s názvem ''' || p_nazev || ''' už existuje!');
+        end if;
+
+        INSERT INTO okrsky (idokrsku, nazev) 
+        VALUES (NULL, p_nazev); 
+        
+    exception    
+        when others then    
+            RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi vkládání okrsku: ' || SQLERRM);
+    end pridejOkrsek; 
+end;
+/
+
+create or replace package upravy_hlidek as
+
+    procedure upravitHlidku(p_nazevHlidky varchar2, p_nazev varchar2, p_idHlidky number);
+    
+    procedure smazHlidku(p_idHlidky number);
+    
+    procedure pridejHlidku(p_nazevHlidky varchar2, p_nazevTypu varchar2);
+end;
+/
+create or replace package body upravy_hlidek as
+    
+    procedure upravitHlidku(p_nazevHlidky varchar2, p_nazev varchar2, p_idHlidky number)
+    is
+        i_existuje number;
+        i_existujeTypHlidky number;
+        i_idTypuHlidky number;
+    begin
+        
+        SELECT COUNT(*) INTO i_existuje FROM hlidky WHERE idhlidky = p_idHlidky;
+        if i_existuje = 0 then
+            RAISE_APPLICATION_ERROR(-20000, 'Hlídka s ID ' || p_idHlidky || ' nenalezena!');
+        end if;
+        
+        SELECT COUNT(*) INTO i_existujeTypHlidky FROM typy_hlidky WHERE nazev LIKE p_nazev;
+        if i_existujeTypHlidky = 0 then
+            RAISE_APPLICATION_ERROR(-20000, 'Typ hlídky s názvem ''' || p_nazev || ''' nenalezen!');
+        end if;
+        SELECT idtypu INTO i_idTypuHlidky FROM typy_hlidky WHERE nazev LIKE p_nazev;
+        
+        UPDATE HLIDKY SET
+        NAZEVHLIDKY = p_nazevHlidky,          
+        IDTYPU = i_idTypuHlidky         
+        WHERE IDHLIDKY = p_idHlidky;
+    
+    exception when NO_DATA_FOUND then
+        RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi úpravì: ' || SQLERRM);
+    end upravitHlidku;
+
+    procedure smazHlidku(p_idHlidky number)
+    is
+        i_existuje number;
+    begin    
+        SELECT COUNT(*) INTO i_existuje FROM hlidky WHERE idhlidky = p_idHlidky;
+        if i_existuje = 0 then
+            RAISE_APPLICATION_ERROR(-20000, 'Hlídka s ID ' || p_idHlidky || ' nenalezena!');
+        end if;
+
+        DELETE FROM HLIDKY WHERE IDHLIDKY = p_idHlidky;
+        
+    exception    
+        when others then    
+            RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi mazání hlídky! Možná má navázané záznamy: ' || SQLERRM);
+    end smazHlidku;
+    
+    procedure pridejHlidku(p_nazevHlidky varchar2, p_nazevTypu varchar2)
+    is
+        i_idTypuHlidky number;
+        i_existuje number;
+    begin
+        
+        if p_nazevHlidky is null then
+            RAISE_APPLICATION_ERROR(-20000, 'Název hlídky nesmí být prázdný.');
+        end if;
+        
+        SELECT COUNT(*) INTO i_existuje FROM hlidky WHERE nazevhlidky = p_nazevHlidky;
+        if i_existuje > 0 then
+            RAISE_APPLICATION_ERROR(-20000, 'Hlídka s názvem ''' || p_nazevHlidky || ''' již existuje!');
+        end if;
+        
+        if p_nazevTypu is null then
+            RAISE_APPLICATION_ERROR(-20000, 'Typ hlídky nesmí být prázdný.');
+        end if;
+        
+        BEGIN
+            SELECT idtypu INTO i_idTypuHlidky 
+            FROM typy_hlidky 
+            WHERE nazev = p_nazevTypu;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                RAISE_APPLICATION_ERROR(-20000, 'Typ hlídky s názvem ''' || p_nazevTypu || ''' nenalezen!');
+        END;
+
+        INSERT INTO HLIDKY (
+            IDHLIDKY,
+            NAZEVHLIDKY,
+            IDTYPU)
+        VALUES (
+            NULL,
+            p_nazevHlidky,
+            i_idTypuHlidky);
+    exception
+        when others then
+            RAISE_APPLICATION_ERROR(-20000, 'Chyba pøi vkládání hlídky: ' || SQLERRM);
+    end pridejHlidku;
+    
+end;
+/
+
+create or replace view opravneniView as
+select nazevopravneni from opravneni;
+
+create or replace view hodnostiView as
+select nazev from hodnosti;
+
+create or replace view typy_prestupkuView as
+select prestupek from typy_prestupku;
+
+create or replace view typy_hlidkyView as
+select nazev from typy_hlidky;
